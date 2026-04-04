@@ -44,6 +44,28 @@ ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
 ?- ancestor(john, bob).  % true (derived, never stored)
 ```
 
+## Project Graphic
+
+This project makes LLMs smarter by combining natural language understanding with a deterministic external knowledge base:
+
+```mermaid
+flowchart LR
+    A[LLM Query / User Prompt] --> B[Semantic Grounding]
+    B --> C[Intermediate Representation]
+    C --> D[Prolog Compiler]
+    D --> E[Prolog Engine]
+    E --> F[Deterministic Answers]
+    E --> G[Proof Trace / Explanation]
+    F --> H[LLM Agent Response]
+    G --> H
+    subgraph KB[External Knowledge Base]
+      E
+    end
+    style KB fill:#f3f4f6,stroke:#999,stroke-width:1px
+```
+
+The graphic shows how the system avoids fragile LLM memory by querying an external KB through logic, then returning accurate, explainable results.
+
 ## Real-World Impact: How This Improves LLM Performance
 
 **Before**: LLM agents lose precision over long conversations, leading to critical errors in high-stakes domains.
