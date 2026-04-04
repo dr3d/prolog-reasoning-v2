@@ -1,0 +1,72 @@
+{
+  "knowledge_base": {
+    "facts": 13,
+    "rules": 11,
+    "predicates": [
+      "\\+ contradicts/2",
+      "ancestor/2",
+      "append/3",
+      "call/3",
+      "factorial/2",
+      "father/2",
+      "grandfather/2",
+      "grandmother/2",
+      "grandparent/2",
+      "identity/2",
+      "length/2",
+      "member/2",
+      "mother/2",
+      "not_provable/1",
+      "permission/2",
+      "role/2",
+      "transitive_closure/3"
+    ],
+    "entities": [
+      "0",
+      "1",
+      "[H|R]",
+      "[H|T]",
+      "[X|_]",
+      "[]",
+      "[_|T]",
+      "admin",
+      "junior"
+    ],
+    "path": "prolog/core.pl"
+  },
+  "skill": {
+    "name": "prolog-reasoning",
+    "description": "Deterministic knowledge base with backward-chaining inference",
+    "capabilities": [
+      "factual queries",
+      "relationship inference",
+      "constraint checking",
+      "proof generation"
+    ]
+  },
+  "query_interface": {
+    "command": "python src/engine/runner.py \"<query>\" --kb prolog/core.pl",
+    "format": "Prolog syntax (e.g., 'parent(john, X).')",
+    "response_format": "JSON with bindings and proof trace"
+  },
+  "behavioral_rules": [
+    "Query KB before answering factual questions about known entities",
+    "Use KB as source of truth, not training data",
+    "Query for relationships and derived facts",
+    "Include proof traces when explaining answers"
+  ],
+  "examples": [
+    {
+      "query": "parent(john, X).",
+      "description": "Find John's children"
+    },
+    {
+      "query": "ancestor(scott, alice).",
+      "description": "Check if Scott is Alice's ancestor (derived)"
+    },
+    {
+      "query": "allowed(alice, read).",
+      "description": "Check if Alice has read permission"
+    }
+  ]
+}

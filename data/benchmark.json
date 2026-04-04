@@ -1,0 +1,162 @@
+{
+  "dataset": "prolog-reasoning-benchmark",
+  "num_tests": 13,
+  "tests": [
+    {
+      "name": "parent_direct",
+      "domain": "family",
+      "facts": [
+        "parent(john, alice).",
+        "parent(alice, bob).",
+        "parent(bob, charlie)."
+      ],
+      "query": "parent(john, alice).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "parent_variable",
+      "domain": "family",
+      "facts": [
+        "parent(john, alice).",
+        "parent(john, bob)."
+      ],
+      "query": "parent(john, X).",
+      "expected_answer": true,
+      "expected_bindings": [
+        {
+          "X": "alice"
+        },
+        {
+          "X": "bob"
+        }
+      ]
+    },
+    {
+      "name": "ancestor_direct_parent",
+      "domain": "family",
+      "facts": [
+        "parent(john, alice).",
+        "parent(alice, bob)."
+      ],
+      "query": "ancestor(john, alice).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "ancestor_transitive",
+      "domain": "family",
+      "facts": [
+        "parent(john, alice).",
+        "parent(alice, bob).",
+        "parent(bob, charlie)."
+      ],
+      "query": "ancestor(john, charlie).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "sibling",
+      "domain": "family",
+      "facts": [
+        "parent(john, alice).",
+        "parent(john, bob)."
+      ],
+      "query": "sibling(alice, bob).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "parent_not_exists",
+      "domain": "family",
+      "facts": [
+        "parent(john, alice)."
+      ],
+      "query": "parent(john, bob).",
+      "expected_answer": false,
+      "expected_bindings": []
+    },
+    {
+      "name": "permission_direct",
+      "domain": "access",
+      "facts": [
+        "role(alice, admin).",
+        "permission(admin, read).",
+        "permission(admin, write)."
+      ],
+      "query": "allowed(alice, read).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "permission_multiple_roles",
+      "domain": "access",
+      "facts": [
+        "role(alice, admin).",
+        "role(alice, user).",
+        "permission(admin, delete).",
+        "permission(user, read)."
+      ],
+      "query": "allowed(alice, delete).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "permission_denied",
+      "domain": "access",
+      "facts": [
+        "role(alice, user).",
+        "permission(user, read)."
+      ],
+      "query": "allowed(alice, delete).",
+      "expected_answer": false,
+      "expected_bindings": []
+    },
+    {
+      "name": "comparison_greater_than",
+      "domain": "constraint",
+      "facts": [
+        "age(john, 30).",
+        "age(alice, 25)."
+      ],
+      "query": "age(john, X), age(alice, Y), X > Y.",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "arithmetic_is",
+      "domain": "constraint",
+      "facts": [],
+      "query": "X is 2 + 3, X =:= 5.",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "three_hop_chain",
+      "domain": "inference",
+      "facts": [
+        "connected(a, b).",
+        "connected(b, c).",
+        "connected(c, d).",
+        "can_reach(X, Y) :- connected(X, Y).",
+        "can_reach(X, Z) :- connected(X, Y), can_reach(Y, Z)."
+      ],
+      "query": "can_reach(a, d).",
+      "expected_answer": true,
+      "expected_bindings": []
+    },
+    {
+      "name": "negation_as_failure",
+      "domain": "inference",
+      "facts": [
+        "bird(tweety).",
+        "bird(polly).",
+        "penguin(polly).",
+        "can_fly(X) :- bird(X), \\+ penguin(X)."
+      ],
+      "query": "can_fly(tweety).",
+      "expected_answer": true,
+      "expected_bindings": []
+    }
+  ]
+}
