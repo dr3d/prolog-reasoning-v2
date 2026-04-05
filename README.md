@@ -1,50 +1,38 @@
 # Prolog Reasoning v2
 
-```
-   🤖 "Who is John's parent?"           📊 parent(john, X)           ✅ alice
-       ↓                                       ↓                          ↓
-   Natural Language → Structured Logic → Deterministic Answers
-```
-
-**Lossless structured fact storage with backward-chaining inference for long-horizon LLM reasoning.**
+Structured fact storage with backward-chaining inference to support deterministic reasoning in LLM agents.
 
 [![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-**Give your LLM agents perfect memory and reasoning without wasting context tokens.**
+This is a research-grade implementation exploring how deterministic symbolic reasoning can address context decay in long-horizon agent memory.
 
-This is a research-grade implementation addressing context decay in agent memory through deterministic symbolic reasoning.
+## Getting Started
 
-## 🚀 Quick Start for New AI Enthusiasts
-
-**New to LLMs and wondering how this helps with forgetful AI?**  
-Check out our **[Training & Course Library](training/)** - designed for complete beginners:
+New to the project? Start with the **[Training & Course Library](training/)** for learning materials:
 - **[LLM Memory Magic](training/01-llm-memory-magic.md)** - Why AI forgets and how we fix it (30 min read)
 - **[Knowledge Bases 101](training/02-knowledge-bases-101.md)** - How to structure facts reliably (25 min)
 - **[Learning from Failures](training/03-learning-from-failures.md)** - Understanding and fixing errors (20 min)
-- **[AI Superpowers: Local LLM + MCP](training/04-lm-studio-mcp.md)** - Use with LM Studio (15 min) ⭐ NEW!
-- More advanced courses coming soon on knowledge graphs, self-correcting AI, and production systems
-- All courses include code you can run right now
-- Perfect for sharing on Twitter/X with pre-made metadata
+- **[Local LLM + MCP Integration](training/04-lm-studio-mcp.md)** - Integration with LM Studio (15 min)
 
-## 🔧 Use with LM Studio (Local LLMs)
+## Integration with LM Studio
 
-**Want to give your local LLM perfect memory and logic?** Using MCP (Model Context Protocol):
+To use this system with a local LLM via MCP (Model Context Protocol):
 
 ```bash
 # 1. Start the MCP server
 python src/mcp_server.py --stdio
 
 # 2. Configure LM Studio (see guide below)
-# 3. Chat with your local LLM - it now has reliable reasoning!
+# 3. Chat with your local LLM
 ```
 
-**Your LLM can now:**
-- ✅ Query knowledge bases with 100% accuracy
-- ✅ Reason about facts without hallucinating
-- ✅ Explain errors and suggest fixes
-- ✅ Keep perfect memory of your data
+Capabilities:
+- Deterministic queries against structured facts
+- Traceable reasoning with explicit proof chains
+- Validation feedback for grounding issues
+- Session-based fact management
 
 👉 **[Full LM Studio MCP Guide](docs/LM_STUDIO_MCP_GUIDE.md)** - Step-by-step setup instructions  
 👉 **[Course 04: AI Superpowers](training/04-lm-studio-mcp.md)** - Beginner-friendly tutorial
@@ -93,25 +81,18 @@ ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
 ?- ancestor(john, bob).  % true (derived, never stored)
 ```
 
-## 🧠 Learning from Failures: Friendly Explanations for Beginners
+## Failure Explanations
 
-**This system is designed to teach beginners how NeSy works.** When something goes wrong, you get a friendly explanation instead of cryptic errors:
+When a query fails, the system provides structured explanations instead of cryptic errors:
 
-**Without Explanations:**
+Example:
 ```
-You: "Who is Charlie's parent?"
-System: "Error: undefined_entity"
-You: 😕 What now?
-```
+Query: "Who is Charlie's parent?"
 
-**With Explanations:**
-```
-You: "Who is Charlie's parent?"
-
-System: ❌ I don't know who 'charlie' is
-        System only knows: john, alice, bob, admin, etc.
-        
-        💡 Try this: Tell me about charlie first, or use a name I know about
+Response:
+- Status: undefined entity 'charlie'
+- Known entities: john, alice, bob, admin, ...
+- Suggestion: Define charlie or use a known entity
 ```
 
 **Run the demo to see this in action:** `python scripts/demonstrate_failures.py`
@@ -144,27 +125,13 @@ flowchart LR
 
 The graphic shows how the system avoids fragile LLM memory by querying an external KB through logic, then returning accurate, explainable results.
 
-## Real-World Impact: How This Improves LLM Performance
+## Use Cases
 
-**Before**: LLM agents lose precision over long conversations, leading to critical errors in high-stakes domains.
+This approach is suited for domains where accurate fact recall is important:
 
-**After**: Deterministic reasoning provides perfect recall and logical consistency.
+### Healthcare: Medication Safety
 
-### 🔴 Healthcare: Medication Safety & Patient Care
-
-**Scenario**: Hospital AI assistant managing patient medications across multiple visits.
-
-**Without Prolog Reasoning:**
-```
-LLM Context: "Patient John Smith, 65yo, takes metformin 500mg BID, lisinopril 10mg daily,
-has penicillin allergy noted in 2018 chart, recent labs show creatinine 1.8..."
-
-After 20+ patient interactions → Context decay:
-"Patient has some allergy... maybe penicillin? Takes metformin... or was it insulin?"
-→ Wrong medication prescribed, patient hospitalized
-```
-
-**With Prolog Reasoning:**
+Managing medication records and allergy tracking:
 ```prolog
 patient(john_smith, id_12345).
 takes_medication(john_smith, metformin, 500, bid).
@@ -180,24 +147,11 @@ contraindicated(Patient, Drug) :- takes_medication(Patient, Drug2, _, _),
 interacts(metformin, penicillin).
 ```
 
-**Result**: Agent queries `?- contraindicated(john_smith, penicillin).` → `true`
-→ Prevents allergic reaction, saves life.
+Query: `?- contraindicated(john_smith, penicillin).` → `true` (deterministic result)
 
-### 🛡️ Cybersecurity: Access Control & Threat Detection
+### Cybersecurity: Access Control
 
-**Scenario**: Enterprise security AI monitoring employee access patterns.
-
-**Without Prolog Reasoning:**
-```
-LLM Context: "Bob Johnson, senior engineer, has admin access to production servers,
-was granted temporary VPN access for client project, security clearance level 3..."
-
-After complex investigation → Context confusion:
-"Bob has access... but was it revoked? Let me check the logs again..."
-→ Security breach goes undetected
-```
-
-**With Prolog Reasoning:**
+Tracking access permissions and detecting policy violations:
 ```prolog
 employee(bob_johnson, emp_456).
 role(bob_johnson, senior_engineer).
@@ -216,24 +170,11 @@ suspicious_activity(User) :- access_attempt(User, Resource, denied),
 revoked_access(User, Resource) :- security_incident(User, Resource, _).
 ```
 
-**Result**: Agent detects `suspicious_activity(bob_johnson)` → `true`
-→ Prevents data breach, saves millions in damages.
+Query: `?- suspicious_activity(bob_johnson).` → `true` (deterministic result)
 
-### 💰 Financial Services: Compliance & Fraud Detection
+### Financial Services: Compliance
 
-**Scenario**: Banking AI monitoring transactions for money laundering.
-
-**Without Prolog Reasoning:**
-```
-LLM Context: "Account 789012 has $50K transfer to offshore entity XYZ Corp,
-linked to customer John Doe who owns ABC Industries, previous clean record..."
-
-After reviewing 100+ transactions → Memory overload:
-"Was this flagged before? Similar pattern with account 456789..."
-→ Fraudulent activity missed
-```
-
-**With Prolog Reasoning:**
+Monitoring transaction patterns for regulatory compliance:
 ```prolog
 account_holder(account_789012, john_doe).
 transaction(account_789012, xyz_corp, 50000, "2024-01-20").
@@ -251,24 +192,11 @@ sanctions_violation(Account) :- account_holder(Account, Person),
                                sanctioned_entity(Person, _).
 ```
 
-**Result**: Agent flags `money_laundering_risk(account_789012)` → `true`
-→ Prevents financial crime, ensures regulatory compliance.
+Query: `?- money_laundering_risk(account_789012).` → `true` (deterministic result)
 
-### ⚖️ Legal: Contract Analysis & Regulatory Compliance
+### Legal: Contract Analysis
 
-**Scenario**: Corporate legal AI reviewing merger agreements.
-
-**Without Prolog Reasoning:**
-```
-LLM Context: "TechCorp acquires StartupXYZ for $50M, subject to regulatory approval,
-IP rights transfer, employee retention clauses, 18-month earnout period..."
-
-After analyzing 200-page document → Context fragmentation:
-"IP transfer was conditional... but what were the exact conditions?"
-→ Contract breach goes unnoticed
-```
-
-**With Prolog Reasoning:**
+Tracking contract terms and detecting potential breaches:
 ```prolog
 contract(techcorp_startupxyz_merger, parties(techcorp, startupxyz)).
 value(techcorp_startupxyz_merger, 50000000).
@@ -287,8 +215,7 @@ liability_risk(Contract) :- breach_of_contract(Contract).
 liability_risk(Contract) :- regulatory_violation(Contract).
 ```
 
-**Result**: Agent identifies `liability_risk(techcorp_startupxyz_merger)` → `true`
-→ Prevents costly litigation, ensures compliance.
+Query: `?- liability_risk(techcorp_startupxyz_merger).` → `true` (deterministic result)
 
 ### 🚛 Supply Chain: Dependency Tracking & Risk Assessment
 
@@ -297,14 +224,7 @@ liability_risk(Contract) :- regulatory_violation(Contract).
 **Without Prolog Reasoning:**
 ```
 LLM Context: "Widget A depends on Part X from Supplier S1 in Taiwan,
-Part Y from Supplier S2 in Vietnam, assembly in Mexico plant..."
-
-After tracking 50+ suppliers → Knowledge degradation:
-"Supplier S1 had issues... was it resolved? Impact on Widget A?"
-→ Production halt, millions in lost revenue
-```
-
-**With Prolog Reasoning:**
+Tracking component suppliers and sourcing locations:
 ```prolog
 component(widget_a, part_x).
 component(widget_a, part_y).
@@ -325,8 +245,7 @@ critical_path_impact(Product, Delay) :- production_delay_risk(Product),
                                         depends_on(critical_customer, Product).
 ```
 
-**Result**: Agent predicts `critical_path_impact(widget_a, severe)` → `true`
-→ Enables proactive risk mitigation, maintains production continuity.
+Query: `?- critical_path_impact(widget_a, severe).` → `true` (deterministic result)
 
 ## Quick Start
 

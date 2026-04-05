@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "AI Superpowers: Giving Your Local LLM Perfect Memory via MCP"
-description: "AI Course Module: Using NeSy with LM Studio"
+title: "Local LLM Integration with MCP"
+description: "Setting up structured reasoning with LM Studio"
 level: "Beginner"
 domain: "LLM Tools & Integration"
 duration: "15 minutes"
 ---
-# 🚀 AI Superpowers: Giving Your Local LLM Perfect Memory via MCP
+# Local LLM Integration with MCP
 
-**AI Course Module: Using NeSy with LM Studio**  
-*Perfect for beginners who want their local AI to remember things perfectly*
+**Setting up structured reasoning with LM Studio**
 
 ---
 

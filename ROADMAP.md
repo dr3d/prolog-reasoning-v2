@@ -2,15 +2,13 @@
 
 **Last Updated**: April 5, 2026  
 **Input**: External critique from Gemini AI + team analysis  
-**Vision**: Transform prolog-reasoning from a research prototype into a production-ready symbolic layer for agentic AI systems
+**Vision**: Develop prolog-reasoning as a research platform exploring how deterministic symbolic reasoning supports long-horizon LLM agent memory
 
 ---
 
 ## Strategic Priorities
 
-### 🔰 Tier 1: High Impact, Lower Effort (Q2 2026)
-
-These unlock significant value without major refactoring.
+### Tier 1: Core Foundations (Q2 2026)
 
 #### 1.1 Temporal Logic Foundation
 **Why**: Most "long-horizon" agent memory involves time. "Who was the manager in 2023?" is unanswerable without it.
@@ -69,9 +67,7 @@ These unlock significant value without major refactoring.
 
 ---
 
-### 🎯 Tier 2: Medium Effort, Huge Leverage (Q3 2026)
-
-These unlock new use cases and showcase depth.
+### Tier 2: Extended Capabilities (Q3 2026)
 
 #### 2.1 Soft-Fail Buffer Zone
 **Why**: Real-world data is "fuzzy." Rigid IR validation causes loss of signal.
@@ -132,9 +128,7 @@ These unlock new use cases and showcase depth.
 
 ---
 
-### 🏆 Tier 3: Flagship Features (Q4 2026 / 2027)
-
-These define the next evolution of the project.
+### Tier 3: Advanced Features (Q4 2026 / 2027)
 
 #### 3.1 Constraint Graph Visualizer
 **Why**: Show users a live graph of what facts/rules exist and how they're related. Powerful for debugging and demo.
@@ -222,29 +216,23 @@ These define the next evolution of the project.
 
 ---
 
-## Product & Community
+## Development & Community
 
-### Immediate Actions (Before Q3)
+Practical actions to support adoption and community.
 
-- [ ] **Update README**: Remove "paper TBD" placeholder
-  - Emphasize **practical implementation** and **MCP + LM Studio** path
-  - Add "Getting started in 5 minutes" section
-  - Add comparison to similar projects (LangChain memory, etc.)
+- [ ] **Update README**: Focus on technical accomplishments over aspirational claims
+  - Emphasize **deterministic reasoning** and **integration patterns**
 
-- [ ] **Publish "Building Agentic AI with Prolog" Guide**
-  - Use case: LLM memory that doesn't hallucinate
-  - Real example: healthcare agent with patient history
-  - Tie to LM Studio integration
+- [ ] **Publish Integration Guide**
+  - Document realistic use cases and limitations
+  - Include integration examples with MCP, LM Studio
 
 - [ ] **MCP Server Stabilization**
   - Ensure `src/mcp_server.py` is robust
   - Add connection pooling / session management
   - Document Claude Desktop integration
 
-- [ ] **Community Setup**
-  - Add CONTRIBUTING.md
-  - Create GitHub Discussions tab
-  - Start a "show & tell" showcase for user projects
+- [ ] **Community Infrastructure** (if opening to contributions)
 
 ---
 
@@ -282,6 +270,4 @@ These define the next evolution of the project.
 
 This roadmap is **input-based** (Gemini critique) and **team-validated**. Tiers 1 & 2 are the moat. Tier 3 is the showpiece. Tier 4 is optionality.
 
-The **core strength** (deterministic reasoning + explainability) is non-negotiable. Everything else is about making it faster, more flexible, and easier to integrate.
-
-**Next checkpoint**: Deliver T1 completely by end of May 2026; then reassess based on user feedback.
+The **core strength** (deterministic reasoning with explicit proof traces) is the primary focus. Additional features should be evaluated against this foundation.

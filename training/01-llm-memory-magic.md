@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "LLM Memory Magic: Never Forget Again!"
-description: "AI Course Module: Fixing Forgetful AI"
+title: "LLM Memory and Symbolic Reasoning"
+description: "Understanding how to extend LLMs with structured fact storage"
 level: "Beginner"
 domain: "LLM Fundamentals"
 duration: "30 minutes"
 ---
-# 🤖 LLM Memory Magic: Never Forget Again!
+# LLM Memory and Symbolic Reasoning
 
-**AI Course Module: Fixing Forgetful AI**  
-*Perfect for beginners learning about LLM limitations and neuro-symbolic solutions*
+**Understanding how to extend LLMs with structured fact storage**
 
 ---
 
@@ -23,41 +22,24 @@ By the end of this module, you'll understand:
 
 ---
 
-## 🧠 The Big Problem: AI Goldfish Memory
+## The Problem: Limited Context
 
-**Hey there, future AI wizard!** 👋
+Large language models have a fundamental constraint: they can only process a fixed amount of context (text) at once. Beyond that context window, information is lost.
 
-Ever feel like your AI chatbot has the memory of a goldfish? 🐠 You tell it "Remember, my dog's name is Max!" and five minutes later it's asking "Who's this Max character?" 🤦‍♂️
+### Why LLMs Lose Information
 
-Well, guess what? **We've got a superpower fix for that!** ✨
+LLMs work through token-by-token prediction. At each step, the model maintains an internal representation (the context) and predicts the next token. This works well for:
+- Writing coherent text
+- Answering questions about the immediate context
+- Reasoning over short sequences
 
-### Why LLMs Forget (The Technical Reason)
-
-Your fancy LLM (that's "Large Language Model" - basically a super-smart text robot) is amazing at:
-- Writing stories
-- Answering questions
-- Having fun chats
-
-But it sucks at **remembering stuff** across conversations. Why?
-
-**LLMs have "working memory" like humans - it gets wiped clean between chats!**
-
-Imagine trying to solve a puzzle, but every time you look away, someone erases half your progress. Frustrating, right?
-
-**Key Insight:** LLMs are great at *pattern recognition* but terrible at *persistent facts*.
+But it fails for long-term fact recall because:
 
 ---
 
-## 🛡️ The Superhero Solution: Neuro-Symbolic AI
+## The Solution: Structured External Storage
 
-**Enter our NeSy Helper!** (NeSy = Neuro-Symbolic)
-
-Think of it like giving your LLM a **perfect notepad** that never gets lost or erased. But way cooler - it's a **logic detective** that can figure out connections automatically!
-
-### The Magic Combination
-
-```
-LLM (Neural Network)     +     Prolog (Logic Engine)     =     Perfect Memory AI
+One approach: store facts separately from the LLM and retrieve them explicitly when needed. This combines:
 
 🎨 Creative & Flexible          🔍 Logical & Precise          🧠 Remembers Everything
 ```
