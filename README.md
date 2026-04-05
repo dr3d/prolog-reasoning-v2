@@ -16,6 +16,15 @@
 
 This is a research-grade implementation addressing context decay in agent memory through deterministic symbolic reasoning.
 
+## 🚀 Quick Start for New AI Enthusiasts
+
+**New to LLMs and wondering how this helps with forgetful AI?**  
+Check out our **[Training & Course Library](training/)** - designed for complete beginners:
+- **[LLM Memory Magic](training/01-llm-memory-magic.md)** - Why AI forgets and how we fix it (30 min read)
+- More courses coming on knowledge graphs, reliable chatbots, and advanced NeSy techniques
+- All courses include code you can run right now
+- Perfect for sharing on Twitter/X with pre-made metadata
+
 ## The Problem
 
 LLMs lose precision over long horizons:
@@ -35,14 +44,35 @@ ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
 
 ?- ancestor(john, bob).  % true (derived, never stored)
 ```
-```prolog
-parent(john, alice).
-parent(alice, bob).
-ancestor(X, Y) :- parent(X, Y).
-ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
 
-?- ancestor(john, bob).  % true (derived, never stored)
+## 🧠 Learning from Failures: Friendly Explanations for Beginners
+
+**This system is designed to teach beginners how NeSy works.** When something goes wrong, you get a friendly explanation instead of cryptic errors:
+
+**Without Explanations:**
 ```
+You: "Who is Charlie's parent?"
+System: "Error: undefined_entity"
+You: 😕 What now?
+```
+
+**With Explanations:**
+```
+You: "Who is Charlie's parent?"
+
+System: ❌ I don't know who 'charlie' is
+        System only knows: john, alice, bob, admin, etc.
+        
+        💡 Try this: Tell me about charlie first, or use a name I know about
+```
+
+**Run the demo to see this in action:** `python scripts/demonstrate_failures.py`
+
+This shows:
+- How to fix common beginner mistakes
+- Why the system failed at each step
+- How logical reasoning derives answers you never explicitly told it
+- The power of combining NLP with deterministic logic
 
 ## Project Graphic
 
@@ -258,8 +288,11 @@ git clone <repo>
 cd prolog-reasoning-v2
 pip install -r requirements.txt
 
-# Run tests (21 comprehensive unit tests)
-python -m pytest tests/test_engine.py -v
+# Run tests (54 comprehensive tests: core, semantic validation, failure explanations)
+python -m pytest tests/ -v
+
+# 🎓 NEW: Learn from failure explanations (perfect for beginners!)
+python scripts/demonstrate_failures.py
 
 # Try natural language queries
 python scripts/demonstrate_semantic.py

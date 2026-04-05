@@ -57,7 +57,7 @@ def demo_semantic_grounding():
 
 
 def demo_integrated_skill():
-    """Demonstrate end-to-end NL to Prolog execution."""
+    """Demonstrate end-to-end NL to Prolog execution with validation."""
 
     print("\nINTEGRATED SKILL DEMO")
     print("=" * 50)
@@ -67,7 +67,10 @@ def demo_integrated_skill():
     nl_queries = [
         "Who is John's parent?",
         "Is Alice allowed to read?",
-        "Who are Alice's siblings?"
+        "Who are Alice's siblings?",
+        "Can Charlie cross the bridge?",  # Low confidence, should work
+        "Is David the boss?",  # Should trigger validation error - David not known
+        "Who is Charlie's parent?"  # Should trigger validation error - Charlie not in KB
     ]
 
     for query in nl_queries:
@@ -79,9 +82,17 @@ def demo_integrated_skill():
 
             print(f"Success: {result['success']}")
             print(f"Parsing Confidence: {result['parsing_confidence']:.2f}")
+            if 'validation_confidence' in result:
+                print(f"Validation Confidence: {result['validation_confidence']:.2f}")
             print(f"Domain: {result['domain']}")
 
-            if result['success']:
+            if 'validation_errors' in result:
+                print("VALIDATION ERRORS:")
+                for error in result['validation_errors']:
+                    print(f"  {error['severity'].upper()}: {error['message']}")
+                    if error.get('suggestion'):
+                        print(f"    Suggestion: {error['suggestion']}")
+            elif result['success']:
                 print(f"Answer: {result['explanation']}")
                 if result['bindings']:
                     print(f"Bindings: {result['bindings']}")

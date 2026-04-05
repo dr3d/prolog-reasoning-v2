@@ -15,7 +15,7 @@ Example:
 
 import re
 import json
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Dict, Any, Optional, List, Tuple, Set
 from dataclasses import dataclass
 from enum import Enum
 
@@ -102,7 +102,15 @@ class SemanticGrounder:
                 })
             else:
                 # Handle questions/queries
-                if "john" in query and "parent" in query:
+                if "charlie" in query and "parent" in query:
+                    return json.dumps({
+                        "intent": "variable_query",
+                        "predicate": "parent",
+                        "args": ["charlie", "X"],
+                        "confidence": 0.9,
+                        "domain": "family"
+                    })
+                elif "john" in query and "parent" in query:
                     return json.dumps({
                         "intent": "variable_query",
                         "predicate": "parent",
@@ -116,6 +124,14 @@ class SemanticGrounder:
                         "predicate": "parent",
                         "args": ["X", "Y"],
                         "confidence": 0.8,
+                        "domain": "family"
+                    })
+                elif "charlie" in query and "parent" in query:
+                    return json.dumps({
+                        "intent": "variable_query",
+                        "predicate": "parent",
+                        "args": ["charlie", "X"],
+                        "confidence": 0.9,
                         "domain": "family"
                     })
                 elif "ancestor" in query:
@@ -374,31 +390,79 @@ Return only valid JSON:"""
 # INTEGRATION WITH AGENT SKILL
 # =============================================================================
 
+# =============================================================================
+# INTEGRATION WITH AGENT SKILL
+# =============================================================================
+
 class SemanticPrologSkill:
     """
-    Enhanced agent skill with semantic grounding.
+    Enhanced agent skill with semantic grounding and validation.
 
     Accepts natural language queries and converts them to Prolog.
     """
 
     def __init__(self, kb_path: str = "prolog/core.pl", llm_client=None):
         from agent_skill import PrologSkill
+        from validator import SemanticValidator
+        from explain.failure_translator import FailureTranslator
 
         self.prolog_skill = PrologSkill(kb_path)
         self.grounder = SemanticGrounder(llm_client)
+        
+        # Initialize validator with known entities
+        kb_entities = self._extract_kb_entities()
+        self.validator = SemanticValidator(kb_entities)
+        self.failure_translator = FailureTranslator(kb_entities)
+
+    def _extract_kb_entities(self) -> Set[str]:
+        """Extract known entities from the knowledge base."""
+        entities = set()
+        # For now, hardcode based on demo KB
+        # In production, parse from .pl files or engine
+        entities.update(["john", "alice", "bob", "admin", "read", "write"])
+        return entities
 
     def query_nl(self, nl_query: str) -> Dict[str, Any]:
         """
-        Query using natural language.
+        Query using natural language with validation.
 
         Args:
             nl_query: Natural language query
 
         Returns:
-            Same format as PrologSkill.query()
+            Same format as PrologSkill.query() plus validation info
         """
         # Ground to IR
         parsed = self.grounder.ground_query(nl_query)
+
+        # Validate IR
+        validation = self.validator.validate_ir(parsed.ir, nl_query)
+        
+        if not validation.is_valid:
+            # Generate failure explanations for each issue
+            explanations = [
+                self.failure_translator.explain_validation_error(issue)
+                for issue in validation.issues
+            ]
+            
+            # Return validation errors with human-friendly explanations
+            return {
+                "success": False,
+                "validation_errors": [
+                    {
+                        "type": issue.error_type.value,
+                        "message": issue.message,
+                        "severity": issue.severity,
+                        "suggestion": issue.suggestion,
+                        "explanation": self.failure_translator.format_for_human(explanation)
+                    } for issue, explanation in zip(validation.issues, explanations)
+                ],
+                "validation_confidence": validation.confidence,
+                "nl_query": nl_query,
+                "parsed_ir": parsed.ir.to_json(),
+                "parsing_confidence": parsed.confidence,
+                "domain": parsed.domain
+            }
 
         # Convert to Prolog
         prolog_query = self.grounder.to_prolog_query(parsed)
@@ -406,11 +470,21 @@ class SemanticPrologSkill:
         # Execute
         result = self.prolog_skill.query(prolog_query)
 
-        # Add semantic metadata
+        # If query failed, add failure explanation
+        if not result.get("success", False):
+            failure_explanation = self.failure_translator.explain_query_failure(prolog_query)
+            result.update({
+                "failure_explanation": self.failure_translator.format_for_human(failure_explanation),
+                "why_it_failed": failure_explanation.detailed_explanation,
+                "what_to_try": failure_explanation.suggestion
+            })
+
+        # Add semantic and validation metadata
         result.update({
             "nl_query": nl_query,
             "parsed_ir": parsed.ir.to_json(),
             "parsing_confidence": parsed.confidence,
+            "validation_confidence": validation.confidence,
             "domain": parsed.domain
         })
 

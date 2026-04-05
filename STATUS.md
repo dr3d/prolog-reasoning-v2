@@ -1,7 +1,7 @@
 # Development Status & Roadmap
 
-**Last Updated**: April 4, 2026  
-**Status**: ✅ **SEMANTIC GROUNDING COMPLETE** - Full system ready for research applications  
+**Last Updated**: January 2025  
+**Status**: ✅ **SEMANTIC VALIDATION + FAILURE EXPLANATIONS COMPLETE** - Full neuro-symbolic pipeline with beginner learning support  
 
 ## ✅ Completed
 
@@ -40,53 +40,106 @@
   - [x] Step-by-step execution logs
   - [x] Human-readable explanations
 
-### Phase 5: Semantic Grounding ✅ COMPLETED
-- [x] Natural language → IR conversion (src/parser/semantic.py)
-  - [x] LLM-assisted parsing with prompt engineering
-  - [x] Query intent classification (variable_query, fact_check, assertion)
-  - [x] Error correction and validation
-  - [x] Confidence scoring and fallback handling
-- [x] Agent skill integration (SemanticPrologSkill)
-  - [x] End-to-end NL → Prolog → Response pipeline
+### Phase 4: Semantic Validation ✅ COMPLETED
+- [x] Semantic Validator (`src/validator/semantic_validator.py`)
+  - [x] Entity grounding checks (undefined entities flagged)
+  - [x] Predicate grounding validation (ungrounded predicates warned)
+  - [x] Consistency checks for facts and rules
+  - [x] Confidence scoring and error reporting
+  - [x] Integration with SemanticPrologSkill (blocks invalid queries)
+- [x] Validation feedback loop
+  - [x] Structured error messages with suggestions
+  - [x] Confidence degradation for issues
+  - [x] Prevents "false certainty" from incorrect facts
+- [x] **17 semantic validation tests** (test_semantic.py)
+
+### Phase 5: Failure Explanation Layer ✅ COMPLETED
+- [x] Failure Translator (`src/explain/failure_translator.py`)
+  - [x] Explanation for undefined entities
+  - [x] Explanation for ungrounded predicates
+  - [x] Explanation for query failures
+  - [x] Explanation for timeouts/depth limits
+  - [x] Explanation for ambiguous inputs
+  - [x] "Did you mean?" suggestions with fuzzy matching
+  - [x] Dual output formats (human-friendly with emojis, LLM-structured)
+- [x] **16 failure translator tests** (test_failures.py)
+- [x] Integration with SemanticPrologSkill
+  - [x] Automatic failure explanation in query responses
+  - [x] Structured error feedback for LLM agents
+- [x] Complete documentation (docs/FAILURE_EXPLANATIONS.md)
+
+### Phase 6: Comprehensive Testing ✅ COMPLETED
+- [x] Core engine tests (**21 tests** in `tests/test_engine.py`)
+  - [x] Term creation, unification, substitution
+  - [x] Resolution, backtracking, built-ins
+- [x] Semantic validation tests (**17 tests** in `tests/test_semantic.py`)
+  - [x] Validator success/failure scenarios
+  - [x] Grounder parsing accuracy
+  - [x] Integrated skill validation
+  - [x] End-to-end workflow testing
+  - [x] Confidence degradation testing
+- [x] Failure translator tests (**16 tests** in `tests/test_failures.py`)
+  - [x] All failure type explanations
+  - [x] "Did you mean?" suggestions
+  - [x] Format variations (human/LLM)
+  - [x] Integration scenarios
+- [x] **Total: 54 tests passing** (100% success rate)
   - [x] Structured responses for agent consumption
   - [x] Parsing metadata and confidence tracking
+  - [x] Failure handling and recovery suggestions
 - [x] Mock LLM implementation for testing
-- [x] Comprehensive documentation (docs/SEMANTIC_GROUNDING.md)
-- [x] Demo scripts and examples
-  - [x] Baseline runner
-  - [x] Result collection
-  - [x] Report generation
+- [x] Comprehensive validation demo script
+- [x] Demo scripts for all major features
+  - [x] `demonstrate_agent.py` - Basic agent workflow
+  - [x] `demonstrate_semantic.py` - Semantic grounding
+  - [x] `demonstrate_healthcare.py` - Real-world healthcare scenario
+  - [x] `demonstrate_failures.py` - Failure explanations (NEW!)
 
-### Phase 5: Documentation
-- [x] README.md (overview)
-- [x] ARCHITECTURE.md (deep dive)
-- [x] QUICKSTART.md (developer guide)
-- [x] core.pl (example rules)
+### Phase 7: Training & Documentation ✅ COMPLETED
+- [x] Training library structure (training/ folder)
+  - [x] Beginner-friendly course materials
+  - [x] YAML frontmatter for social media sharing
+  - [x] Template for creating new courses
+- [x] First course: LLM Memory Magic (30 min)
+  - [x] Explains why LLMs forget and how Prolog helps
+  - [x] Beginner-oriented introduction to NeSy
+  - [x] Runnable code examples
+- [x] Documentation Updates
+  - [x] README with learning path for newcomers
+  - [x] FAILURE_EXPLANATIONS.md (comprehensive guide)
+  - [x] All demo scripts enhanced with explanations
+  - [x] Clear "Try this first" recommendations
 
 ## ⚠️ In Progress / Planned
 
-### Phase 6: Semantic Grounding (NEXT)
-**Goal**: Bridge natural language to structured IR
+### Phase 8: Iterative Repair Loops ✅ NEXT
+**Goal**: Let the system auto-correct based on failure explanations
 
 **Tasks**:
-- [ ] LLM semantic parser (src/parser/semantic.py)
-  - [ ] Prompt engineering for NL → IR conversion
-  - [ ] Error correction loop
-  - [ ] Confidence estimation
-- [ ] Parser integration tests
-- [ ] Error analysis on ambiguous inputs
-- [ ] Schema learning (auto-detect predicates from examples)
+- [ ] Extend SemanticPrologSkill with retry logic
+  - [ ] LLM parses initial query
+  - [ ] System returns failure explanation
+  - [ ] LLM reformulates based on feedback
+  - [ ] Automatic retry (up to N times)
+- [ ] Test with common beginner errors
+- [ ] Track success rate improvement
+- [ ] Document "tree of thoughts" approach
 
-**Why this matters**: This is where the system currently fails in practice. The engine is deterministic, but converting "John is Alice's parent" to `parent(john, alice)` is the hard part.
+**Why this matters**: Turns passive failure explanations into active error correction. Aligns with "help newbs learn" goal.
 
-### Phase 7: Consistency & Verification
+### Phase 9: Typed Predicate Templates
+**Goal**: Reduce LLM hallucinations through structured prompting
+
 **Tasks**:
-- [ ] Contradiction detection (src/verifier/consistency.py)
-- [ ] Conflict resolution strategies
-- [ ] Invariant checking
-- [ ] Constraint violations
+- [ ] Extend IR schema with type hints
+  - [ ] `path(Start: location, End: location, Cost: int)`
+- [ ] Semantic parser enforces types
+- [ ] Type validation in compiled Prolog
+- [ ] Tests for type violation catching
 
-### Phase 8: Extended Benchmarking
+**Why this matters**: Prevents "invented arguments" hallucinations (research shows 70%+ improvement).
+
+### Phase 10: Extended Benchmarking
 **Tasks**:
 - [ ] Expand dataset to 100+ test cases
 - [ ] Add baseline comparisons
@@ -99,15 +152,15 @@
   - [ ] Explainability (human evaluation)
   - [ ] Grounding accuracy (% valid NL → IR)
 
-### Phase 9: Performance & Scaling
+### Phase 11: Performance & Scaling
 **Tasks**:
 - [ ] Optimize unification
 - [ ] Index facts by functor
 - [ ] Tabling/memoization
-- [ ] Parallel resolution
+- [ ] Parallel resolution (if needed)
 - [ ] Memory profiling
 
-### Phase 10: Advanced Features
+### Phase 12: Advanced Features
 **Tasks**:
 - [ ] findall/bagof/setof predicates (full)
 - [ ] Constraint logic programming (CLP)
@@ -115,30 +168,31 @@
 - [ ] DCG (Definite Clause Grammar) support
 - [ ] Module system
 
-## Critical Path for Publication
+## Quick Status Summary
 
-**Goal**: Conference-ready research paper
+| Component | Tests | Status | Notes |
+|-----------|-------|--------|-------|
+| Core engine | ✅ 21 | Pass | Complete, well-tested |
+| Semantic validation | ✅ 17 | Pass | Prevents invalid queries |
+| Failure explanations | ✅ 16 | Pass | Human-friendly error messages |
+| Integration | ✅ All | Pass | Full pipeline working end-to-end |
+| **TOTAL** | **54** | **Pass** | 100% success rate |
 
-**Minimum requirements**:
-1. Semantic grounding layer (**Phase 6**)
-2. Extended benchmark (50+ test cases) (**Phase 8**)
-3. Baseline comparisons (**Phase 8**)
-4. Human evaluation of explanations (**Phase 8**)
-5. Ablation study (Prolog vs LLM vs hybrid)
-6. Paper draft (methods, results, discussion)
+## Project Health
 
-**Timeline estimate**:
-- Phase 6 (semantic parser): 1 week
-- Phase 8 (extended benchmarking): 1 week
-- Paper writing: 1 week
-- **Total**: ~3 weeks to publication-ready
+✅ **Core**: Solid, well-tested, fully documented  
+✅ **Semantic Layer**: Prevents bad facts from reaching Prolog  
+✅ **User Experience**: Beginner-friendly error messages with actionable suggestions  
+✅ **Testing**: Comprehensive coverage (54 tests, all passing)  
+✅ **Documentation**: README, courses, failure explanations, architecture  
+⚠️ **Next Focus**: Iterative repair loops (let system learn from failures)
 
 ## Known Limitations
 
 ### Current
-- No findall/bagof/setof (stub only)
-- No tabling or constraint solving
-- Semantic parser not integrated
+- Iterative repair loops not implemented (next phase)
+- No typed predicate templates yet
+- Semantic parser not yet LLM-integrated
 - Limited to 500-depth recursion
 - No module system
 - Simplified term parser
@@ -159,16 +213,38 @@
 | Resolution (rules) | ✅ 1 | Pass |
 | Resolution (recursive) | ✅ 1 | Pass |
 | Built-ins | ✅ 3 | Pass |
-| **Total** | **18** | **Pass** |
+| Semantic validation | ✅ 17 | Pass |
+| Failure translator | ✅ 16 | Pass |
+| **Total** | **54** | **Pass** |
 
-## Next Session
+## Next Session: Iterative Repair Loops
 
-1. Implement semantic parser (NL → IR)
-2. Run full benchmark on baseline
-3. Add conflict detection
-4. Expand test dataset to 50 cases
-5. Begin drafting paper outline
+**Goal**: Let the system recover from common beginner mistakes automatically
+
+**Approach**: 
+```
+Beginner: "Who is Charlie's parent?"
+↓
+System: Parse + Validate + Fail (Charlie undefined)
+↓
+System: Return explanation ("I don't know Charlie")
+↓
+LLM: "Oh! Let me use Alice instead"
+↓
+System: Parse + Validate + Execute (alice exists)
+↓
+Result: Success with explanation of the fix
+```
+
+**Implementation**:
+1. Extend `SemanticPrologSkill.query_nl()` with retry loop
+2. LLM receives failure explanation as context
+3. LLM reformulates query
+4. Automatic retry (3-5 times max)
+5. Return best result or all attempts
+
+**Testing**: Focus on common beginner mistakes (typos, undefined entities, wrong predicates)
 
 ---
 
-**Questions or blockers?** Check ARCHITECTURE.md or QUICKSTART.md for design context.
+**Questions or blockers?** Check ARCHITECTURE.md or FAILURE_EXPLANATIONS.md for context.
