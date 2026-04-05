@@ -1,4 +1,4 @@
-# Development Status & Roadmap
+# Development Status
 
 **Last Updated**: April 5, 2026  
 **Status**: ✅ **CORE SYMBOLIC LAYER + MVP HANDOFF COMPLETE** — Ready for integration testing and iterative product refinement  
@@ -112,62 +112,6 @@
 
 ## ⚠️ In Progress / Planned
 
-### Phase 8: Iterative Repair Loops ✅ NEXT
-**Goal**: Let the system auto-correct based on failure explanations
-
-**Tasks**:
-- [ ] Extend SemanticPrologSkill with retry logic
-  - [ ] LLM parses initial query
-  - [ ] System returns failure explanation
-  - [ ] LLM reformulates based on feedback
-  - [ ] Automatic retry (up to N times)
-- [ ] Test with common beginner errors
-- [ ] Track success rate improvement
-- [ ] Document "tree of thoughts" approach
-
-**Why this matters**: Turns passive failure explanations into active error correction. Aligns with "help newbs learn" goal.
-
-### Phase 9: Typed Predicate Templates
-**Goal**: Reduce LLM hallucinations through structured prompting
-
-**Tasks**:
-- [ ] Extend IR schema with type hints
-  - [ ] `path(Start: location, End: location, Cost: int)`
-- [ ] Semantic parser enforces types
-- [ ] Type validation in compiled Prolog
-- [ ] Tests for type violation catching
-
-**Why this matters**: Prevents "invented arguments" hallucinations (research shows 70%+ improvement).
-
-### Phase 10: Extended Benchmarking
-**Tasks**:
-- [ ] Expand dataset to 100+ test cases
-- [ ] Add baseline comparisons
-  - [ ] Pure LLM (0-shot, few-shot)
-  - [ ] Vector retrieval (embedding lookup)
-  - [ ] Hybrid (Prolog + LLM confidence)
-- [ ] Metrics
-  - [ ] Accuracy (% correct answers)
-  - [ ] Consistency (% contradictions caught)
-  - [ ] Explainability (human evaluation)
-  - [ ] Grounding accuracy (% valid NL → IR)
-
-### Phase 11: Performance & Scaling
-**Tasks**:
-- [ ] Optimize unification
-- [ ] Index facts by functor
-- [ ] Tabling/memoization
-- [ ] Parallel resolution (if needed)
-- [ ] Memory profiling
-
-### Phase 12: Advanced Features
-**Tasks**:
-- [ ] findall/bagof/setof predicates (full)
-- [ ] Constraint logic programming (CLP)
-- [ ] Forward chaining rules
-- [ ] DCG (Definite Clause Grammar) support
-- [ ] Module system
-
 ## Quick Status Summary
 
 | Component | Tests | Status | Notes |
@@ -184,8 +128,7 @@
 ✅ **Semantic Layer**: Prevents bad facts from reaching Prolog  
 ✅ **User Experience**: Beginner-friendly error messages with actionable suggestions  
 ✅ **Testing**: Comprehensive coverage (54 tests, all passing)  
-✅ **Documentation**: README, courses, failure explanations, architecture  
-⚠️ **Next Focus**: Iterative repair loops (let system learn from failures)
+✅ **Documentation**: README, courses, failure explanations, architecture
 
 ## Known Limitations
 
@@ -217,34 +160,8 @@
 | Failure translator | ✅ 16 | Pass |
 | **Total** | **54** | **Pass** |
 
-## Next Session: Iterative Repair Loops
-
-**Goal**: Let the system recover from common beginner mistakes automatically
-
-**Approach**: 
-```
-Beginner: "Who is Charlie's parent?"
-↓
-System: Parse + Validate + Fail (Charlie undefined)
-↓
-System: Return explanation ("I don't know Charlie")
-↓
-LLM: "Oh! Let me use Alice instead"
-↓
-System: Parse + Validate + Execute (alice exists)
-↓
-Result: Success with explanation of the fix
-```
-
-**Implementation**:
-1. Extend `SemanticPrologSkill.query_nl()` with retry loop
-2. LLM receives failure explanation as context
-3. LLM reformulates query
-4. Automatic retry (3-5 times max)
-5. Return best result or all attempts
-
-**Testing**: Focus on common beginner mistakes (typos, undefined entities, wrong predicates)
-
 ---
 
-**Questions or blockers?** Check ARCHITECTURE.md or FAILURE_EXPLANATIONS.md for context.
+## Next Steps
+
+For future priorities and development plans, see [ROADMAP.md](ROADMAP.md).
