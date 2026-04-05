@@ -1,364 +1,205 @@
 # Prolog Reasoning v2
-Structured fact storage with backward-chaining inference to support deterministic reasoning in LLM agents.
+
+**Memories are timestamped. Facts are not. Hallucinations begin when facts collapse into memories.**
+
+Prolog Reasoning v2 is a local-first neuro-symbolic reliability layer for LLM agents. It combines deterministic symbolic reasoning, structured validation, and human-readable explanations, then exposes that through practical integration paths like MCP.
 
 [![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-This is a research-grade implementation exploring how deterministic symbolic reasoning can address context decay in long-horizon agent memory.
+![Two memory systems, two inference systems](infographics/02-memory-and-inference-map.png)
 
-## Why This Project
+## Why This Exists
 
-LLMs lose precision over long horizons:
-- **Summaries degrade**: "Scott's family in Ohio" becomes "family in Midwest"
-- **Vector stores approximate**: they answer "similar to?" rather than "is true?"
-- **Model weights confabulate**: facts get blurred under recall pressure
+LLMs are good at language, but weak at durable truth.
 
-This project stores hard facts in Prolog and derives answers through explicit inference:
+- Summaries drift.
+- Retrieval approximates.
+- Model weights blur facts under pressure.
 
-```prolog
-parent(john, alice).
-parent(alice, bob).
-ancestor(X, Y) :- parent(X, Y).
-ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
+This repository explores a stricter contract:
 
-?- ancestor(john, bob).  % true (derived, never stored)
-```
+- use symbolic structure for facts and rules
+- use deterministic execution for truth conditions
+- use natural language only as an interface layer
+- explain failures instead of hiding them
 
-## Key Features
+## What This Project Is
 
-- **Lossless**: facts do not degrade through summarization
-- **Deterministic**: the same query succeeds or fails the same way
-- **Explainable**: answers can be traced through proof steps
-- **Schema-safe**: IR validation prevents malformed structured facts
-- **Composable**: rules derive new facts from stored ones
-- **Agent-ready**: usable from MCP and agent frameworks
+This repo is best understood through four pillars:
+
+1. **Deterministic reasoning**
+   A pure Python Prolog interpreter answers the same query the same way and can show its proof steps.
+
+2. **Validation before belief**
+   Natural-language inputs are grounded into structured representations and checked before they are allowed to act like facts.
+
+3. **Failure explanations for humans**
+   The system tries to teach when something is wrong instead of returning cryptic failure modes.
+
+4. **Practical integration**
+   MCP, agent-facing skill wrappers, demos, and manifests make the symbolic layer usable from real agent workflows.
+
+## What Is Real Today
+
+These parts are implemented and working:
+
+- Prolog engine with unification, backward chaining, backtracking, and built-ins in [src/engine/core.py](src/engine/core.py)
+- Structured IR and schema validation in [src/ir/schema.py](src/ir/schema.py)
+- Semantic grounding and semantic validation pipeline in [src/parser/semantic.py](src/parser/semantic.py)
+- Failure explanation layer in [src/explain/failure_translator.py](src/explain/failure_translator.py)
+- MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
+- Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
+- Test suite currently passing: `60 passed`
+
+What is still simplified or partly mocked:
+
+- some demo and agent paths use stub knowledge-base loading rather than full `.pl` parsing
+- the default semantic grounding path still includes a mock LLM mode
+- the graphics editor is exploratory and not the mainline product focus
+
+That is intentional to state plainly: the core symbolic layer is real, but not every surrounding integration path is equally mature yet.
 
 ## Quick Start
 
 ```bash
-# Clone and setup
 git clone <repo>
 cd prolog-reasoning-v2
 pip install -r requirements.txt
 
-# Run tests
-python -m pytest tests/ -v
+# Verify the current baseline
+python -m pytest tests -q
+
+# Try semantic grounding
+python scripts/demonstrate_semantic.py
 
 # Try failure explanations
 python scripts/demonstrate_failures.py
 
-# Try natural language queries
-python scripts/demonstrate_semantic.py
+# Try the agent-facing skill demo
+python scripts/demonstrate_agent.py
 
 # Run benchmark evaluation
 python data/evaluate.py
-
-# Generate KB manifest for agents
-python scripts/generate_manifest.py
 ```
 
-## Natural Language Queries
+## Choose Your Path
 
-The system supports natural language queries through semantic grounding:
+### Use It
 
-```python
-from src.parser.semantic import SemanticPrologSkill
+- Ask natural-language questions through `SemanticPrologSkill`
+- Run the MCP server for local LLM tools via [src/mcp_server.py](src/mcp_server.py)
+- Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
 
-skill = SemanticPrologSkill()
-result = skill.query_nl("Who is John's parent?")
-# Returns: success, bindings, explanation, confidence, proof traces
-```
+### Understand It
 
-Supported query types:
-- Variable queries: "Who is John's parent?"
-- Fact checks: "Is Alice allowed to read?"
-- Assertions: "John is Alice's parent"
-- Complex reasoning: "Who are Bob's ancestors?"
+- Architecture: [architecture.md](architecture.md)
+- Semantic grounding: [docs/semantic-grounding.md](docs/semantic-grounding.md)
+- Failure explanations: [docs/failure-explanations.md](docs/failure-explanations.md)
+- LM Studio + MCP guide: [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
+- Session summaries: [sessions.md](sessions.md) and [docs/sessions/parts/2026-part-01.md](docs/sessions/parts/2026-part-01.md)
 
-## Failure Explanations
+### Build On It
 
-When a query fails, the system provides structured explanations instead of cryptic errors:
+- Current implementation status: [status.md](status.md)
+- Planned work: [roadmap.md](roadmap.md)
+- Ontology routing spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md)
+- Memory ingestion notes: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md)
+- Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)
+
+## Architecture Snapshot
+
+The main execution path is:
+
+1. Natural language arrives.
+2. Semantic grounding converts it into structured IR.
+3. Validation checks whether the representation is grounded and coherent.
+4. The symbolic engine resolves the query deterministically.
+5. Explanation and failure layers translate the result back into something an agent or human can use.
+
+This keeps neural and symbolic responsibilities separate:
+
+- language models help interpret intent
+- symbolic structures hold explicit facts and rules
+- the engine decides truth
+
+## Repo Map
 
 ```text
-Query: "Who is Charlie's parent?"
+src/
+  engine/        Prolog interpreter and propagation engine
+  ir/            Structured intermediate representation
+  compiler/      IR to Prolog conversion
+  parser/        Natural-language grounding
+  explain/       Proof traces and failure explanations
+  validator/     Semantic validation
+  mcp_server.py  MCP integration
 
-Response:
-- Status: undefined entity 'charlie'
-- Known entities: john, alice, bob, admin, ...
-- Suggestion: define charlie or use a known entity
+scripts/         Demos and utility scripts
+tests/           Unit and integration tests
+data/            Benchmarks and evaluation artifacts
+docs/            Design docs, guides, reviews, and session notes
+training/        Beginner-facing learning materials
+prolog/          Knowledge-base files
+mvp/             Experimental constraint-graphics prototype
 ```
 
-Run the demo:
+## Local LLM Integration
+
+To expose the system to a local LLM through MCP:
 
 ```bash
-python scripts/demonstrate_failures.py
-```
-
-## Architecture
-
-See [architecture.md](architecture.md) for full design.
-
-Key layers:
-1. **Prolog Engine** — Pure Python interpreter with unification and backtracking
-2. **IR Schema** — Structured intermediate representation with validation
-3. **Semantic Grounding** — Natural language to IR conversion
-4. **IR Compiler** — JSON to Prolog conversion with deduplication
-5. **Explanation Layer** — Proof traces and human-readable outputs
-6. **Agent Integration** — Skill interfaces for LLM frameworks and MCP
-
-## File Structure
-
-```text
-prolog-reasoning-v2/
-├── src/
-│   ├── engine/                   # Prolog interpreter and propagation engine
-│   ├── ir/                       # Intermediate representation
-│   ├── compiler/                 # IR → Prolog compiler
-│   ├── parser/                   # Semantic grounding (NL → IR)
-│   ├── explain/                  # Proof trace generation
-│   └── agent_skill.py            # Agent framework integration
-├── tests/                        # Unit and integration tests
-├── data/                         # Benchmarks and evaluation
-├── scripts/                      # Demo and utility scripts
-├── docs/                         # Documentation
-├── prolog/                       # Prolog knowledge bases
-└── requirements.txt              # Python dependencies
-```
-
-## Integration with LM Studio
-
-To use this system with a local LLM via MCP (Model Context Protocol):
-
-```bash
-# 1. Start the MCP server
 python src/mcp_server.py --stdio
-
-# 2. Configure LM Studio
-# 3. Chat with your local LLM
 ```
 
-Capabilities:
-- Deterministic queries against structured facts
-- Traceable reasoning with explicit proof chains
-- Validation feedback for grounding issues
-- Session-based fact management
+Then configure your MCP client or LM Studio to call it.
 
-Resources:
-- [LM Studio MCP Guide](docs/lm-studio-mcp-guide.md)
-- [Course 04: Local LLM + MCP Integration](training/04-lm-studio-mcp.md)
+Relevant references:
+
+- [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
+- [training/04-lm-studio-mcp.md](training/04-lm-studio-mcp.md)
 
 ## Constraint Propagation
 
-The repository also includes a deterministic constraint propagation layer for building constraint-management applications.
+The repository also includes a deterministic constraint propagation layer for state and domain reasoning.
 
-What it provides:
-- Known-state propagation via implication rules (fixed-point closure)
-- Degree-of-freedom propagation via domain narrowing
-- Contradiction detection when domains become infeasible
+It supports:
 
-Run the example:
+- known-state fixed-point propagation
+- degree-of-freedom propagation via domain narrowing
+- contradiction detection when feasible domains collapse
+
+Try the example:
 
 ```bash
 python src/engine/runner.py --propagate --problem-json data/propagation_example.json
 ```
 
-Core files:
-- `src/engine/constraint_propagation.py`
-- `src/engine/runner.py`
-- `data/propagation_example.json`
-- `tests/test_constraint_propagation.py`
-- `tests/test_runner_propagation.py`
+This is the foundation behind the repo's experimental constraint-graphics direction.
 
-## Getting Started Resources
+## Experimental Graphics Editor
 
-If you want guided material first, start with the [training library](training/):
-- [01 - LLM Memory and Symbolic Reasoning](training/01-llm-memory-magic.md)
-- [02 - Knowledge Bases 101](training/02-knowledge-bases-101.md)
-- [03 - Learning from Failures](training/03-learning-from-failures.md)
-- [04 - Local LLM + MCP Integration](training/04-lm-studio-mcp.md)
+There is an exploratory constraint-based graphics editor in [mvp](mvp/). It is not the main focus of the repository, but it demonstrates how the same deterministic philosophy can be applied in an interactive visual domain.
 
-## Use Cases
+Related doc:
 
-This approach is suited for domains where accurate fact recall is important.
+- [docs/constraint-editor-mvp-playbook.md](docs/constraint-editor-mvp-playbook.md)
 
-### Healthcare: Medication Safety
+## Current Status
 
-Managing medication records and allergy tracking:
+The project has a working symbolic core, validation layer, failure-explanation layer, MCP server, and constraint propagation engine.
 
-```prolog
-patient(john_smith, id_12345).
-takes_medication(john_smith, metformin, 500, bid).
-takes_medication(john_smith, lisinopril, 10, daily).
-allergy(john_smith, penicillin, severe).
-lab_result(john_smith, creatinine, 1.8, "2024-01-15").
+The next serious work is around:
 
-contraindicated(Patient, Drug) :- allergy(Patient, Drug, severe).
-contraindicated(Patient, Drug) :- takes_medication(Patient, Drug2, _, _),
-                                  interacts(Drug, Drug2).
+- temporal reasoning
+- dependency separation
+- multi-session isolation
+- ontology-aware routing
+- memory ingestion and revision workflows
 
-interacts(metformin, penicillin).
-```
-
-Query: `?- contraindicated(john_smith, penicillin).` → `true`
-
-### Cybersecurity: Access Control
-
-Tracking access permissions and detecting policy violations:
-
-```prolog
-employee(bob_johnson, emp_456).
-role(bob_johnson, senior_engineer).
-access_level(bob_johnson, admin).
-clearance(bob_johnson, level_3).
-
-can_access(User, Resource) :- role(User, admin).
-can_access(User, Resource) :- granted_permission(User, Resource, active).
-
-suspicious_activity(User) :- access_attempt(User, Resource, denied),
-                             access_attempt(User, Resource, denied),
-                             time_window(attempts, 300).
-
-revoked_access(User, Resource) :- security_incident(User, Resource, _).
-```
-
-Query: `?- suspicious_activity(bob_johnson).` → `true`
-
-### Financial Services: Compliance
-
-Monitoring transaction patterns for regulatory compliance:
-
-```prolog
-account_holder(account_789012, john_doe).
-transaction(account_789012, xyz_corp, 50000, "2024-01-20").
-owns_business(john_doe, abc_industries).
-
-high_risk_transaction(Account, Amount) :- transaction(Account, _, Amount, _),
-                                         Amount > 10000.
-
-money_laundering_risk(Account) :- transaction(Account, offshore_entity, _, _),
-                                  transaction(Account, offshore_entity, _, _),
-                                  time_window(transactions, 30).
-
-sanctions_violation(Account) :- account_holder(Account, Person),
-                               sanctioned_entity(Person, _).
-```
-
-Query: `?- money_laundering_risk(account_789012).` → `true`
-
-### Legal: Contract Analysis
-
-Tracking contract terms and detecting potential breaches:
-
-```prolog
-contract(techcorp_startupxyz_merger, parties(techcorp, startupxyz)).
-value(techcorp_startupxyz_merger, 50000000).
-condition(techcorp_startupxyz_merger, regulatory_approval, required).
-condition(techcorp_startupxyz_merger, ip_transfer, required).
-condition(techcorp_startupxyz_merger, employee_retention, required).
-
-breach_of_contract(Contract) :- condition(Contract, Condition, required),
-                                not_satisfied(Condition).
-
-regulatory_violation(Contract) :- condition(Contract, regulatory_approval, required),
-                                  approval_status(regulatory_approval, denied).
-
-liability_risk(Contract) :- breach_of_contract(Contract).
-liability_risk(Contract) :- regulatory_violation(Contract).
-```
-
-Query: `?- liability_risk(techcorp_startupxyz_merger).` → `true`
-
-### Supply Chain: Dependency Tracking
-
-Tracking component suppliers and sourcing locations:
-
-```prolog
-component(widget_a, part_x).
-component(widget_a, part_y).
-supplier(part_x, s1_taiwan).
-supplier(part_y, s2_vietnam).
-assembly_location(widget_a, mexico_plant).
-
-supply_chain_risk(Product) :- component(Product, Component),
-                              supplier(Component, Location),
-                              geopolitical_risk(Location, high).
-
-production_delay_risk(Product) :- supply_chain_risk(Product).
-production_delay_risk(Product) :- assembly_location(Product, Location),
-                                  labor_dispute(Location, active).
-
-critical_path_impact(Product, Delay) :- production_delay_risk(Product),
-                                        depends_on(critical_customer, Product).
-```
-
-Query: `?- critical_path_impact(widget_a, severe).` → `true`
-
-## Testing
-
-```bash
-# Run all tests
-python -m pytest tests/ -v
-
-# Run a specific test file
-python -m pytest tests/test_engine.py -v
-
-# Run benchmark evaluation
-python data/evaluate.py
-```
-
-## Project Status
-
-For current implementation status, see [status.md](status.md).
-
-For future priorities and planned work, see [roadmap.md](roadmap.md).
-
-Current architecture design notes:
-- [Ontology Context Routing Spec](docs/ontology-context-routing-spec.md)
-- [Memory Ingestion and Revision Notes](docs/memory-ingestion-and-revision-notes.md)
-- [Pre-Thinker Control Plane](docs/pre-thinker-control-plane.md)
-
-## Experimental: Constraint-Based Graphics Editor
-
-Status: early exploratory prototype, not production-ready.
-
-This explores whether the constraint propagation layer can support a graphics editor with rule-based layout behavior.
-
-- [Constraint Editor MVP Playbook](docs/constraint-editor-mvp-playbook.md)
-
-Local handoff notes for MVP iterations are kept outside published docs.
-
-This is not the main focus of the project.
-
-## Contributing
-
-This is research software. Contributions are welcome:
-
-1. Bug reports via GitHub issues
-2. Feature requests via issue discussion
-3. Code contributions via pull request with tests
-4. Research collaboration by direct contact
-
-## Citation
-
-If you use this work in research:
-
-```bibtex
-@software{prolog_reasoning_v2,
-  title = {Prolog Reasoning v2: Lossless Symbolic Memory for LLM Agents},
-  author = {Your Name},
-  year = {2026},
-  url = {https://github.com/your-repo/prolog-reasoning-v2}
-}
-```
+See [status.md](status.md), [roadmap.md](roadmap.md), and [sessions.md](sessions.md) for the current planning picture.
 
 ## License
 
 MIT License. See [LICENSE](LICENSE).
-
-## Related Work
-
-- Original Prolog Reasoning repository
-- Symbolic AI systems for reliable reasoning
-- Neuro-symbolic systems that combine neural and symbolic components
-- Agent memory systems for long-horizon reasoning

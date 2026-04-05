@@ -4,10 +4,10 @@ This file is a compact public summary of recent project state.
 
 ## Current Snapshot
 
-- Last major track completed: Architecture documentation and pre-thinker control plane specification
+- Last major track completed: README and public-facing narrative refresh around the memory/inference split
 - Current product direction: Core symbolic reliability first, with MVP editor treated as experimental
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13 (improved from 6/13)
-- Latest actions: Added pre-thinker-control-plane.md public design doc; linked from README and roadmap; cleaned duplicate Tier 2 roadmap formatting; consolidated architecture design note references
+- Latest actions: Reframed README around deterministic reliability for LLM agents; added the "Memories are timestamped. Facts are not." thesis line; added a new memory-and-inference infographic and linked it from README; kept constraint editor work explicitly in the experimental lane
 - Next priority: Implement Tier 1 roadmap items (temporal logic, dependency split, multi-session isolation) and start ontology-context routing prototype
 
 ## Usage Notes
