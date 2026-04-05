@@ -8,21 +8,13 @@
 
 **Lossless structured fact storage with backward-chaining inference for long-horizon LLM reasoning.**
 
-[![Tests](https://img.shields.io/badge/tests-21%20passed-brightgreen)](tests/test_engine.py)
+[![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Give your LLM agents perfect memory and reasoning without wasting context tokens.**
 
 This is a research-grade implementation addressing context decay in agent memory through deterministic symbolic reasoning.
-
-## New Product Direction: Constraint-Based Graphic Editor
-
-If you want a tangible "wow" use case for this stack, see:
-
-- [Constraint Editor MVP Playbook](docs/CONSTRAINT_EDITOR_MVP_PLAYBOOK.md)
-
-It outlines a low-friction path to a modern vector editor with rule-based layout behavior (graphical spreadsheet style), plus a second-track "music rules" MVP concept using the same propagation engine.
 
 ## 🚀 Quick Start for New AI Enthusiasts
 
@@ -416,11 +408,24 @@ We test this through:
 
 ### ✅ Completed (April 2026)
 - [x] **Architecture design** — Layered design with clear separation of concerns
-- [x] **Prolog engine** — Pure Python implementation (21/21 tests pass)
+- [x] **Prolog engine** — Pure Python implementation (21 tests pass)
   - Unification with occurs check
   - Backward-chaining resolution
   - Backtracking and cut operations
-  - Built-in predicates (arithmetic, comparison, negation)
+  - Built-in predicates (arithmetic, comparison, negation, findall)
+- [x] **IR schema & compiler** — Type-safe intermediate representation (13 tests pass)
+  - JSON-based structured data
+  - Schema validation and deduplication
+  - Domain-specific schemas (family, access control)
+- [x] **Semantic validation** — Prevents invalid facts and ungrounded predicates (17 tests pass)
+  - Entity grounding checks
+  - Predicate validation
+  - Confidence scoring
+- [x] **Failure explanations** — User-friendly error messages (16 tests pass)
+  - Guides for common beginner mistakes
+  - "Did you mean?" suggestions
+  - Structured JSON output for agents
+- [x] **Evaluation pipeline** — Benchmark testing with statistics (current: baseline 13/13, ir_compiled 13/13, lm_only 8/13)
 - [x] **IR schema & compiler** — Type-safe intermediate representation
   - JSON-based structured data
   - Schema validation and deduplication
@@ -436,22 +441,22 @@ We test this through:
   - AutoGen/CrewAI compatible
   - Structured response formats
   - External KB with manifest injection
-- [x] **Test suite** — 21 comprehensive unit tests
-- [x] **Benchmark dataset** — 13 test cases across 4 domains
-- [x] **Documentation** — Complete API docs and integration guides
+- [x] **Test suite** — 60 comprehensive unit tests (100% pass rate)
+  - Core engine: 21 tests
+  - Semantic validation: 17 tests
+  - Failure explanations: 16 tests
+  - MVP validation: 6 tests
+- [x] **Benchmark dataset** — 13 test cases across 4 domains (family, access control, constraints, inference)
+- [x] **Documentation** — Complete API docs, training courses, integration guides
+- [x] **MCP Integration** — Works with LM Studio and Claude Desktop
+- [x] **Constraint Propagation** — Known-state and degree-of-freedom reasoning engine
 
-### 🚧 In Progress
-- [ ] Extended benchmarks (50+ test cases)
-- [ ] Real LLM API integration (OpenAI, Anthropic)
-- [ ] Baseline comparisons (vs embeddings, summarization)
-- [ ] Research paper draft
-
-### 📋 Planned
-- [ ] Multi-turn conversation context
-- [ ] Rule learning from examples
-- [ ] Advanced NLP features (NER, temporal reasoning)
-- [ ] Performance optimization and scaling
-- [ ] Web interface for KB management
+### 🚧 Next: Roadmap-Driven Development
+See [ROADMAP.md](ROADMAP.md) for strategic priorities:
+- **Tier 1 (Q2)**: Temporal logic, split dependencies, multi-session isolation
+- **Tier 2 (Q3)**: Soft-fail buffer, fact auditor, typed predicate templates
+- **Tier 3 (Q4)**: Fact graph visualizer, recursive refinement
+- **Tier 4 (Future)**: DCG, CLP, module system
 
 ## Usage Examples
 
@@ -522,6 +527,17 @@ python data/evaluate.py
 # Run semantic grounding demo
 python scripts/demonstrate_semantic.py
 ```
+
+## 🧪 Experimental: Constraint-Based Graphics Editor
+
+**Status**: Early exploratory prototype, not production-ready.
+
+We're exploring how constraint propagation can power a graphics editor with rule-based layout behavior (think: spreadsheet formulas for design). See:
+
+- [Constraint Editor MVP Playbook](docs/CONSTRAINT_EDITOR_MVP_PLAYBOOK.md) — conceptual overview
+- [MVP Results & UX Feedback](CODEX_MVP_RESULTS.md) — what we learned, what needs work
+
+This is **not** the main focus of the project. It exists to validate whether the constraint propagation layer has product potential. Expect rough edges and active refinement.
 
 ## Contributing
 
