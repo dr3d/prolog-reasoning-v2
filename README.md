@@ -49,6 +49,28 @@ python src/mcp_server.py --stdio
 👉 **[Full LM Studio MCP Guide](docs/LM_STUDIO_MCP_GUIDE.md)** - Step-by-step setup instructions  
 👉 **[Course 04: AI Superpowers](training/04-lm-studio-mcp.md)** - Beginner-friendly tutorial
 
+## Constraint Propagation (Known State + Degrees of Freedom)
+
+This project now includes a deterministic constraint propagation layer for building constraint-management applications.
+
+What it provides:
+- Known-state propagation via implication rules (fixed-point closure)
+- Degree-of-freedom propagation via domain narrowing
+- Contradiction detection when domains become infeasible
+
+Run the example:
+
+```bash
+python src/engine/runner.py --propagate --problem-json data/propagation_example.json
+```
+
+Core files:
+- `src/engine/constraint_propagation.py`
+- `src/engine/runner.py` (`--propagate` mode)
+- `data/propagation_example.json`
+- `tests/test_constraint_propagation.py`
+- `tests/test_runner_propagation.py`
+
 ---
 
 ## The Problem

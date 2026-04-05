@@ -19,6 +19,85 @@ A scholarly article situating this project within the broader NeSy field. Addres
 
 ---
 
+## 📅 Session 6: April 5, 2026 — Evidence Pack + Constraint Propagation (Known State + DoF)
+
+**Session Date**: April 5, 2026  
+**Status**: ✅ **COMPLETE: EVIDENCE PIPELINE + PROPAGATION ENGINE + CLI**  
+**Next Priority**: Implement `ir_compiled` and `lm_only` evaluator paths, then repeated-run statistics
+
+### 🎯 Part 1: Evidence and Reproducibility Hardening
+
+**1. Evidence Pack Added** ✅ COMPLETE
+- Added `docs/evidence/METHODS_APPENDIX_TEMPLATE.md`
+- Added `docs/evidence/BENCHMARK_RUN_CHECKLIST.md`
+- Added `docs/evidence/CLAIM_EVIDENCE_MATRIX.md`
+
+**2. First Measured Run Logged** ✅ COMPLETE
+- Generated benchmark and evaluation artifacts
+- Added `docs/evidence/METHODS_APPENDIX_2026-04-05.md`
+- Captured logs in `data/results/2026-04-05-evidence/`
+
+**3. Evaluator Stability Fix** ✅ COMPLETE
+- Fixed `data/evaluate.py` report generation crash caused by list/dict mismatch
+- `data/evaluation_report.json` now writes reliably
+
+### 🎯 Part 2: Document Separation and Review Hygiene
+
+**4. Landscape Split (Review vs Pitch)** ✅ COMPLETE
+- Rewrote `docs/NEURO_SYMBOLIC_2026_LANDSCAPE.md` as concise evidence-aware review
+- Added `docs/NEURO_SYMBOLIC_2026_STACK_PITCH.md` for implementation advocacy
+
+**5. Critique Archive Cleanup** ✅ COMPLETE
+- Added concise external critique archive: `docs/reviews/landscape_doc_external_critique.md`
+- Removed root clutter (`PRPLEXITY.md` placeholder)
+
+### 🎯 Part 3: Constraint Management Foundation
+
+**6. Constraint Propagation Engine** ✅ COMPLETE
+- Added `src/engine/constraint_propagation.py`
+- Supports:
+  - Known-state fixed-point propagation via deterministic implication rules
+  - Degree-of-freedom propagation via domain constraints
+  - Contradiction detection when domains collapse
+
+**7. Propagation Schema Types** ✅ COMPLETE
+- Added to `src/ir/schema.py`:
+  - `StateAtom`
+  - `ConstraintRuleSpec`
+  - `DomainConstraintSpec`
+  - `StateDomainLinkSpec`
+
+**8. Runner CLI Integration** ✅ COMPLETE
+- Extended `src/engine/runner.py` with JSON-driven propagation mode:
+  - `--propagate`
+  - `--problem-json`
+  - `--max-iterations`
+- Added script bootstrap for direct execution from repo root
+- Added sample problem: `data/propagation_example.json`
+
+**9. New Tests** ✅ COMPLETE
+- Added `tests/test_constraint_propagation.py` (4 tests)
+- Added `tests/test_runner_propagation.py` (1 test)
+- Propagation tests passing: 5/5
+
+### 📊 Session 6 Snapshot
+
+```
+Evidence Pack:                ✅ Added and populated
+Evaluator report generation:  ✅ Fixed
+Constraint propagator:        ✅ Implemented
+Propagation CLI runner:       ✅ Implemented
+New propagation tests:        ✅ 5/5 passing
+```
+
+### 💡 Outcome
+
+This repo now supports both:
+- deterministic query answering via Prolog, and
+- deterministic constraint-state/domain propagation suitable for scheduling, policy, and control applications.
+
+---
+
 ## 📅 Session 5: April 5, 2026 — Failure Explanation Layer, Training Library & MCP Integration
 
 **Session Date**: April 5, 2026  

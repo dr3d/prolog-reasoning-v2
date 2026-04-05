@@ -23,7 +23,7 @@ Schema ensures:
 - Validation
 """
 
-from typing import Any, Dict, List, Optional, Literal
+from typing import Any, Dict, List, Optional, Literal, Set, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 import json
@@ -176,6 +176,63 @@ class RuleIR(IR):
     
     def __post_init__(self):
         self.type = IRType.RULE
+
+
+@dataclass(frozen=True)
+class StateAtom:
+    """
+    Canonical state representation used by constraint propagation.
+
+    Example:
+        StateAtom("machine_ready", ("line_1",))
+        StateAtom("has_role", ("alice", "admin"))
+    """
+    predicate: str
+    args: Tuple[Any, ...] = ()
+
+
+@dataclass
+class ConstraintRuleSpec:
+    """
+    Deterministic implication rule for known-state propagation.
+
+    If all antecedents are satisfied, derive consequent.
+    Variables are represented with leading "?" (for example, "?X").
+    """
+    name: str
+    antecedents: List[StateAtom]
+    consequent: StateAtom
+
+
+@dataclass
+class DomainConstraintSpec:
+    """
+    Constraint over variable domains for DoF propagation.
+
+    Supported kinds:
+    - allowed_values
+    - forbidden_values
+    - equal
+    - not_equal
+    - implication
+    """
+    kind: str
+    left: str
+    right: Optional[str] = None
+    values: Optional[Set[Any]] = None
+    when_value: Optional[Any] = None
+
+
+@dataclass
+class StateDomainLinkSpec:
+    """
+    Domain restriction activated by a known state.
+
+    When trigger is known, restrict variable domain to allowed_values.
+    """
+    trigger: StateAtom
+    variable: str
+    allowed_values: Set[Any]
 
 
 # =============================================================================

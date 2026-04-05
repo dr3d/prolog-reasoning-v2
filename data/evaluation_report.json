@@ -1,0 +1,111 @@
+{
+  "results": {
+    "prolog_baseline": {
+      "name": "prolog_baseline",
+      "passed": 4,
+      "failed": 9,
+      "total": 13,
+      "details": [
+        {
+          "test": "parent_direct",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "parent_variable",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "ancestor_direct_parent",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "ancestor_transitive",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "sibling",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "parent_not_exists",
+          "success": true,
+          "passed": false,
+          "expected": false,
+          "time": 0.0
+        },
+        {
+          "test": "permission_direct",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "permission_multiple_roles",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "permission_denied",
+          "success": true,
+          "passed": false,
+          "expected": false,
+          "time": 0.0
+        },
+        {
+          "test": "comparison_greater_than",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "arithmetic_is",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "three_hop_chain",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "negation_as_failure",
+          "success": false,
+          "passed": false,
+          "expected": true,
+          "time": 0.0
+        }
+      ],
+      "accuracy": 0.3076923076923077
+    },
+    "ir_compiled": {},
+    "lm_only": {}
+  },
+  "metrics": {},
+  "summary": {
+    "baseline_accuracy": 0.3076923076923077,
+    "tests_run": 13
+  }
+}

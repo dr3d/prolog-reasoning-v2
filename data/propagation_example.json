@@ -1,0 +1,36 @@
+{
+  "initial_states": [
+    {"predicate": "mode", "args": ["safe"]},
+    {"predicate": "enabled", "args": ["line_1"]}
+  ],
+  "rules": [
+    {
+      "name": "enabled_implies_ready",
+      "antecedents": [
+        {"predicate": "enabled", "args": ["?X"]}
+      ],
+      "consequent": {"predicate": "ready", "args": ["?X"]}
+    },
+    {
+      "name": "ready_implies_active",
+      "antecedents": [
+        {"predicate": "ready", "args": ["?X"]}
+      ],
+      "consequent": {"predicate": "active", "args": ["?X"]}
+    }
+  ],
+  "initial_domains": {
+    "speed": [10, 20, 30],
+    "operator": ["alice", "bob"]
+  },
+  "domain_constraints": [
+    {"kind": "forbidden_values", "left": "operator", "values": ["bob"]}
+  ],
+  "state_domain_links": [
+    {
+      "trigger": {"predicate": "mode", "args": ["safe"]},
+      "variable": "speed",
+      "allowed_values": [10]
+    }
+  ]
+}

@@ -26,9 +26,9 @@ class Evaluator:
     
     def __init__(self):
         self.results = {
-            "prolog_baseline": [],
-            "ir_compiled": [],
-            "lm_only": []  # Placeholder for LLM-only results
+            "prolog_baseline": {},
+            "ir_compiled": {},
+            "lm_only": {}  # Placeholder for LLM-only results
         }
         self.metrics = {}
     
@@ -154,12 +154,17 @@ class Evaluator:
     
     def generate_report(self) -> Dict[str, Any]:
         """Generate evaluation report."""
+        tests_run = 0
+        for result in self.results.values():
+            if isinstance(result, dict):
+                tests_run += result.get("total", 0)
+
         return {
             "results": self.results,
             "metrics": self.metrics,
             "summary": {
                 "baseline_accuracy": self.results["prolog_baseline"].get("accuracy", 0),
-                "tests_run": sum(r.get("total", 0) for r in self.results.values()),
+                "tests_run": tests_run,
             }
         }
 
