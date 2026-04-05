@@ -32,11 +32,28 @@ from parser.semantic import SemanticPrologSkill
 
 class PrologMCPServer:
     """MCP Server exposing Prolog reasoning capabilities."""
+
+    SUPPORTED_PROTOCOL_VERSIONS = [
+        "2025-11-25",
+        "2025-06-18",
+        "2025-03-26",
+        "2024-11-05",
+    ]
     
     def __init__(self, kb_path: str = "prolog/core.pl"):
         """Initialize the MCP server with a knowledge base."""
-        self.skill = SemanticPrologSkill(kb_path=kb_path)
+        self.kb_path = self._resolve_kb_path(kb_path)
+        self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
         self._request_id = 0
+
+    def _resolve_kb_path(self, kb_path: str) -> Path:
+        """Resolve KB paths relative to the repo root when needed."""
+        candidate = Path(kb_path)
+        if candidate.is_absolute():
+            return candidate
+
+        repo_root = Path(__file__).resolve().parent.parent
+        return (repo_root / candidate).resolve()
         
     def get_tools(self) -> list:
         """Return available tools for MCP."""
@@ -138,7 +155,11 @@ class PrologMCPServer:
                 "user", "role", "permission", "access_level",
                 "can_access", "granted_permission"
             ],
-            "note": "This is a summary based on the KB schema. For complete details, query the system."
+            "note": (
+                "This is a summary view of known entities plus supported relationship names. "
+                "It is not a full dump of every stored fact."
+            ),
+            "knowledge_base_path": str(self.kb_path)
         }
     
     def explain_error(self, error_message: str) -> Dict[str, Any]:
@@ -161,15 +182,20 @@ class PrologMCPServer:
         """Show system information and capabilities."""
         return {
             "status": "success",
-            "system": "Prolog Reasoning v2 - Neuro-Symbolic AI",
+            "system": "Prolog Reasoning v2",
             "version": "0.5",
-            "description": "Deterministic logical reasoning with natural language interface",
+            "description": (
+                "A local-first neuro-symbolic reliability layer for LLM agents. "
+                "Natural language helps express intent; symbolic reasoning decides truth."
+            ),
+            "knowledge_base_path": str(self.kb_path),
+            "core_idea": "Memories are timestamped. Facts are not.",
             "capabilities": [
                 "Natural language query processing",
-                "Knowledge base reasoning with inference rules",
-                "Semantic validation to prevent invalid queries",
-                "Friendly error explanations with suggestions",
-                "Proof trace generation"
+                "Deterministic knowledge-base reasoning",
+                "Semantic validation before query execution",
+                "Friendly failure explanations with suggestions",
+                "Proof-trace generation"
             ],
             "supported_domains": [
                 "Family relationships (parent, sibling, ancestor)",
@@ -186,6 +212,7 @@ class PrologMCPServer:
                 "getting_started": "See training/01-llm-memory-magic.md",
                 "kb_design": "See training/02-knowledge-bases-101.md",
                 "error_handling": "See training/03-learning-from-failures.md",
+                "lm_studio": "See docs/lm-studio-mcp-guide.md",
                 "github": "https://github.com/dr3d/prolog-reasoning-v2"
             }
         }
@@ -216,14 +243,74 @@ class PrologMCPServer:
                 "available_tools": list(handlers.keys())
             }
     
-    def process_request(self, request: Dict[str, Any]) -> Dict[str, Any]:
+    def _negotiate_protocol_version(self, requested: Optional[str]) -> str:
+        """Return the requested protocol version if supported, else our default."""
+        if requested in self.SUPPORTED_PROTOCOL_VERSIONS:
+            return requested
+        return self.SUPPORTED_PROTOCOL_VERSIONS[0]
+
+    def _format_tool_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        """Wrap tool output in MCP CallToolResult shape."""
+        is_error = result.get("status") in {"error", "validation_error", "no_results"}
+        pretty = json.dumps(result, indent=2)
+        return {
+            "content": [
+                {
+                    "type": "text",
+                    "text": pretty
+                }
+            ],
+            "structuredContent": result,
+            "isError": is_error
+        }
+
+    def process_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Process an MCP request (simplified for stdio protocol)."""
         method = request.get("method")
         params = request.get("params", {})
         request_id = request.get("id", self._request_id)
         self._request_id = request_id + 1
-        
-        if method == "tools/list":
+
+        # MCP clients typically begin with initialize, followed by
+        # notifications/initialized before tool discovery.
+        if method == "initialize":
+            client_info = params.get("clientInfo", {})
+            requested_protocol = params.get("protocolVersion")
+            negotiated_protocol = self._negotiate_protocol_version(requested_protocol)
+            return {
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "result": {
+                    "protocolVersion": negotiated_protocol,
+                    "capabilities": {
+                        "tools": {
+                            "listChanged": False
+                        }
+                    },
+                    "serverInfo": {
+                        "name": "prolog-reasoning",
+                        "version": "0.5"
+                    },
+                    "instructions": (
+                        "Use query_prolog for natural-language queries against the "
+                        "deterministic Prolog knowledge base. Use list_known_facts "
+                        "first if you need to inspect available entities."
+                    ),
+                    "clientInfoEcho": client_info
+                }
+            }
+
+        elif method == "notifications/initialized":
+            return None
+
+        elif method == "ping":
+            return {
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "result": {}
+            }
+
+        elif method == "tools/list":
             return {
                 "jsonrpc": "2.0",
                 "id": request_id,
@@ -239,7 +326,7 @@ class PrologMCPServer:
             return {
                 "jsonrpc": "2.0",
                 "id": request_id,
-                "result": result
+                "result": self._format_tool_result(result)
             }
         
         else:
@@ -266,26 +353,40 @@ def main():
     
     if args.test:
         # Test mode: show available tools and exit
-        print("✅ MCP Server initialized successfully\n")
+        print("MCP Server initialized successfully\n")
         print("Available Tools:")
         for tool in server.get_tools():
-            print(f"  • {tool['name']}: {tool['description']}")
+            print(f"  - {tool['name']}: {tool['description']}")
         print("\nExample usage:")
         print('  query_prolog({"query": "Who is John\'s parent?"})')
         sys.exit(0)
     
     if args.stdio:
         # Stdio transport for LM Studio
-        print("✅ Prolog Reasoning MCP Server ready", file=sys.stderr)
+        print("Prolog Reasoning MCP Server ready", file=sys.stderr)
         print("Reading from stdin, writing to stdout", file=sys.stderr)
         
         try:
             for line in sys.stdin:
                 try:
-                    request = json.loads(line)
-                    response = server.process_request(request)
-                    print(json.dumps(response))
-                    sys.stdout.flush()
+                    payload = json.loads(line)
+
+                    # JSON-RPC batch support: respond with an array of
+                    # responses, skipping notifications that return None.
+                    if isinstance(payload, list):
+                        responses = []
+                        for request in payload:
+                            response = server.process_request(request)
+                            if response is not None:
+                                responses.append(response)
+                        if responses:
+                            print(json.dumps(responses))
+                            sys.stdout.flush()
+                    else:
+                        response = server.process_request(payload)
+                        if response is not None:
+                            print(json.dumps(response))
+                            sys.stdout.flush()
                 except json.JSONDecodeError:
                     print(json.dumps({
                         "error": "Invalid JSON",
@@ -297,7 +398,7 @@ def main():
             sys.exit(0)
     else:
         # Interactive mode for testing
-        print("🚀 Prolog Reasoning MCP Server (Interactive Mode)")
+        print("Prolog Reasoning MCP Server (Interactive Mode)")
         print("Available tools:", [t["name"] for t in server.get_tools()])
         print("\nType 'help' for commands, 'quit' to exit\n")
         

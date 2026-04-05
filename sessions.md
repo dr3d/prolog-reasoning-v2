@@ -7,7 +7,7 @@ This file is a compact public summary of recent project state.
 - Last major track completed: README and public-facing narrative refresh around the memory/inference split
 - Current product direction: Core symbolic reliability first, with MVP editor treated as experimental
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13 (improved from 6/13)
-- Latest actions: Reframed README around deterministic reliability for LLM agents; added the "Memories are timestamped. Facts are not." thesis line; added a new memory-and-inference infographic and linked it from README; kept constraint editor work explicitly in the experimental lane
+- Latest actions: Reframed README around deterministic reliability for LLM agents; added the "Memories are timestamped. Facts are not." thesis line; added a new memory-and-inference infographic and linked it from README; hardened the MCP server for LM Studio with initialize/ping/tool-call handshake support and verified all four exposed tools in a live LM Studio session; kept constraint editor work explicitly in the experimental lane
 - Next priority: Implement Tier 1 roadmap items (temporal logic, dependency split, multi-session isolation) and start ontology-context routing prototype
 
 ## Usage Notes
