@@ -166,23 +166,55 @@ class IRCompiler:
         
         TODO: Full Prolog parser
         """
-        # Split on commas (naive - doesn't handle nested parens)
         goals = []
-        for goal_str in body.split(","):
+        for goal_str in self._split_top_level(body, ","):
             goal_str = goal_str.strip()
             if goal_str:
                 goals.append(self._parse_goal(goal_str))
         return goals
+
+    def _split_top_level(self, text: str, delimiter: str) -> List[str]:
+        """Split text by delimiter while respecting parentheses nesting."""
+        parts: List[str] = []
+        current: List[str] = []
+        depth = 0
+
+        for ch in text:
+            if ch == "(":
+                depth += 1
+                current.append(ch)
+            elif ch == ")":
+                depth = max(0, depth - 1)
+                current.append(ch)
+            elif ch == delimiter and depth == 0:
+                parts.append("".join(current).strip())
+                current = []
+            else:
+                current.append(ch)
+
+        if current:
+            parts.append("".join(current).strip())
+
+        return parts
     
     def _parse_goal(self, goal_str: str) -> Term:
         """Parse a single goal from string."""
         goal_str = goal_str.strip()
+
+        if goal_str.startswith("\\+"):
+            negated = goal_str[2:].strip()
+            return Term("\\+", [self._parse_goal(negated)])
+
+        for op in [" is ", " =\\= ", " =:= ", " >= ", " =< ", " \\= ", " = ", " > ", " < "]:
+            if op in goal_str:
+                left, right = goal_str.split(op, 1)
+                return Term(op.strip(), [self._parse_arg(left.strip()), self._parse_arg(right.strip())])
         
         # Check for functor(args...)
         if "(" in goal_str and goal_str.endswith(")"):
             name, rest = goal_str.split("(", 1)
             rest = rest[:-1]
-            args_strs = [a.strip() for a in rest.split(",")]
+            args_strs = [a.strip() for a in self._split_top_level(rest, ",")]
             args = [self._parse_arg(a) for a in args_strs]
             return Term(name.strip(), args)
         

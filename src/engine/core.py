@@ -135,6 +135,7 @@ class PrologEngine:
     def __init__(self, max_depth=500):
         self.clauses: List[Clause] = []
         self.max_depth = max_depth
+        self._rename_counter = 0
         self.builtins = {
             "is": self._builtin_is,
             ">": self._builtin_gt,
@@ -275,8 +276,14 @@ class PrologEngine:
         return solutions
     
     def _rename_clause(self, clause: Clause, depth: int) -> Clause:
-        """Rename variables in clause to avoid conflicts."""
-        suffix = f"_{depth}"
+        """Rename variables in clause to avoid conflicts.
+
+        Uses a global counter so that every clause instantiation gets a unique
+        suffix, preventing variable collisions when the same clause is used
+        multiple times at the same depth level.
+        """
+        self._rename_counter += 1
+        suffix = f"_{self._rename_counter}"
         renamed_head = self._rename_term(clause.head, suffix)
         renamed_body = [self._rename_term(t, suffix) for t in clause.body] if clause.body else None
         return Clause(renamed_head, renamed_body)
@@ -409,8 +416,30 @@ class PrologEngine:
     
     def _builtin_findall(self, goal: Term, subst: Substitution, depth: int) -> List[Substitution]:
         """findall(Template, Goal, List) — collect all solutions."""
-        # TODO: Implement
-        return []
+        if len(goal.args) != 3:
+            return []
+
+        template = subst.apply(goal.args[0])
+        query_goal = subst.apply(goal.args[1])
+        result_slot = goal.args[2]
+
+        # Collect all solutions for the goal
+        inner_solutions = self.resolve(query_goal, subst, depth + 1)
+
+        # Apply template to each solution to build the collected list
+        collected = [subst.apply(template) if not inner_solutions else sol.apply(template)
+                     for sol in inner_solutions]
+
+        prolog_list = self._build_prolog_list(collected)
+        new_subst = self.unify(result_slot, prolog_list, subst)
+        return [new_subst] if new_subst is not None else []
+
+    def _build_prolog_list(self, terms: List["Term"]) -> "Term":
+        """Build a Prolog list term ./2 from a Python list of Terms."""
+        result: Term = Term("[]")
+        for term in reversed(terms):
+            result = Term(".", [term, result])
+        return result
     
     def _builtin_unify(self, goal: Term, subst: Substitution, depth: int) -> List[Substitution]:
         """X = Y — unify."""

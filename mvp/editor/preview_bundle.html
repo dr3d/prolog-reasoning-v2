@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Draw With Constraints Preview</title>
+  <style>:root {
+  --paper: #f7f1e3;
+  --paper-deep: #eadfca;
+  --ink: #1f1c17;
+  --muted: #6f6559;
+  --line: rgba(57, 44, 31, 0.18);
+  --accent: #b96033;
+  --accent-soft: rgba(185, 96, 51, 0.14);
+  --olive: #54624d;
+  --teal: #2c6a74;
+  --crimson: #8f3a2f;
+  --panel: rgba(250, 246, 236, 0.82);
+  --shadow: 0 18px 40px rgba(52, 35, 21, 0.14);
+  --radius: 22px;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(242, 207, 156, 0.42), transparent 28%),
+    radial-gradient(circle at top right, rgba(115, 150, 123, 0.2), transparent 22%),
+    linear-gradient(135deg, #f9f6ee 0%, #f0e4cf 46%, #e7dcc7 100%);
+}
+.shell {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(560px, 1fr) minmax(280px, 340px);
+  gap: 18px;
+  padding: 18px;
+}
+.panel, .stage-card, .diagnostic-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 14px;
+}
+.panel-block {
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 251, 244, 0.62);
+  border: 1px solid rgba(57, 44, 31, 0.09);
+}
+.hero-block {
+  background: linear-gradient(145deg, rgba(44, 106, 116, 0.14), transparent 62%), linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.36));
+}
+.workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.stage-card { padding: 16px; }
+.stage-header, .section-heading, .button-row, .mini-stats, .stage-badges, .diagnostics-strip {
+  display: flex;
+  gap: 12px;
+}
+.stage-header, .section-heading {
+  justify-content: space-between;
+  align-items: end;
+}
+.stage-badges {
+  flex-wrap: wrap;
+  justify-content: end;
+  align-items: center;
+}
+.canvas-shell {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(246, 240, 228, 0.9)),
+    repeating-linear-gradient(90deg, rgba(57, 44, 31, 0.03) 0, rgba(57, 44, 31, 0.03) 1px, transparent 1px, transparent 48px),
+    repeating-linear-gradient(0deg, rgba(57, 44, 31, 0.03) 0, rgba(57, 44, 31, 0.03) 1px, transparent 1px, transparent 48px);
+}
+#editor-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+}
+h1, h2, h3, .lesson-title {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+h1 { font-size: clamp(2rem, 3vw, 2.8rem); line-height: 1.05; }
+h2 { font-size: 1.28rem; }
+p { margin: 0; line-height: 1.52; }
+.eyebrow, .constraint-pill, .badge, .stat-label, .lesson-meta, .microcopy {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+.eyebrow, .stat-label, .lesson-meta, .microcopy { color: var(--muted); }
+.lede { margin-top: 10px; max-width: 28rem; }
+.button-row { flex-wrap: wrap; }
+.button {
+  border: 1px solid rgba(45, 31, 18, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.74);
+  color: var(--ink);
+  padding: 0.72rem 1rem;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease;
+}
+.button:hover, .button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(44, 106, 116, 0.38);
+  background: rgba(255, 255, 255, 0.94);
+}
+.button-primary {
+  background: linear-gradient(135deg, #b96033, #cf8750);
+  color: #fffaf3;
+  border-color: transparent;
+}
+.button-secondary { background: linear-gradient(135deg, rgba(84, 98, 77, 0.15), rgba(44, 106, 116, 0.14)); }
+.mini-stats { justify-content: space-between; padding-top: 8px; }
+.mini-stats strong { display: block; margin-top: 4px; font-size: 1.12rem; }
+.badge, .constraint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.38rem 0.74rem;
+  border-radius: 999px;
+  background: rgba(84, 98, 77, 0.12);
+  border: 1px solid rgba(84, 98, 77, 0.15);
+}
+.diagnostics-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.diagnostic-card { padding: 14px 16px; }
+.status-banner, .lesson-detail, .conflict-card, .constraint-item, .empty-state, .lesson-card {
+  margin-top: 10px;
+  border-radius: 18px;
+  border: 1px solid rgba(57, 44, 31, 0.11);
+  background: rgba(255, 255, 255, 0.65);
+  padding: 12px 14px;
+}
+.status-banner { border-left: 4px solid var(--teal); }
+.status-banner.conflict {
+  border-left-color: var(--crimson);
+  background: rgba(143, 58, 47, 0.08);
+}
+.lesson-list, .lesson-steps, .constraint-list, .conflict-list { display: grid; gap: 10px; }
+.lesson-card { position: relative; overflow: hidden; }
+.lesson-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -35% auto;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(44, 106, 116, 0.17), transparent 70%);
+}
+.lesson-card.active {
+  border-color: rgba(44, 106, 116, 0.42);
+  background: linear-gradient(180deg, rgba(44, 106, 116, 0.08), rgba(255, 255, 255, 0.78));
+}
+.lesson-card button { margin-top: 10px; }
+.lesson-step, .constraint-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: start;
+}
+.constraint-row { align-items: center; }
+.constraint-form { display: grid; gap: 10px; }
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.field { display: grid; gap: 6px; }
+.field label { font-size: 0.86rem; color: var(--muted); }
+.field input, .field select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(57, 44, 31, 0.15);
+  padding: 0.72rem 0.85rem;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  font: inherit;
+}
+.field input:focus, .field select:focus { outline: 2px solid rgba(44, 106, 116, 0.24); outline-offset: 1px; }
+.constraint-item, .conflict-card { display: grid; gap: 8px; }
+.conflict-card {
+  border-left: 4px solid var(--crimson);
+  background: rgba(143, 58, 47, 0.08);
+}
+.empty-state { color: var(--muted); }
+.theory-block { background: linear-gradient(155deg, rgba(185, 96, 51, 0.08), rgba(84, 98, 77, 0.08)), rgba(255, 255, 255, 0.48); }
+.canvas-stage { fill: rgba(255, 252, 246, 0.96); stroke: rgba(57, 44, 31, 0.16); stroke-width: 2; }
+.constraint-line { fill: none; stroke: rgba(44, 106, 116, 0.42); stroke-width: 2; stroke-dasharray: 8 8; }
+.constraint-label { font-size: 12px; font-family: "Trebuchet MS", "Gill Sans", sans-serif; fill: var(--teal); }
+.shape rect.body {
+  stroke: rgba(30, 24, 19, 0.28);
+  stroke-width: 2;
+  cursor: move;
+  transition: filter 120ms ease, stroke-width 120ms ease;
+}
+.shape.selected rect.body {
+  stroke: var(--accent);
+  stroke-width: 3;
+  filter: drop-shadow(0 8px 16px rgba(185, 96, 51, 0.22));
+}
+.shape text { font-size: 16px; font-weight: 700; fill: rgba(31, 28, 23, 0.84); pointer-events: none; }
+.resize-handle { fill: #fffaf3; stroke: var(--ink); stroke-width: 2; cursor: nwse-resize; }
+.canvas-caption { font-size: 11px; fill: rgba(111, 101, 89, 0.75); }
+@media (max-width: 1180px) {
+  .shell { grid-template-columns: 1fr; }
+  .diagnostics-strip { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+    <aside class="panel panel-left">
+      <section class="panel-block hero-block">
+        <p class="eyebrow">Constraint Graphics MVP</p>
+        <h1>Draw with rules, not just nudges.</h1>
+        <p class="lede">A small, inspectable homage to ThingLab: rectangles on a canvas, a deterministic solver underneath, and lessons that introduce the larger NeSy project without a big mental ramp.</p>
+      </section>
+
+      <section class="panel-block controls-block">
+        <div class="button-row">
+          <button id="add-rect-button" class="button button-primary" type="button">Add Rectangle</button>
+          <button id="delete-rect-button" class="button" type="button">Delete Selected</button>
+        </div>
+        <div class="button-row">
+          <button id="reset-scene-button" class="button button-secondary" type="button">Starter Scene</button>
+        </div>
+        <div class="mini-stats">
+          <div><span class="stat-label">Selected</span><strong id="selected-readout">None</strong></div>
+          <div><span class="stat-label">Rects</span><strong id="rect-count-readout">0</strong></div>
+          <div><span class="stat-label">Rough freedoms</span><strong id="freedom-readout">0</strong></div>
+        </div>
+        <p class="microcopy">For pairwise constraints, A is the source and B is the follower. Drag the source to see the solver propagate.</p>
+      </section>
+
+      <section class="panel-block lesson-block">
+        <div class="section-heading">
+          <h2>Learn in 3 Minutes</h2>
+          <p>Each lesson loads a tiny scene and explains one idea.</p>
+        </div>
+        <div id="lesson-list" class="lesson-list"></div>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="stage-card">
+        <div class="stage-header">
+          <div>
+            <p class="eyebrow">Canvas</p>
+            <h2>Single-page deterministic editor</h2>
+          </div>
+          <div class="stage-badges">
+            <span class="badge">Rectangles only</span>
+            <span class="badge">Five constraints</span>
+            <span class="badge">Conflict rollback</span>
+          </div>
+        </div>
+        <div class="canvas-shell">
+          <svg id="editor-canvas" viewBox="0 0 960 600" aria-label="Constraint editor canvas"></svg>
+        </div>
+      </section>
+
+      <section class="diagnostics-strip">
+        <article class="diagnostic-card">
+          <p class="eyebrow">Solve Loop</p>
+          <div id="status-banner" class="status-banner"></div>
+        </article>
+        <article class="diagnostic-card">
+          <p class="eyebrow">Current Lesson</p>
+          <div id="lesson-detail" class="lesson-detail"></div>
+        </article>
+      </section>
+    </main>
+
+    <aside class="panel panel-right">
+      <section class="panel-block">
+        <div class="section-heading">
+          <h2>Constraints</h2>
+          <p>Add, inspect, or remove layout rules.</p>
+        </div>
+        <div id="constraint-panel"></div>
+      </section>
+
+      <section class="panel-block">
+        <div class="section-heading">
+          <h2>Conflict Feed</h2>
+          <p>Unsatisfiable scenes snap back to the last valid state.</p>
+        </div>
+        <div id="conflict-panel"></div>
+      </section>
+
+      <section class="panel-block theory-block">
+        <div class="section-heading">
+          <h2>Why this counts as NeSy</h2>
+        </div>
+        <p>The solver is the truth layer. It enforces explicit structure and rejects contradictions. A language model belongs above that layer, helping users express intent or understand what happened, but never bypassing validated operations.</p>
+      </section>
+    </aside>
+  </div>
+<script type="module">
+const stateSource = "export const CANVAS = {\n  width: 960,\n  height: 600,\n  minRectSize: 48,\n};\n\nconst COLORS = [\"#efc46a\", \"#d1a25c\", \"#a7c89c\", \"#8bbcc4\", \"#d59f8b\", \"#cdb7dd\"];\nlet rectCounter = 0;\nlet constraintCounter = 0;\n\nexport function cloneScene(scene) {\n  return JSON.parse(JSON.stringify(scene));\n}\n\nexport function makeRect(overrides = {}) {\n  rectCounter += 1;\n  const index = rectCounter;\n  return {\n    id: overrides.id ?? `rect_${index}`,\n    label: overrides.label ?? `Rect ${index}`,\n    x: overrides.x ?? 72 + ((index - 1) % 4) * 160,\n    y: overrides.y ?? 72 + Math.floor((index - 1) / 4) * 110,\n    width: overrides.width ?? 150,\n    height: overrides.height ?? 96,\n    fill: overrides.fill ?? COLORS[(index - 1) % COLORS.length],\n  };\n}\n\nexport function makeConstraint(overrides = {}) {\n  constraintCounter += 1;\n  return {\n    id: overrides.id ?? `constraint_${constraintCounter}`,\n    type: overrides.type ?? \"align-left\",\n    a: overrides.a ?? \"\",\n    b: overrides.b ?? \"\",\n    gap: overrides.gap ?? 24,\n  };\n}\n\nfunction buildScene(rects, constraints = []) {\n  return {\n    canvas: { ...CANVAS },\n    rects,\n    constraints,\n  };\n}\n\nexport function reseedCounters(scene) {\n  const rectNumbers = scene.rects\n    .map((rect) => Number.parseInt(String(rect.id).split(\"_\").pop(), 10))\n    .filter((value) => Number.isFinite(value));\n  const constraintNumbers = scene.constraints\n    .map((constraint) => Number.parseInt(String(constraint.id).split(\"_\").pop(), 10))\n    .filter((value) => Number.isFinite(value));\n  rectCounter = rectNumbers.length ? Math.max(...rectNumbers) : scene.rects.length;\n  constraintCounter = constraintNumbers.length ? Math.max(...constraintNumbers) : scene.constraints.length;\n}\n\nexport function buildStarterScene() {\n  const scene = buildScene(\n    [\n      makeRect({ id: \"rect_1\", label: \"Header\", x: 96, y: 120, width: 170, height: 92 }),\n      makeRect({ id: \"rect_2\", label: \"Body\", x: 336, y: 184, width: 150, height: 92 }),\n      makeRect({ id: \"rect_3\", label: \"Aside\", x: 584, y: 248, width: 150, height: 92 }),\n    ],\n    []\n  );\n  reseedCounters(scene);\n  return scene;\n}\n\nfunction lessonScene(id) {\n  const scenes = {\n    why_constraints: buildScene(\n      [\n        makeRect({ id: \"card_a\", label: \"Card A\", x: 110, y: 146, width: 180, height: 96, fill: \"#efc46a\" }),\n        makeRect({ id: \"card_b\", label: \"Card B\", x: 390, y: 266, width: 150, height: 96, fill: \"#8bbcc4\" }),\n      ],\n      [makeConstraint({ id: \"constraint_1\", type: \"align-left\", a: \"card_a\", b: \"card_b\" })]\n    ),\n    editor_loop: buildScene(\n      [\n        makeRect({ id: \"story_a\", label: \"Story A\", x: 92, y: 150, width: 160, height: 100, fill: \"#efc46a\" }),\n        makeRect({ id: \"story_b\", label: \"Story B\", x: 320, y: 212, width: 120, height: 100, fill: \"#d59f8b\" }),\n        makeRect({ id: \"story_c\", label: \"Story C\", x: 548, y: 274, width: 120, height: 100, fill: \"#a7c89c\" }),\n      ],\n      [\n        makeConstraint({ id: \"constraint_1\", type: \"equal-width\", a: \"story_a\", b: \"story_b\" }),\n        makeConstraint({ id: \"constraint_2\", type: \"equal-width\", a: \"story_b\", b: \"story_c\" }),\n        makeConstraint({ id: \"constraint_3\", type: \"horizontal-gap\", a: \"story_a\", b: \"story_b\", gap: 34 }),\n        makeConstraint({ id: \"constraint_4\", type: \"horizontal-gap\", a: \"story_b\", b: \"story_c\", gap: 34 }),\n      ]\n    ),\n    nesy_role: buildScene(\n      [\n        makeRect({ id: \"intent_box\", label: \"Intent\", x: 112, y: 128, width: 170, height: 102, fill: \"#d59f8b\" }),\n        makeRect({ id: \"solver_box\", label: \"Truth\", x: 360, y: 128, width: 170, height: 102, fill: \"#8bbcc4\" }),\n        makeRect({ id: \"explain_box\", label: \"Explain\", x: 608, y: 128, width: 170, height: 102, fill: \"#a7c89c\" }),\n      ],\n      [\n        makeConstraint({ id: \"constraint_1\", type: \"align-top\", a: \"intent_box\", b: \"solver_box\" }),\n        makeConstraint({ id: \"constraint_2\", type: \"align-top\", a: \"solver_box\", b: \"explain_box\" }),\n        makeConstraint({ id: \"constraint_3\", type: \"horizontal-gap\", a: \"intent_box\", b: \"solver_box\", gap: 78 }),\n        makeConstraint({ id: \"constraint_4\", type: \"horizontal-gap\", a: \"solver_box\", b: \"explain_box\", gap: 78 }),\n      ]\n    ),\n    conflict_reading: buildScene(\n      [\n        makeRect({ id: \"rule_a\", label: \"Rule A\", x: 120, y: 220, width: 180, height: 104, fill: \"#efc46a\" }),\n        makeRect({ id: \"rule_b\", label: \"Rule B\", x: 392, y: 220, width: 180, height: 104, fill: \"#d59f8b\" }),\n      ],\n      [\n        makeConstraint({ id: \"constraint_1\", type: \"align-left\", a: \"rule_a\", b: \"rule_b\" }),\n        makeConstraint({ id: \"constraint_2\", type: \"horizontal-gap\", a: \"rule_a\", b: \"rule_b\", gap: 36 }),\n      ]\n    ),\n  };\n\n  const scene = scenes[id] ?? buildStarterScene();\n  reseedCounters(scene);\n  return scene;\n}\n\nexport const LESSONS = [\n  {\n    id: \"why_constraints\",\n    title: \"Why constraints?\",\n    duration: \"2 min\",\n    summary: \"A single relationship should survive movement. Drag Card A and Card B keeps the same left edge.\",\n    projectLink: \"This is the low-friction doorway into the whole project: explicit structure beats manual repair.\",\n    steps: [\n      \"Select Card A and drag it around the canvas.\",\n      \"Watch Card B update because the relationship is the thing that matters, not the last pixel position.\",\n      \"Remove the align-left constraint to feel the difference.\",\n    ],\n  },\n  {\n    id: \"editor_loop\",\n    title: \"How this editor thinks\",\n    duration: \"3 min\",\n    summary: \"The editor clones state, applies deterministic rules, then either commits or rolls back.\",\n    projectLink: \"This mirrors the repo's propagation mindset: a repeatable solve loop with no silent failures.\",\n    steps: [\n      \"Drag Story A or resize it from the lower-right handle.\",\n      \"The equal-width and horizontal-gap rules propagate across the row.\",\n      \"Notice that the result is stable because the rule order is fixed and the allowed actions are small.\",\n    ],\n  },\n  {\n    id: \"nesy_role\",\n    title: \"What NeSy is doing here\",\n    duration: \"2 min\",\n    summary: \"The solver owns truth. A future LLM layer would translate intent or explain outcomes, not edit geometry directly.\",\n    projectLink: \"That is the neuro-symbolic contract in this repo: deterministic structure underneath, language on top.\",\n    steps: [\n      \"Drag the Intent rectangle and watch the truth and explanation boxes follow.\",\n      \"Imagine a language model creating these structured constraints instead of moving boxes freehand.\",\n      \"The structure stays inspectable because every change still becomes a validated operation.\",\n    ],\n  },\n  {\n    id: \"conflict_reading\",\n    title: \"How to read a conflict\",\n    duration: \"2 min\",\n    summary: \"A conflict means two requested truths cannot both hold. The app names the fight and keeps the last valid scene.\",\n    projectLink: \"That same idea powers the broader project: failure should teach, not mystify.\",\n    steps: [\n      \"This scene is intentionally contradictory: Rule B cannot share Rule A's left edge and also keep a positive gap.\",\n      \"Notice the conflict card naming the offending rule and shapes.\",\n      \"Remove one rule to get back to a valid layout.\",\n    ],\n  },\n];\n\nexport function loadLessonScene(lessonId) {\n  return lessonScene(lessonId);\n}\n\nexport function createAppState() {\n  const scene = buildStarterScene();\n  return {\n    scene,\n    lastValidScene: cloneScene(scene),\n    selectedRectId: scene.rects[0]?.id ?? null,\n    activeLessonId: LESSONS[0].id,\n    conflict: null,\n    status: {\n      tone: \"info\",\n      title: \"Starter scene ready\",\n      detail: \"Add rules, drag a rectangle, or load a lesson to see the deterministic solve loop in action.\",\n    },\n  };\n}\n";
+const solverSource = "import { CANVAS, cloneScene } from \"./state.js\";\n\nconst EPSILON = 0.01;\nconst MAX_ITERATIONS = 24;\n\nfunction nearlyEqual(a, b) {\n  return Math.abs(a - b) <= EPSILON;\n}\n\nfunction clamp(value, min, max) {\n  return Math.min(Math.max(value, min), max);\n}\n\nfunction idsFor(constraint) {\n  return constraint.type === \"inside\" ? [constraint.a] : [constraint.a, constraint.b].filter(Boolean);\n}\n\nfunction makeConflict(constraint, message) {\n  return {\n    constraintId: constraint?.id ?? \"scene\",\n    constraintType: constraint?.type ?? \"scene\",\n    rectIds: idsFor(constraint ?? {}),\n    message,\n  };\n}\n\nfunction rectMap(scene) {\n  return new Map(scene.rects.map((rect) => [rect.id, rect]));\n}\n\nfunction validateBasics(rect) {\n  if (rect.width < CANVAS.minRectSize || rect.height < CANVAS.minRectSize) {\n    return `Rectangle ${rect.id} is smaller than the minimum size of ${CANVAS.minRectSize}px.`;\n  }\n  return null;\n}\n\nfunction detectDirectConflict(scene) {\n  const map = rectMap(scene);\n  const gapBuckets = new Map();\n\n  for (const constraint of scene.constraints) {\n    if (constraint.type === \"horizontal-gap\") {\n      const key = `${constraint.a}:${constraint.b}`;\n      if (!gapBuckets.has(key)) {\n        gapBuckets.set(key, []);\n      }\n      gapBuckets.get(key).push(constraint);\n    }\n  }\n\n  for (const constraints of gapBuckets.values()) {\n    const gaps = new Set(constraints.map((constraint) => Number(constraint.gap)));\n    if (gaps.size > 1) {\n      return makeConflict(constraints[1], `These horizontal-gap rules disagree for ${constraints[0].a} -> ${constraints[0].b}. Pick one gap value.`);\n    }\n  }\n\n  for (const constraint of scene.constraints) {\n    const rectA = map.get(constraint.a);\n    const rectB = map.get(constraint.b);\n\n    if (constraint.type === \"inside\" && rectA) {\n      if (rectA.width > scene.canvas.width || rectA.height > scene.canvas.height) {\n        return makeConflict(constraint, `${rectA.id} is larger than the canvas, so inside(${rectA.id}, canvas) cannot be satisfied.`);\n      }\n    }\n\n    if (constraint.type === \"align-left\" && rectA && rectB) {\n      const gapMate = scene.constraints.find((item) => item.type === \"horizontal-gap\" && item.a === constraint.a && item.b === constraint.b);\n      if (gapMate && !nearlyEqual(rectA.width + Number(gapMate.gap), 0)) {\n        return makeConflict(gapMate, `${constraint.b} cannot stay aligned left with ${constraint.a} and also keep a ${gapMate.gap}px horizontal gap.`);\n      }\n    }\n  }\n\n  return null;\n}\n\nfunction applyConstraint(constraint, map, canvas) {\n  const rectA = map.get(constraint.a);\n  const rectB = map.get(constraint.b);\n  let changed = false;\n\n  if (!rectA) {\n    return { conflict: makeConflict(constraint, `Constraint ${constraint.id} references missing rectangle ${constraint.a}.`) };\n  }\n\n  const basicsA = validateBasics(rectA);\n  if (basicsA) {\n    return { conflict: makeConflict(constraint, basicsA) };\n  }\n\n  if (constraint.type === \"inside\") {\n    if (rectA.width > canvas.width || rectA.height > canvas.height) {\n      return { conflict: makeConflict(constraint, `${rectA.id} is too large for the canvas, so the inside constraint cannot be satisfied.`) };\n    }\n    const nextX = clamp(rectA.x, 0, canvas.width - rectA.width);\n    const nextY = clamp(rectA.y, 0, canvas.height - rectA.height);\n    changed = !nearlyEqual(rectA.x, nextX) || !nearlyEqual(rectA.y, nextY);\n    rectA.x = nextX;\n    rectA.y = nextY;\n    return { changed };\n  }\n\n  if (!rectB) {\n    return { conflict: makeConflict(constraint, `Constraint ${constraint.id} references missing rectangle ${constraint.b}.`) };\n  }\n\n  const basicsB = validateBasics(rectB);\n  if (basicsB) {\n    return { conflict: makeConflict(constraint, basicsB) };\n  }\n\n  if (constraint.type === \"align-left\") {\n    changed = !nearlyEqual(rectB.x, rectA.x);\n    rectB.x = rectA.x;\n    return { changed };\n  }\n\n  if (constraint.type === \"align-top\") {\n    changed = !nearlyEqual(rectB.y, rectA.y);\n    rectB.y = rectA.y;\n    return { changed };\n  }\n\n  if (constraint.type === \"equal-width\") {\n    changed = !nearlyEqual(rectB.width, rectA.width);\n    rectB.width = rectA.width;\n    return { changed };\n  }\n\n  if (constraint.type === \"horizontal-gap\") {\n    const nextX = rectA.x + rectA.width + Number(constraint.gap);\n    changed = !nearlyEqual(rectB.x, nextX);\n    rectB.x = nextX;\n    return { changed };\n  }\n\n  return { conflict: makeConflict(constraint, `Unsupported constraint type ${constraint.type}.`) };\n}\n\nfunction validateScene(scene) {\n  const map = rectMap(scene);\n  for (const constraint of scene.constraints) {\n    const rectA = map.get(constraint.a);\n    const rectB = map.get(constraint.b);\n\n    if (!rectA) {\n      return makeConflict(constraint, `Constraint ${constraint.id} references missing rectangle ${constraint.a}.`);\n    }\n\n    if (constraint.type === \"align-left\" && (!rectB || !nearlyEqual(rectA.x, rectB.x))) {\n      return makeConflict(constraint, `${constraint.b} did not end up aligned to the left edge of ${constraint.a}.`);\n    }\n    if (constraint.type === \"align-top\" && (!rectB || !nearlyEqual(rectA.y, rectB.y))) {\n      return makeConflict(constraint, `${constraint.b} did not end up aligned to the top edge of ${constraint.a}.`);\n    }\n    if (constraint.type === \"equal-width\" && (!rectB || !nearlyEqual(rectA.width, rectB.width))) {\n      return makeConflict(constraint, `${constraint.b} did not keep the same width as ${constraint.a}.`);\n    }\n    if (constraint.type === \"horizontal-gap\" && (!rectB || !nearlyEqual(rectB.x, rectA.x + rectA.width + Number(constraint.gap)))) {\n      return makeConflict(constraint, `${constraint.b} did not keep the requested ${constraint.gap}px horizontal gap after ${constraint.a}.`);\n    }\n    if (constraint.type === \"inside\") {\n      const inside = rectA.x >= 0 && rectA.y >= 0 && rectA.x + rectA.width <= scene.canvas.width + EPSILON && rectA.y + rectA.height <= scene.canvas.height + EPSILON;\n      if (!inside) {\n        return makeConflict(constraint, `${constraint.a} ended outside the canvas bounds.`);\n      }\n    }\n  }\n  return null;\n}\n\nexport function solveScene(scene) {\n  const working = cloneScene(scene);\n  const directConflict = detectDirectConflict(working);\n  if (directConflict) {\n    return { ok: false, scene: working, conflict: directConflict, iterations: 0 };\n  }\n\n  const map = rectMap(working);\n  let lastConstraint = null;\n\n  for (let iteration = 1; iteration <= MAX_ITERATIONS; iteration += 1) {\n    let changed = false;\n    for (const constraint of working.constraints) {\n      const result = applyConstraint(constraint, map, working.canvas);\n      if (result.conflict) {\n        return { ok: false, scene: working, conflict: result.conflict, iterations: iteration };\n      }\n      if (result.changed) {\n        changed = true;\n        lastConstraint = constraint;\n      }\n    }\n\n    const issue = validateScene(working);\n    if (!issue && !changed) {\n      return { ok: true, scene: working, conflict: null, iterations: iteration };\n    }\n  }\n\n  return {\n    ok: false,\n    scene: working,\n    conflict: makeConflict(lastConstraint, \"These constraints keep changing the scene in circles. Remove one of the competing rules and try again.\"),\n    iterations: MAX_ITERATIONS,\n  };\n}\n";
+const uiSource = "const CONSTRAINT_TYPES = [\n  { value: \"align-left\", label: \"align-left(A, B)\" },\n  { value: \"align-top\", label: \"align-top(A, B)\" },\n  { value: \"equal-width\", label: \"equal-width(A, B)\" },\n  { value: \"horizontal-gap\", label: \"horizontal-gap(A, B, gap)\" },\n  { value: \"inside\", label: \"inside(A, canvas)\" },\n];\n\nexport function formatConstraint(constraint) {\n  if (constraint.type === \"inside\") {\n    return `${constraint.type}(${constraint.a}, canvas)`;\n  }\n  if (constraint.type === \"horizontal-gap\") {\n    return `${constraint.type}(${constraint.a}, ${constraint.b}, ${constraint.gap})`;\n  }\n  return `${constraint.type}(${constraint.a}, ${constraint.b})`;\n}\n\nexport function renderConstraintPanel({ container, scene, onAddConstraint, onRemoveConstraint }) {\n  const rectOptions = scene.rects\n    .map((rect) => `<option value=\"${rect.id}\">${rect.label} (${rect.id})</option>`)\n    .join(\"\");\n\n  const listMarkup = scene.constraints.length\n    ? scene.constraints\n        .map(\n          (constraint) => `\n            <article class=\"constraint-item\">\n              <div class=\"constraint-row\">\n                <span class=\"constraint-pill\">${constraint.type}</span>\n                <button class=\"button\" type=\"button\" data-remove-constraint=\"${constraint.id}\">Remove</button>\n              </div>\n              <strong>${constraint.id}</strong>\n              <p>${formatConstraint(constraint)}</p>\n            </article>\n          `\n        )\n        .join(\"\")\n    : `<div class=\"empty-state\">No constraints yet. Add one below or load a lesson scene.</div>`;\n\n  container.innerHTML = `\n    <form class=\"constraint-form\" id=\"constraint-form\">\n      <div class=\"form-grid\">\n        <div class=\"field\">\n          <label for=\"constraint-type\">Type</label>\n          <select id=\"constraint-type\" name=\"type\">\n            ${CONSTRAINT_TYPES.map((type) => `<option value=\"${type.value}\">${type.label}</option>`).join(\"\")}\n          </select>\n        </div>\n        <div class=\"field\">\n          <label for=\"constraint-a\">A (source)</label>\n          <select id=\"constraint-a\" name=\"a\" ${scene.rects.length ? \"\" : \"disabled\"}>\n            ${rectOptions}\n          </select>\n        </div>\n      </div>\n      <div class=\"form-grid\">\n        <div class=\"field\" id=\"constraint-b-field\">\n          <label for=\"constraint-b\">B (follower)</label>\n          <select id=\"constraint-b\" name=\"b\" ${scene.rects.length > 1 ? \"\" : \"disabled\"}>\n            ${rectOptions}\n          </select>\n        </div>\n        <div class=\"field\" id=\"constraint-gap-field\">\n          <label for=\"constraint-gap\">Gap</label>\n          <input id=\"constraint-gap\" name=\"gap\" type=\"number\" value=\"24\">\n        </div>\n      </div>\n      <button class=\"button button-primary\" type=\"submit\" ${scene.rects.length ? \"\" : \"disabled\"}>Add Constraint</button>\n    </form>\n    <div class=\"constraint-list\">${listMarkup}</div>\n  `;\n\n  const form = container.querySelector(\"#constraint-form\");\n  const typeSelect = container.querySelector(\"#constraint-type\");\n  const bField = container.querySelector(\"#constraint-b-field\");\n  const gapField = container.querySelector(\"#constraint-gap-field\");\n\n  function syncFields() {\n    const type = typeSelect.value;\n    bField.style.display = type === \"inside\" ? \"none\" : \"grid\";\n    gapField.style.display = type === \"horizontal-gap\" ? \"grid\" : \"none\";\n  }\n\n  syncFields();\n  typeSelect.addEventListener(\"change\", syncFields);\n\n  form?.addEventListener(\"submit\", (event) => {\n    event.preventDefault();\n    const data = new FormData(form);\n    onAddConstraint({\n      type: String(data.get(\"type\")),\n      a: String(data.get(\"a\")),\n      b: String(data.get(\"b\") ?? \"\"),\n      gap: Number(data.get(\"gap\") ?? 0),\n    });\n    form.reset();\n    container.querySelector(\"#constraint-gap\").value = \"24\";\n    syncFields();\n  });\n\n  container.querySelectorAll(\"[data-remove-constraint]\").forEach((button) => {\n    button.addEventListener(\"click\", () => onRemoveConstraint(button.dataset.removeConstraint));\n  });\n}\n";
+const appSource = "import {\n  CANVAS,\n  LESSONS,\n  buildStarterScene,\n  cloneScene,\n  createAppState,\n  loadLessonScene,\n  makeConstraint,\n  makeRect,\n  reseedCounters,\n} from \"./state.js\";\nimport { solveScene } from \"./solver_adapter.js\";\nimport { formatConstraint, renderConstraintPanel } from \"./ui_constraints.js\";\n\nconst svg = document.querySelector(\"#editor-canvas\");\nconst addRectButton = document.querySelector(\"#add-rect-button\");\nconst deleteRectButton = document.querySelector(\"#delete-rect-button\");\nconst resetSceneButton = document.querySelector(\"#reset-scene-button\");\nconst constraintPanel = document.querySelector(\"#constraint-panel\");\nconst conflictPanel = document.querySelector(\"#conflict-panel\");\nconst lessonList = document.querySelector(\"#lesson-list\");\nconst lessonDetail = document.querySelector(\"#lesson-detail\");\nconst statusBanner = document.querySelector(\"#status-banner\");\nconst selectedReadout = document.querySelector(\"#selected-readout\");\nconst rectCountReadout = document.querySelector(\"#rect-count-readout\");\nconst freedomReadout = document.querySelector(\"#freedom-readout\");\n\nconst appState = createAppState();\nlet interaction = null;\n\nfunction roughFreedomCount(scene) {\n  return Math.max(0, scene.rects.length * 4 - scene.constraints.length);\n}\n\nfunction selectedRect(scene = appState.scene) {\n  return scene.rects.find((rect) => rect.id === appState.selectedRectId) ?? null;\n}\n\nfunction setStatus(tone, title, detail) {\n  appState.status = { tone, title, detail };\n}\n\nfunction commitScene(candidateScene, detailPrefix) {\n  reseedCounters(candidateScene);\n  const result = solveScene(candidateScene);\n  if (result.ok) {\n    appState.scene = result.scene;\n    appState.lastValidScene = cloneScene(result.scene);\n    appState.conflict = null;\n    setStatus(\"info\", \"Solve succeeded\", `${detailPrefix} Solver settled in ${result.iterations} pass${result.iterations === 1 ? \"\" : \"es\"}.`);\n    const selectedStillExists = appState.scene.rects.some((rect) => rect.id === appState.selectedRectId);\n    if (!selectedStillExists) {\n      appState.selectedRectId = appState.scene.rects[0]?.id ?? null;\n    }\n  } else {\n    appState.scene = cloneScene(appState.lastValidScene);\n    appState.conflict = result.conflict;\n    setStatus(\"conflict\", \"Conflict detected\", result.conflict.message);\n  }\n  render();\n  return result.ok;\n}\n\nfunction loadScene(scene, lessonId, detail) {\n  appState.activeLessonId = lessonId;\n  appState.selectedRectId = scene.rects[0]?.id ?? null;\n  appState.scene = cloneScene(scene);\n  appState.lastValidScene = cloneScene(scene);\n  appState.conflict = null;\n  const solved = solveScene(scene);\n  if (solved.ok) {\n    appState.scene = solved.scene;\n    appState.lastValidScene = cloneScene(solved.scene);\n    setStatus(\"info\", \"Scene loaded\", detail);\n  } else {\n    appState.scene = cloneScene(scene);\n    appState.lastValidScene = cloneScene(scene);\n    appState.conflict = solved.conflict;\n    setStatus(\"conflict\", \"Lesson conflict\", solved.conflict.message);\n  }\n  render();\n}\n\nfunction resetToStarterScene() {\n  loadScene(buildStarterScene(), LESSONS[0].id, \"Starter scene loaded. Add a rule or pick a lesson to experience the editor step by step.\");\n}\n\nfunction canvasPoint(event) {\n  const bounds = svg.getBoundingClientRect();\n  return {\n    x: ((event.clientX - bounds.left) / bounds.width) * CANVAS.width,\n    y: ((event.clientY - bounds.top) / bounds.height) * CANVAS.height,\n  };\n}\n\nfunction buildConstraintGhost(constraint, scene) {\n  if (constraint.type === \"inside\") {\n    return \"\";\n  }\n  const rectA = scene.rects.find((rect) => rect.id === constraint.a);\n  const rectB = scene.rects.find((rect) => rect.id === constraint.b);\n  if (!rectA || !rectB) {\n    return \"\";\n  }\n  const x1 = rectA.x + rectA.width / 2;\n  const y1 = rectA.y + rectA.height / 2;\n  const x2 = rectB.x + rectB.width / 2;\n  const y2 = rectB.y + rectB.height / 2;\n  const midX = (x1 + x2) / 2;\n  const midY = (y1 + y2) / 2 - 10;\n  return `\n    <line class=\"constraint-line\" x1=\"${x1}\" y1=\"${y1}\" x2=\"${x2}\" y2=\"${y2}\"></line>\n    <text class=\"constraint-label\" x=\"${midX}\" y=\"${midY}\" text-anchor=\"middle\">${constraint.type}</text>\n  `;\n}\n\nfunction renderCanvas() {\n  const ghosts = appState.scene.constraints.map((constraint) => buildConstraintGhost(constraint, appState.scene)).join(\"\");\n  const shapes = appState.scene.rects\n    .map((rect) => {\n      const selected = rect.id === appState.selectedRectId ? \"selected\" : \"\";\n      const handleX = rect.x + rect.width - 8;\n      const handleY = rect.y + rect.height - 8;\n      return `\n        <g class=\"shape ${selected}\" data-rect-id=\"${rect.id}\">\n          <rect class=\"body\" data-role=\"body\" data-rect-id=\"${rect.id}\" x=\"${rect.x}\" y=\"${rect.y}\" width=\"${rect.width}\" height=\"${rect.height}\" rx=\"18\" fill=\"${rect.fill}\"></rect>\n          <text x=\"${rect.x + 16}\" y=\"${rect.y + 30}\">${rect.label}</text>\n          <text class=\"canvas-caption\" x=\"${rect.x + 16}\" y=\"${rect.y + 50}\">${rect.id}</text>\n          <rect class=\"resize-handle\" data-role=\"handle\" data-rect-id=\"${rect.id}\" x=\"${handleX}\" y=\"${handleY}\" width=\"16\" height=\"16\" rx=\"4\"></rect>\n        </g>\n      `;\n    })\n    .join(\"\");\n\n  svg.innerHTML = `\n    <rect class=\"canvas-stage\" x=\"0\" y=\"0\" width=\"${CANVAS.width}\" height=\"${CANVAS.height}\" rx=\"28\"></rect>\n    ${ghosts}\n    ${shapes}\n  `;\n}\n\nfunction renderLessons() {\n  lessonList.innerHTML = LESSONS.map((lesson) => {\n    const active = lesson.id === appState.activeLessonId ? \"active\" : \"\";\n    return `\n      <article class=\"lesson-card ${active}\">\n        <p class=\"lesson-meta\">${lesson.duration}</p>\n        <h3 class=\"lesson-title\">${lesson.title}</h3>\n        <p>${lesson.summary}</p>\n        <button class=\"button button-secondary\" type=\"button\" data-load-lesson=\"${lesson.id}\">Load Lesson</button>\n      </article>\n    `;\n  }).join(\"\");\n\n  lessonList.querySelectorAll(\"[data-load-lesson]\").forEach((button) => {\n    button.addEventListener(\"click\", () => {\n      const lesson = LESSONS.find((item) => item.id === button.dataset.loadLesson);\n      if (lesson) {\n        loadScene(loadLessonScene(lesson.id), lesson.id, `${lesson.title} loaded. ${lesson.projectLink}`);\n      }\n    });\n  });\n\n  const activeLesson = LESSONS.find((lesson) => lesson.id === appState.activeLessonId) ?? LESSONS[0];\n  lessonDetail.innerHTML = `\n    <h3>${activeLesson.title}</h3>\n    <p>${activeLesson.projectLink}</p>\n    <div class=\"lesson-steps\">\n      ${activeLesson.steps.map((step, index) => `<div class=\"lesson-step\"><strong>${index + 1}.</strong><span>${step}</span></div>`).join(\"\")}\n    </div>\n  `;\n}\n\nfunction renderConflictPanel() {\n  if (!appState.conflict) {\n    conflictPanel.innerHTML = `<div class=\"empty-state\">No current conflict. Try the \"How to read a conflict\" lesson if you want to see rollback in action.</div>`;\n    return;\n  }\n  conflictPanel.innerHTML = `\n    <div class=\"conflict-list\">\n      <article class=\"conflict-card\">\n        <span class=\"constraint-pill\">${appState.conflict.constraintType}</span>\n        <strong>${appState.conflict.constraintId}</strong>\n        <p>${appState.conflict.message}</p>\n        <p><strong>Involved:</strong> ${appState.conflict.rectIds.join(\", \") || \"scene\"}</p>\n      </article>\n    </div>\n  `;\n}\n\nfunction renderStatus() {\n  statusBanner.className = `status-banner ${appState.status.tone === \"conflict\" ? \"conflict\" : \"\"}`;\n  statusBanner.innerHTML = `<strong>${appState.status.title}</strong><p>${appState.status.detail}</p>`;\n}\n\nfunction renderReadouts() {\n  selectedReadout.textContent = selectedRect()?.id ?? \"None\";\n  rectCountReadout.textContent = String(appState.scene.rects.length);\n  freedomReadout.textContent = String(roughFreedomCount(appState.scene));\n}\n\nfunction renderConstraints() {\n  renderConstraintPanel({\n    container: constraintPanel,\n    scene: appState.scene,\n    onAddConstraint: (draft) => {\n      if (!draft.a) {\n        return;\n      }\n      if (draft.type !== \"inside\" && (!draft.b || draft.a === draft.b)) {\n        setStatus(\"conflict\", \"Constraint needs two rectangles\", \"Pick different A and B rectangles for pairwise rules.\");\n        render();\n        return;\n      }\n      const nextScene = cloneScene(appState.scene);\n      const nextConstraint = makeConstraint({\n        type: draft.type,\n        a: draft.a,\n        b: draft.type === \"inside\" ? \"\" : draft.b,\n        gap: draft.type === \"horizontal-gap\" ? draft.gap : 0,\n      });\n      nextScene.constraints.push(nextConstraint);\n      commitScene(nextScene, `Added ${formatConstraint(nextConstraint)}.`);\n    },\n    onRemoveConstraint: (constraintId) => {\n      const nextScene = cloneScene(appState.scene);\n      nextScene.constraints = nextScene.constraints.filter((constraint) => constraint.id !== constraintId);\n      commitScene(nextScene, `Removed ${constraintId}.`);\n    },\n  });\n}\n\nfunction render() {\n  renderCanvas();\n  renderLessons();\n  renderConstraints();\n  renderConflictPanel();\n  renderStatus();\n  renderReadouts();\n}\n\nfunction addRectangle() {\n  const nextScene = cloneScene(appState.scene);\n  const rect = makeRect();\n  nextScene.rects.push(rect);\n  appState.selectedRectId = rect.id;\n  commitScene(nextScene, `Added ${rect.id}.`);\n}\n\nfunction deleteSelectedRectangle() {\n  const rect = selectedRect();\n  if (!rect) {\n    return;\n  }\n  const nextScene = cloneScene(appState.scene);\n  nextScene.rects = nextScene.rects.filter((item) => item.id !== rect.id);\n  nextScene.constraints = nextScene.constraints.filter((constraint) => constraint.a !== rect.id && constraint.b !== rect.id);\n  appState.selectedRectId = nextScene.rects[0]?.id ?? null;\n  commitScene(nextScene, `Deleted ${rect.id} and removed dependent constraints.`);\n}\n\nfunction startInteraction(event, mode, rectId) {\n  const point = canvasPoint(event);\n  const rect = appState.scene.rects.find((item) => item.id === rectId);\n  if (!rect) {\n    return;\n  }\n  appState.selectedRectId = rectId;\n  interaction = {\n    mode,\n    rectId,\n    startPoint: point,\n    baseScene: cloneScene(appState.scene),\n    baseRect: { ...rect },\n  };\n  render();\n}\n\nfunction moveInteraction(event) {\n  if (!interaction) {\n    return;\n  }\n  const current = canvasPoint(event);\n  const dx = current.x - interaction.startPoint.x;\n  const dy = current.y - interaction.startPoint.y;\n  const nextScene = cloneScene(interaction.baseScene);\n  const rect = nextScene.rects.find((item) => item.id === interaction.rectId);\n  if (!rect) {\n    return;\n  }\n\n  if (interaction.mode === \"drag\") {\n    rect.x = interaction.baseRect.x + dx;\n    rect.y = interaction.baseRect.y + dy;\n  } else {\n    rect.width = Math.max(CANVAS.minRectSize, interaction.baseRect.width + dx);\n    rect.height = Math.max(CANVAS.minRectSize, interaction.baseRect.height + dy);\n  }\n\n  commitScene(nextScene, interaction.mode === \"drag\" ? `Moved ${rect.id}.` : `Resized ${rect.id}.`);\n}\n\nfunction stopInteraction() {\n  interaction = null;\n}\n\nsvg.addEventListener(\"pointerdown\", (event) => {\n  const target = event.target.closest(\"[data-role]\");\n  if (!target) {\n    appState.selectedRectId = null;\n    render();\n    return;\n  }\n  const rectId = target.dataset.rectId;\n  if (target.dataset.role === \"body\") {\n    startInteraction(event, \"drag\", rectId);\n  } else {\n    startInteraction(event, \"resize\", rectId);\n  }\n});\n\nwindow.addEventListener(\"pointermove\", (event) => {\n  if (interaction) {\n    moveInteraction(event);\n  }\n});\nwindow.addEventListener(\"pointerup\", stopInteraction);\nwindow.addEventListener(\"keydown\", (event) => {\n  if (event.key === \"Delete\" || event.key === \"Backspace\") {\n    deleteSelectedRectangle();\n  }\n});\n\naddRectButton.addEventListener(\"click\", addRectangle);\ndeleteRectButton.addEventListener(\"click\", deleteSelectedRectangle);\nresetSceneButton.addEventListener(\"click\", resetToStarterScene);\n\nloadScene(loadLessonScene(LESSONS[0].id), LESSONS[0].id, `${LESSONS[0].title} loaded. ${LESSONS[0].projectLink}`);\n";
+
+const stateUrl = URL.createObjectURL(new Blob([stateSource], { type: 'text/javascript' }));
+const solverUrl = URL.createObjectURL(new Blob([solverSource.replace('./state.js', stateUrl)], { type: 'text/javascript' }));
+const uiUrl = URL.createObjectURL(new Blob([uiSource], { type: 'text/javascript' }));
+const appCode = appSource
+  .replace('./state.js', stateUrl)
+  .replace('./solver_adapter.js', solverUrl)
+  .replace('./ui_constraints.js', uiUrl);
+const appUrl = URL.createObjectURL(new Blob([appCode], { type: 'text/javascript' }));
+import(appUrl);
+</script>
+</body>
+</html>

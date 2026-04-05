@@ -2,8 +2,208 @@
   "results": {
     "prolog_baseline": {
       "name": "prolog_baseline",
-      "passed": 4,
-      "failed": 9,
+      "passed": 13,
+      "failed": 0,
+      "total": 13,
+      "details": [
+        {
+          "test": "parent_direct",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "parent_variable",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "ancestor_direct_parent",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "ancestor_transitive",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "sibling",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "parent_not_exists",
+          "success": true,
+          "passed": false,
+          "expected": false,
+          "time": 0.0
+        },
+        {
+          "test": "permission_direct",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "permission_multiple_roles",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "permission_denied",
+          "success": true,
+          "passed": false,
+          "expected": false,
+          "time": 0.0009984970092773438
+        },
+        {
+          "test": "comparison_greater_than",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "arithmetic_is",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "three_hop_chain",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "negation_as_failure",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        }
+      ],
+      "accuracy": 1.0
+    },
+    "ir_compiled": {
+      "name": "ir_compiled",
+      "passed": 13,
+      "failed": 0,
+      "total": 13,
+      "details": [
+        {
+          "test": "parent_direct",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "parent_variable",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "ancestor_direct_parent",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "ancestor_transitive",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "sibling",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "parent_not_exists",
+          "success": true,
+          "passed": false,
+          "expected": false,
+          "time": 0.0
+        },
+        {
+          "test": "permission_direct",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0010008811950683594
+        },
+        {
+          "test": "permission_multiple_roles",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "permission_denied",
+          "success": true,
+          "passed": false,
+          "expected": false,
+          "time": 0.0
+        },
+        {
+          "test": "comparison_greater_than",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "arithmetic_is",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "three_hop_chain",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        },
+        {
+          "test": "negation_as_failure",
+          "success": true,
+          "passed": true,
+          "expected": true,
+          "time": 0.0
+        }
+      ],
+      "accuracy": 1.0
+    },
+    "lm_only": {
+      "name": "lm_only",
+      "passed": 8,
+      "failed": 5,
       "total": 13,
       "details": [
         {
@@ -71,41 +271,230 @@
         },
         {
           "test": "comparison_greater_than",
-          "success": false,
-          "passed": false,
+          "success": true,
+          "passed": true,
           "expected": true,
           "time": 0.0
         },
         {
           "test": "arithmetic_is",
-          "success": false,
-          "passed": false,
+          "success": true,
+          "passed": true,
           "expected": true,
           "time": 0.0
         },
         {
           "test": "three_hop_chain",
-          "success": false,
-          "passed": false,
+          "success": true,
+          "passed": true,
           "expected": true,
           "time": 0.0
         },
         {
           "test": "negation_as_failure",
-          "success": false,
-          "passed": false,
+          "success": true,
+          "passed": true,
           "expected": true,
           "time": 0.0
         }
       ],
-      "accuracy": 0.3076923076923077
-    },
-    "ir_compiled": {},
-    "lm_only": {}
+      "accuracy": 0.6153846153846154
+    }
   },
   "metrics": {},
   "summary": {
-    "baseline_accuracy": 0.3076923076923077,
-    "tests_run": 13
+    "baseline_accuracy": 1.0,
+    "tests_run": 39
+  },
+  "repeated_run_stats": {
+    "prolog_baseline": {
+      "mean_accuracy": 1.0,
+      "std_accuracy": 0.0,
+      "wilson_ci_95": [
+        0.7719,
+        1.0
+      ],
+      "n_runs": 5,
+      "timing_ms": {
+        "parent_direct": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "parent_variable": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "ancestor_direct_parent": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "ancestor_transitive": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "sibling": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "parent_not_exists": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_direct": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_multiple_roles": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_denied": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "comparison_greater_than": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "arithmetic_is": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "three_hop_chain": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "negation_as_failure": {
+          "mean_ms": 0.2032,
+          "std_ms": 0.4543
+        }
+      }
+    },
+    "ir_compiled": {
+      "mean_accuracy": 1.0,
+      "std_accuracy": 0.0,
+      "wilson_ci_95": [
+        0.7719,
+        1.0
+      ],
+      "n_runs": 5,
+      "timing_ms": {
+        "parent_direct": {
+          "mean_ms": 0.2001,
+          "std_ms": 0.4474
+        },
+        "parent_variable": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "ancestor_direct_parent": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "ancestor_transitive": {
+          "mean_ms": 0.2004,
+          "std_ms": 0.4481
+        },
+        "sibling": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "parent_not_exists": {
+          "mean_ms": 0.2015,
+          "std_ms": 0.4505
+        },
+        "permission_direct": {
+          "mean_ms": 0.1986,
+          "std_ms": 0.444
+        },
+        "permission_multiple_roles": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_denied": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "comparison_greater_than": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "arithmetic_is": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "three_hop_chain": {
+          "mean_ms": 0.1999,
+          "std_ms": 0.4471
+        },
+        "negation_as_failure": {
+          "mean_ms": 0.2001,
+          "std_ms": 0.4474
+        }
+      }
+    },
+    "lm_only": {
+      "mean_accuracy": 0.6153846153846154,
+      "std_accuracy": 0.0,
+      "wilson_ci_95": [
+        0.3552,
+        0.8229
+      ],
+      "n_runs": 5,
+      "timing_ms": {
+        "parent_direct": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "parent_variable": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "ancestor_direct_parent": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "ancestor_transitive": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "sibling": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "parent_not_exists": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_direct": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_multiple_roles": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "permission_denied": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "comparison_greater_than": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "arithmetic_is": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "three_hop_chain": {
+          "mean_ms": 0.0,
+          "std_ms": 0.0
+        },
+        "negation_as_failure": {
+          "mean_ms": 0.2002,
+          "std_ms": 0.4476
+        }
+      }
+    }
   }
 }

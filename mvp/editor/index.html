@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Draw With Constraints MVP</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="masthead">
+      <div class="masthead-copy">
+        <p class="eyebrow">Constraint Graphics MVP</p>
+        <h1>Draw with rules, then let the scene keep its promises.</h1>
+        <p class="lede">A small, inspectable homage to ThingLab: direct manipulation in the center, deterministic structure underneath, and an educational layer that introduces the larger NeSy project without forcing people through architecture first.</p>
+      </div>
+
+      <div class="masthead-tools">
+        <div class="button-row hero-actions">
+          <button id="add-rect-button" class="button button-primary" type="button">Add Rectangle</button>
+          <button id="delete-rect-button" class="button" type="button">Delete Selected</button>
+          <button id="reset-scene-button" class="button button-secondary" type="button">Starter Scene</button>
+        </div>
+        <div class="mini-stats hero-stats">
+          <div><span class="stat-label">Selected</span><strong id="selected-readout">None</strong></div>
+          <div><span class="stat-label">Rects</span><strong id="rect-count-readout">0</strong></div>
+          <div><span class="stat-label">Rough freedoms</span><strong id="freedom-readout">0</strong></div>
+        </div>
+        <p class="microcopy">For pairwise constraints, A is the source and B is the follower. Drag the source to see the solver propagate, not improvise.</p>
+      </div>
+    </header>
+
+    <div class="content-row">
+      <main class="workspace">
+        <section class="stage-card stage-card-main">
+          <div class="stage-header">
+            <div>
+              <p class="eyebrow">Canvas</p>
+              <h2>Single-page deterministic editor</h2>
+            </div>
+            <div class="stage-badges">
+              <span class="badge">Rectangles only</span>
+              <span class="badge">Five constraints</span>
+              <span class="badge">Conflict rollback</span>
+            </div>
+          </div>
+          <div class="canvas-shell">
+            <svg id="editor-canvas" viewBox="0 0 960 600" aria-label="Constraint editor canvas"></svg>
+          </div>
+        </section>
+
+        <section class="support-grid">
+          <article class="diagnostic-card status-card">
+            <p class="eyebrow">Solve Loop</p>
+            <div id="status-banner" class="status-banner"></div>
+          </article>
+
+          <article class="diagnostic-card lesson-focus-card">
+            <p class="eyebrow">Current Lesson</p>
+            <div id="lesson-detail" class="lesson-detail"></div>
+          </article>
+        </section>
+
+        <section class="lesson-tray panel-block">
+          <div class="section-heading lesson-heading">
+            <div>
+              <p class="eyebrow">Learn in 3 Minutes</p>
+              <h2>Short scenes that explain the whole project through interaction</h2>
+            </div>
+            <p class="lesson-heading-copy">The canvas stays primary; the lessons stay close enough to guide without crowding the stage.</p>
+          </div>
+          <div id="lesson-list" class="lesson-list lesson-list-scroll"></div>
+        </section>
+      </main>
+
+      <aside class="rail">
+        <section class="panel-block rail-block rail-constraints">
+          <div class="section-heading rail-heading">
+            <div>
+              <p class="eyebrow">Constraint Studio</p>
+              <h2>Compose the rules</h2>
+            </div>
+            <p>Add, inspect, or remove layout relationships.</p>
+          </div>
+          <div id="constraint-panel"></div>
+        </section>
+
+        <section class="panel-block rail-block rail-conflicts">
+          <div class="section-heading rail-heading">
+            <div>
+              <p class="eyebrow">Diagnostics</p>
+              <h2>Conflict feed</h2>
+            </div>
+            <p>Impossible scenes snap back to the last valid state.</p>
+          </div>
+          <div id="conflict-panel"></div>
+        </section>
+
+        <section class="panel-block rail-block theory-block">
+          <div class="section-heading rail-heading">
+            <div>
+              <p class="eyebrow">NeSy Contract</p>
+              <h2>Why this counts as neuro-symbolic</h2>
+            </div>
+          </div>
+          <p>The solver is the truth layer. It enforces explicit structure and rejects contradictions. A language model belongs above that layer, helping users express intent or understand what happened, but never bypassing validated operations.</p>
+        </section>
+      </aside>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

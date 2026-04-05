@@ -1,0 +1,547 @@
+:root {
+  --paper: #f7f1e3;
+  --paper-deep: #eadfca;
+  --ink: #1f1c17;
+  --muted: #6f6559;
+  --line: rgba(57, 44, 31, 0.18);
+  --line-soft: rgba(57, 44, 31, 0.09);
+  --accent: #b96033;
+  --olive: #54624d;
+  --teal: #2c6a74;
+  --crimson: #8f3a2f;
+  --panel: rgba(250, 246, 236, 0.84);
+  --shadow: 0 22px 56px rgba(52, 35, 21, 0.16);
+  --shadow-soft: 0 10px 24px rgba(52, 35, 21, 0.08);
+  --radius: 24px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(242, 207, 156, 0.48), transparent 25%),
+    radial-gradient(circle at 85% 18%, rgba(115, 150, 123, 0.18), transparent 18%),
+    linear-gradient(180deg, #f8f2e6 0%, #f0e4cf 45%, #ecdcbf 100%);
+}
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.masthead,
+.stage-card,
+.diagnostic-card,
+.rail-block,
+.lesson-tray {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+}
+
+.masthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 14px;
+  padding: 14px;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(44, 106, 116, 0.12), transparent 24%),
+    radial-gradient(circle at 82% 26%, rgba(185, 96, 51, 0.12), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42));
+}
+
+.content-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.masthead-copy,
+.masthead-tools,
+.rail-block,
+.lesson-tray,
+.stage-card,
+.diagnostic-card {
+  padding: 16px;
+}
+
+.masthead-copy {
+  flex: 1 1 520px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.18));
+  border: 1px solid var(--line-soft);
+}
+
+.masthead-tools {
+  flex: 1 1 360px;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 251, 244, 0.88), rgba(255, 251, 244, 0.52));
+  border: 1px solid var(--line-soft);
+}
+
+.workspace {
+  flex: 1 1 920px;
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.rail {
+  flex: 0 1 320px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-width: 280px;
+}
+
+.stage-card-main {
+  padding-bottom: 14px;
+}
+
+.stage-header,
+.section-heading,
+.button-row,
+.mini-stats,
+.stage-badges,
+.lesson-step,
+.constraint-row {
+  display: flex;
+  gap: 12px;
+}
+
+.stage-header,
+.section-heading,
+.constraint-row {
+  justify-content: space-between;
+  align-items: end;
+}
+
+.support-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.support-grid > * {
+  flex: 1 1 280px;
+}
+
+.canvas-shell {
+  position: relative;
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 28px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.88), rgba(246, 240, 228, 0.88)),
+    repeating-linear-gradient(90deg, rgba(57, 44, 31, 0.03) 0, rgba(57, 44, 31, 0.03) 1px, transparent 1px, transparent 48px),
+    repeating-linear-gradient(0deg, rgba(57, 44, 31, 0.03) 0, rgba(57, 44, 31, 0.03) 1px, transparent 1px, transparent 48px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.46);
+}
+
+.canvas-shell::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 24px;
+  pointer-events: none;
+  border: 1px solid rgba(185, 96, 51, 0.08);
+}
+
+#editor-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 22px;
+}
+
+.stage-badges {
+  flex-wrap: wrap;
+  justify-content: end;
+  align-items: center;
+}
+
+.hero-actions,
+.hero-stats {
+  flex-wrap: wrap;
+}
+
+.hero-stats {
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.hero-stats > div {
+  min-width: 78px;
+}
+
+.lesson-tray {
+  background:
+    linear-gradient(180deg, rgba(255, 253, 247, 0.86), rgba(255, 250, 242, 0.58)),
+    linear-gradient(135deg, rgba(44, 106, 116, 0.04), rgba(185, 96, 51, 0.08));
+}
+
+.lesson-heading {
+  align-items: start;
+}
+
+.lesson-heading-copy,
+.rail-heading p {
+  max-width: 16rem;
+  color: var(--muted);
+}
+
+.lesson-list {
+  display: grid;
+  gap: 12px;
+}
+
+.lesson-list-scroll {
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 260px);
+  overflow-x: auto;
+  padding-top: 10px;
+  padding-bottom: 2px;
+  scrollbar-width: thin;
+}
+
+.lesson-card,
+.status-banner,
+.lesson-detail,
+.conflict-card,
+.constraint-item,
+.empty-state {
+  border-radius: 20px;
+  border: 1px solid rgba(57, 44, 31, 0.11);
+  background: rgba(255, 255, 255, 0.74);
+  padding: 13px 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.lesson-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 164px;
+}
+
+.lesson-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -34% auto;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(44, 106, 116, 0.18), transparent 70%);
+}
+
+.lesson-card.active {
+  border-color: rgba(44, 106, 116, 0.4);
+  background: linear-gradient(180deg, rgba(44, 106, 116, 0.08), rgba(255, 255, 255, 0.86));
+}
+
+.lesson-card button {
+  margin-top: 12px;
+}
+
+.status-card {
+  background: linear-gradient(180deg, rgba(250, 246, 236, 0.92), rgba(248, 240, 225, 0.7));
+}
+
+.lesson-focus-card {
+  background: linear-gradient(180deg, rgba(255, 251, 244, 0.88), rgba(249, 243, 230, 0.68));
+}
+
+.rail-block {
+  background: linear-gradient(180deg, rgba(255, 251, 244, 0.88), rgba(247, 240, 226, 0.7));
+}
+
+.rail-heading {
+  align-items: start;
+}
+
+h1,
+h2,
+h3,
+.lesson-title {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+h1 {
+  font-size: clamp(1.95rem, 3vw, 3.15rem);
+  line-height: 0.96;
+  max-width: 11ch;
+}
+
+h2 {
+  font-size: 1.18rem;
+}
+
+p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.eyebrow,
+.constraint-pill,
+.badge,
+.stat-label,
+.lesson-meta,
+.microcopy {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.66rem;
+}
+
+.eyebrow,
+.stat-label,
+.lesson-meta,
+.microcopy {
+  color: var(--muted);
+}
+
+.lede {
+  margin-top: 10px;
+  max-width: 52ch;
+  font-size: 0.94rem;
+}
+
+.button-row {
+  flex-wrap: wrap;
+}
+
+.button {
+  border: 1px solid rgba(45, 31, 18, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  padding: 0.58rem 0.84rem;
+  font: inherit;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: transform 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.button:hover,
+.button:focus-visible {
+  transform: translateY(-1px);
+  border-color: rgba(44, 106, 116, 0.38);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 10px 18px rgba(44, 106, 116, 0.09);
+}
+
+.button-primary {
+  background: linear-gradient(135deg, #b96033, #cf8750);
+  color: #fffaf3;
+  border-color: transparent;
+}
+
+.button-secondary {
+  background: linear-gradient(135deg, rgba(84, 98, 77, 0.16), rgba(44, 106, 116, 0.16));
+}
+
+.mini-stats strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.96rem;
+}
+
+.badge,
+.constraint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0.3rem 0.58rem;
+  border-radius: 999px;
+  background: rgba(84, 98, 77, 0.12);
+  border: 1px solid rgba(84, 98, 77, 0.15);
+}
+
+.status-banner {
+  margin-top: 10px;
+  border-left: 4px solid var(--teal);
+}
+
+.status-banner.conflict,
+.conflict-card {
+  border-left: 4px solid var(--crimson);
+  background: rgba(143, 58, 47, 0.08);
+}
+
+.lesson-steps,
+.constraint-list,
+.conflict-list,
+.constraint-form {
+  display: grid;
+  gap: 10px;
+}
+
+.lesson-step {
+  justify-content: start;
+  align-items: start;
+}
+
+.constraint-row {
+  align-items: center;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid rgba(57, 44, 31, 0.15);
+  padding: 0.58rem 0.68rem;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
+  font: inherit;
+}
+
+.field input:focus,
+.field select:focus {
+  outline: 2px solid rgba(44, 106, 116, 0.24);
+  outline-offset: 1px;
+}
+
+.constraint-item,
+.conflict-card {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.empty-state {
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+.theory-block {
+  background:
+    linear-gradient(155deg, rgba(185, 96, 51, 0.08), rgba(84, 98, 77, 0.08)),
+    rgba(255, 255, 255, 0.48);
+}
+
+.canvas-stage {
+  fill: rgba(255, 252, 246, 0.96);
+  stroke: rgba(57, 44, 31, 0.16);
+  stroke-width: 2;
+}
+
+.constraint-line {
+  fill: none;
+  stroke: rgba(44, 106, 116, 0.42);
+  stroke-width: 2;
+  stroke-dasharray: 8 8;
+}
+
+.constraint-label {
+  font-size: 12px;
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+  fill: var(--teal);
+}
+
+.shape rect.body {
+  stroke: rgba(30, 24, 19, 0.28);
+  stroke-width: 2;
+  cursor: move;
+  transition: filter 120ms ease, stroke-width 120ms ease, transform 120ms ease;
+}
+
+.shape.selected rect.body {
+  stroke: var(--accent);
+  stroke-width: 3;
+  filter: drop-shadow(0 14px 22px rgba(185, 96, 51, 0.22));
+}
+
+.shape text {
+  font-size: 16px;
+  font-weight: 700;
+  fill: rgba(31, 28, 23, 0.84);
+  pointer-events: none;
+}
+
+.resize-handle {
+  fill: #fffaf3;
+  stroke: var(--ink);
+  stroke-width: 2;
+  cursor: nwse-resize;
+}
+
+.canvas-caption {
+  font-size: 11px;
+  fill: rgba(111, 101, 89, 0.75);
+}
+
+@media (max-width: 1260px) {
+  .rail {
+    flex: 1 1 100%;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 920px) {
+  .content-row,
+  .masthead {
+    flex-direction: column;
+  }
+
+  .rail,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .shell {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+  }
+
+  .stage-header,
+  .section-heading {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .lesson-heading-copy,
+  .rail-heading p {
+    max-width: none;
+  }
+
+  .rail {
+    min-width: 0;
+  }
+}
