@@ -7,7 +7,7 @@
 
 ### Phase 1: Core Infrastructure
 - [x] Project structure and scaffolding
-- [x] Architecture documentation (ARCHITECTURE.md)
+- [x] Architecture documentation (architecture.md)
 - [x] Prolog engine (pure Python)
   - [x] Term/Clause representation
   - [x] Unification algorithm with occurs check
@@ -66,7 +66,7 @@
 - [x] Integration with SemanticPrologSkill
   - [x] Automatic failure explanation in query responses
   - [x] Structured error feedback for LLM agents
-- [x] Complete documentation (docs/FAILURE_EXPLANATIONS.md)
+- [x] Complete documentation (docs/failure-explanations.md)
 
 ### Phase 6: Comprehensive Testing ✅ COMPLETED
 - [x] Core engine tests (**21 tests** in `tests/test_engine.py`)
@@ -106,7 +106,7 @@
   - [x] Runnable code examples
 - [x] Documentation Updates
   - [x] README with learning path for newcomers
-  - [x] FAILURE_EXPLANATIONS.md (comprehensive guide)
+  - [x] failure-explanations.md (comprehensive guide)
   - [x] All demo scripts enhanced with explanations
   - [x] Clear "Try this first" recommendations
 
@@ -164,4 +164,4 @@
 
 ## Next Steps
 
-For future priorities and development plans, see [ROADMAP.md](ROADMAP.md).
+For future priorities and development plans, see [roadmap.md](roadmap.md).

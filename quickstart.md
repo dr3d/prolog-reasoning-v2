@@ -41,9 +41,9 @@ prolog/                # Prolog knowledge bases
   └── core.pl          # Base rules (family, access, etc.)
 
 docs/                  # Documentation
-  ├── ARCHITECTURE.md          # Full system design
-  ├── AGENT_INTEGRATION.md     # Agent framework integration
-  └── SEMANTIC_GROUNDING.md    # NL processing guide
+  ├── architecture.md          # Full system design
+  ├── agent-integration.md     # Agent framework integration
+  └── semantic-grounding.md    # NL processing guide
 ```
 
 ## Key Components
@@ -334,6 +334,6 @@ cat data/evaluation_report.json
 ## Contributing
 
 - Add tests for new features
-- Update ARCHITECTURE.md for design changes
+- Update architecture.md for design changes
 - Keep engine pure Python (no external deps)
 - Document changes in docstrings

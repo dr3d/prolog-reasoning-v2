@@ -97,7 +97,7 @@ python scripts/demonstrate_failures.py
 
 ## Architecture
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for full design.
+See [architecture.md](architecture.md) for full design.
 
 Key layers:
 1. **Prolog Engine** — Pure Python interpreter with unification and backtracking
@@ -145,7 +145,7 @@ Capabilities:
 - Session-based fact management
 
 Resources:
-- [LM Studio MCP Guide](docs/LM_STUDIO_MCP_GUIDE.md)
+- [LM Studio MCP Guide](docs/lm-studio-mcp-guide.md)
 - [Course 04: Local LLM + MCP Integration](training/04-lm-studio-mcp.md)
 
 ## Constraint Propagation
@@ -309,9 +309,9 @@ python data/evaluate.py
 
 ## Project Status
 
-For current implementation status, see [STATUS.md](STATUS.md).
+For current implementation status, see [status.md](status.md).
 
-For future priorities and planned work, see [ROADMAP.md](ROADMAP.md).
+For future priorities and planned work, see [roadmap.md](roadmap.md).
 
 ## Experimental: Constraint-Based Graphics Editor
 
@@ -319,8 +319,9 @@ Status: early exploratory prototype, not production-ready.
 
 This explores whether the constraint propagation layer can support a graphics editor with rule-based layout behavior.
 
-- [Constraint Editor MVP Playbook](docs/CONSTRAINT_EDITOR_MVP_PLAYBOOK.md)
-- [MVP Results & UX Feedback](CODEX_MVP_RESULTS.md)
+- [Constraint Editor MVP Playbook](docs/constraint-editor-mvp-playbook.md)
+
+Local handoff notes for MVP iterations are kept outside published docs.
 
 This is not the main focus of the project.
 

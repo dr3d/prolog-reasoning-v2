@@ -298,6 +298,6 @@ The Failure Explanation Layer isn't just about telling you something broke—it'
 
 ## See Also
 
-- [Semantic Grounding Documentation](SEMANTIC_GROUNDING.md) - NL→Prolog conversion
-- [Semantic Validator Documentation](SEMANTIC_GROUNDING.md#validation) - Pre-execution checking
-- [Agent Integration Documentation](AGENT_INTEGRATION.md) - Using this with LLM agents
+- [Semantic Grounding Documentation](semantic-grounding.md) - NL→Prolog conversion
+- [Semantic Validator Documentation](semantic-grounding.md#validation) - Pre-execution checking
+- [Agent Integration Documentation](agent-integration.md) - Using this with LLM agents

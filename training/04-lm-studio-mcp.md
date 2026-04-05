@@ -446,7 +446,7 @@ You now have:
 2. **[02 - Knowledge Bases 101](02-knowledge-bases-101.md)** - How to structure facts
 3. **[03 - Learning from Failures](03-learning-from-failures.md)** - Error handling
 4. **[04 - This Course!](04-lm-studio-mcp.md)** - Putting it all together
-5. **[LM Studio MCP Guide](../docs/LM_STUDIO_MCP_GUIDE.md)** - Technical details
+5. **[LM Studio MCP Guide](../docs/lm-studio-mcp-guide.md)** - Technical details
 
 ---
 

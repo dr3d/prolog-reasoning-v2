@@ -128,6 +128,7 @@
 
 ---
 
+
 ### Tier 3: Advanced Features (Q4 2026 / 2027)
 
 #### 3.1 Constraint Graph Visualizer

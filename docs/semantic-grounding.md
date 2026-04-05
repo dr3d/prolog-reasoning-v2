@@ -292,4 +292,4 @@ This semantic grounding layer enables:
 - **Hybrid Reasoning**: Combining neural and symbolic approaches
 
 The system provides a bridge between human language and formal logic, enabling more intuitive and powerful AI agents.</content>
-<parameter name="filePath">d:\_PROJECTS\prolog-reasoning-v2\docs\SEMANTIC_GROUNDING.md
+<parameter name="filePath">d:\_PROJECTS\prolog-reasoning-v2\docs\semantic-grounding.md

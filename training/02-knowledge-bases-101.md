@@ -300,7 +300,7 @@ AI gets accurate answers AND knows why
 
 1. **Run the example:** `python scripts/demonstrate_semantic.py`
 2. **Try the validation demo:** `python scripts/demonstrate_failures.py`
-3. **Read deeper:** Check out `docs/SEMANTIC_GROUNDING.md`
+3. **Read deeper:** Check out `docs/semantic-grounding.md`
 4. **Course 3 (coming soon):** Learn how to handle mistakes when they happen
 
 ---

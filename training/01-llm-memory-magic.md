@@ -174,7 +174,7 @@ Imagine:
 ---
 
 *Built with ❤️ for AI students and enthusiasts*  
-*Technical deep dive: Check ARCHITECTURE.md for the research details!*
+*Technical deep dive: Check architecture.md for the research details!*
 
 ---
 

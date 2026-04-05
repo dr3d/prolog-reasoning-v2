@@ -379,9 +379,9 @@ The LLM can now query your custom knowledge!
 
 ### Technical Documentation
 
-- **[ARCHITECTURE.md](../ARCHITECTURE.md)** - System design
-- **[SEMANTIC_GROUNDING.md](../docs/SEMANTIC_GROUNDING.md)** - NL processing
-- **[FAILURE_EXPLANATIONS.md](../docs/FAILURE_EXPLANATIONS.md)** - Error handling
+- **[architecture.md](../architecture.md)** - System design
+- **[semantic-grounding.md](semantic-grounding.md)** - NL processing
+- **[failure-explanations.md](failure-explanations.md)** - Error handling
 
 ---
 
