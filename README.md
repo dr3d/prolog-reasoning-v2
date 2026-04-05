@@ -313,6 +313,11 @@ For current implementation status, see [status.md](status.md).
 
 For future priorities and planned work, see [roadmap.md](roadmap.md).
 
+Current architecture design notes:
+- [Ontology Context Routing Spec](docs/ontology-context-routing-spec.md)
+- [Memory Ingestion and Revision Notes](docs/memory-ingestion-and-revision-notes.md)
+- [Pre-Thinker Control Plane](docs/pre-thinker-control-plane.md)
+
 ## Experimental: Constraint-Based Graphics Editor
 
 Status: early exploratory prototype, not production-ready.

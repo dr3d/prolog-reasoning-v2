@@ -72,6 +72,7 @@
 Reference spec:
 - `docs/ontology-context-routing-spec.md`
 - `docs/memory-ingestion-and-revision-notes.md`
+- `docs/pre-thinker-control-plane.md`
 
 #### 2.1 Soft-Fail Buffer Zone
 **Why**: Real-world data is "fuzzy." Rigid IR validation causes loss of signal.
@@ -150,6 +151,9 @@ Reference spec:
 - [ ] Add context-shift benchmark cases
 - [ ] Implement according to `docs/ontology-context-routing-spec.md`
 
+**Effort**: 4-6 days  
+**Release**: v2.9
+
 ---
 
 #### 2.5 Memory Ingestion and Revision
@@ -171,11 +175,6 @@ Reference spec:
 
 **Effort**: 5-7 days  
 **Release**: v2.10
-
-**Effort**: 4-6 days  
-**Release**: v2.9
-
----
 
 ---
 
