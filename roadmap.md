@@ -71,6 +71,7 @@
 
 Reference spec:
 - `docs/ontology-context-routing-spec.md`
+- `docs/memory-ingestion-and-revision-notes.md`
 
 #### 2.1 Soft-Fail Buffer Zone
 **Why**: Real-world data is "fuzzy." Rigid IR validation causes loss of signal.
@@ -106,6 +107,7 @@ Reference spec:
 - [ ] Return structured report: `{conflict: ..., fact1: ..., fact2: ..., timestamp_delta: ...}`
 - [ ] Add tests: `tests/test_auditor.py`
 - [ ] Integration example in `scripts/audit_kb.py`
+- [ ] Add support for `retract` / `supersede` workflows described in `docs/memory-ingestion-and-revision-notes.md`
 
 **Effort**: 2-3 days  
 **Release**: v2.5
@@ -147,6 +149,28 @@ Reference spec:
 - [ ] Add context metadata to assertion and response payloads
 - [ ] Add context-shift benchmark cases
 - [ ] Implement according to `docs/ontology-context-routing-spec.md`
+
+---
+
+#### 2.5 Memory Ingestion and Revision
+**Why**: Fact capture is not binary; the system needs tentative memory, correction handling, and lightweight backtracking semantics.
+
+**Scope**:
+- Add tentative memory class for uncertain factual statements
+- Add reversible memory journal operations (`assert`, `tentative`, `confirm`, `retract`, `supersede`)
+- Detect user correction cues and route them as explicit memory operations
+- Keep deterministic hard-fact reasoning separate from uncertain capture
+
+**Tasks**:
+- [ ] Add statement classification layer for hard fact / tentative / session / preference / hypothesis
+- [ ] Add tentative memory store and promotion rules
+- [ ] Add correction cue detection and routing
+- [ ] Add event journal schema for reversible memory operations
+- [ ] Integrate with contradiction auditor and ontology routing
+- [ ] Implement according to `docs/memory-ingestion-and-revision-notes.md`
+
+**Effort**: 5-7 days  
+**Release**: v2.10
 
 **Effort**: 4-6 days  
 **Release**: v2.9
