@@ -21,9 +21,35 @@ This is a research-grade implementation addressing context decay in agent memory
 **New to LLMs and wondering how this helps with forgetful AI?**  
 Check out our **[Training & Course Library](training/)** - designed for complete beginners:
 - **[LLM Memory Magic](training/01-llm-memory-magic.md)** - Why AI forgets and how we fix it (30 min read)
-- More courses coming on knowledge graphs, reliable chatbots, and advanced NeSy techniques
+- **[Knowledge Bases 101](training/02-knowledge-bases-101.md)** - How to structure facts reliably (25 min)
+- **[Learning from Failures](training/03-learning-from-failures.md)** - Understanding and fixing errors (20 min)
+- **[AI Superpowers: Local LLM + MCP](training/04-lm-studio-mcp.md)** - Use with LM Studio (15 min) ⭐ NEW!
+- More advanced courses coming soon on knowledge graphs, self-correcting AI, and production systems
 - All courses include code you can run right now
 - Perfect for sharing on Twitter/X with pre-made metadata
+
+## 🔧 Use with LM Studio (Local LLMs)
+
+**Want to give your local LLM perfect memory and logic?** Using MCP (Model Context Protocol):
+
+```bash
+# 1. Start the MCP server
+python src/mcp_server.py --stdio
+
+# 2. Configure LM Studio (see guide below)
+# 3. Chat with your local LLM - it now has reliable reasoning!
+```
+
+**Your LLM can now:**
+- ✅ Query knowledge bases with 100% accuracy
+- ✅ Reason about facts without hallucinating
+- ✅ Explain errors and suggest fixes
+- ✅ Keep perfect memory of your data
+
+👉 **[Full LM Studio MCP Guide](docs/LM_STUDIO_MCP_GUIDE.md)** - Step-by-step setup instructions  
+👉 **[Course 04: AI Superpowers](training/04-lm-studio-mcp.md)** - Beginner-friendly tutorial
+
+---
 
 ## The Problem
 

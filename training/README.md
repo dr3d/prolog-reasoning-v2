@@ -58,16 +58,31 @@ Learn to read error messages like a detective, understand why systems fail, and 
 
 **Best For:** Anyone who's gotten a confusing error message, developers building AI products, people learning system design
 
+#### [04 - AI Superpowers: Giving Your Local LLM Perfect Memory via MCP](04-lm-studio-mcp.md)
+**Duration:** 15 minutes | **Domain:** LLM Tools & Integration | **Level:** Beginner
+
+Learn how to set up and use Prolog Reasoning with LM Studio to give your local language model perfect logical reasoning and memory. This is your practical "how-to" for creating professional-grade AI systems!
+
+**Topics:**
+- What MCP is and why it matters
+- Step-by-step LM Studio setup (5 simple steps!)
+- Real examples: medical, access control, home automation
+- Building your own knowledge base
+- Troubleshooting common issues
+- Common mistakes and how to avoid them
+
+**Best For:** Anyone with LM Studio installed, builders of local AI systems, people who want their AI to remember things perfectly
+
 ---
 
 ### **Level 2: Intermediate**
 *Coming Soon*
 
 We're planning courses on:
-- **04 - Iterative Repair: Self-Correcting AI** - Systems that learn from each mistake
-- **05 - Building Reliable Chatbots** - Making AI you can trust
-- **06 - Knowledge Graph Mastery** - Structuring complex relationships
-- **07 - Rule-Based Reasoning** - When logic matters most
+- **05 - Iterative Repair: Self-Correcting AI** - Systems that learn from each mistake
+- **06 - Building Reliable Chatbots** - Making AI you can trust
+- **07 - Knowledge Graph Mastery** - Structuring complex relationships
+- **08 - Rule-Based Reasoning** - When logic matters most
 
 ---
 
