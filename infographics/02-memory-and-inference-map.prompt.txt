@@ -1,0 +1,54 @@
+Create a clean technical infographic (16:9, high-resolution, neutral color palette) titled:
+"Two Memory Systems, Two Inference Systems"
+
+Style:
+- professional systems architecture poster
+- subtle gradients, soft shadows, no cartoon style
+- modern sans-serif typography, readable labels
+- visually balanced with clear directional flow arrows
+
+Core structure (must include):
+1) Left: "User Turn / Conversation"
+2) Center top: "Memory A: Active Conversation Memory (Short-term)"
+   - recent turns
+   - session goals
+   - active ontology context
+3) Center middle: "Inference A: Neural/Semantic Inference"
+   - intent parsing
+   - entity grounding
+   - context routing
+4) Center bottom: "Memory B: Symbolic Fact Memory (Long-term)"
+   - Prolog facts and rules
+   - context tags / metadata
+   - manifest and schema constraints
+5) Right middle: "Inference B: Symbolic/Deterministic Inference"
+   - backward chaining
+   - constraint propagation
+   - proof traces / failure traces
+6) Right: "Output"
+   - deterministic answer
+   - explanation/failure guidance
+
+Flow requirements:
+- User Turn -> Active Conversation Memory
+- Active Conversation Memory -> Neural/Semantic Inference
+- Neural/Semantic Inference -> Symbolic Fact Memory (scoped retrieval/write)
+- Symbolic Fact Memory -> Symbolic/Deterministic Inference
+- Symbolic/Deterministic Inference -> Output
+- Output -> back to Conversation loop
+- Conversation loop -> write validated facts back to Symbolic Fact Memory
+
+Visual emphasis:
+- Show that short-term memory guides focus, long-term memory stores truth
+- Show that neural inference routes and interprets, symbolic inference proves
+- Include small legend:
+  - blue = memory
+  - orange = inference
+  - green = outputs
+
+Text footer:
+"Focus from context. Reliability from proofs."
+
+Output:
+- transparent background version and white background version
+- save as PNG

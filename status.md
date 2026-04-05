@@ -165,3 +165,5 @@
 ## Next Steps
 
 For future priorities and development plans, see [roadmap.md](roadmap.md).
+
+Ontology-context routing draft spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md).

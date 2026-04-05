@@ -69,6 +69,9 @@
 
 ### Tier 2: Extended Capabilities (Q3 2026)
 
+Reference spec:
+- `docs/ontology-context-routing-spec.md`
+
 #### 2.1 Soft-Fail Buffer Zone
 **Why**: Real-world data is "fuzzy." Rigid IR validation causes loss of signal.
 
@@ -125,6 +128,30 @@
 
 **Effort**: 2-3 days (cache), 5-7 days (local classifier)  
 **Release**: v2.6 (cache) or v2.7 (classifier)
+
+---
+
+#### 2.4 Ontology Context Routing
+**Why**: Conversations shift across domain contexts; retrieval and fact storage should follow the active context.
+
+**Scope**:
+- Add ontology registry with prose profiles and taxonomy metadata
+- Route each turn to an active context with confidence
+- Apply scoped retrieval (strict/soft/recovery)
+- Tag asserted facts with context metadata and log transitions
+
+**Tasks**:
+- [ ] Add ontology registry model and storage format
+- [ ] Implement context router (lexical + continuity signals)
+- [ ] Implement scoped retrieval policy with fallback behavior
+- [ ] Add context metadata to assertion and response payloads
+- [ ] Add context-shift benchmark cases
+- [ ] Implement according to `docs/ontology-context-routing-spec.md`
+
+**Effort**: 4-6 days  
+**Release**: v2.9
+
+---
 
 ---
 
@@ -243,7 +270,7 @@ Practical actions to support adoption and community.
 |---|---|---|
 | **Now → May 2026** | Temporal logic, split deps, multi-session isolation | v2.1–2.3 |
 | **May → Aug 2026** | Soft-fail buffer, auditor, typed templates | v2.4–2.8 |
-| **Aug → Nov 2026** | NL latency improvements, ReadMe refresh | v2.6–2.7 |
+| **Aug → Nov 2026** | NL latency improvements, ontology context routing | v2.6–2.9 |
 | **Q4 2026** | Fact graph visualizer, recursive refinement | v3.0–3.1 |
 | **2027+** | DCG, CLP, module system (if demand) | v4.0+ |
 
