@@ -67,7 +67,7 @@ python src/mcp_server.py
 python src/mcp_server.py --stdio
 ```
 
-This is what LM Studio will use. It reads JSON requests from stdin and writes responses to stdout.
+This is the transport LM Studio will use. In normal use, LM Studio should launch this process for you from `mcp.json` rather than you keeping it running manually in a separate terminal.
 
 ---
 
@@ -82,21 +82,31 @@ This is what LM Studio will use. It reads JSON requests from stdin and writes re
 
 ### Step 2b: Add the Prolog Server
 
-Add this configuration to your `servers` list:
+Add this configuration to your `servers` list. Replace `<PYTHON_EXE>` with the Python interpreter from the environment where you installed this repo's dependencies, and replace `<REPO_ROOT>` with your clone path:
 
 ```json
 {
-  "servers": {
+  "mcpServers": {
     "prolog-reasoning": {
-      "command": "python",
-      "args": ["C:\\path\\to\\prolog-reasoning-v2\\src\\mcp_server.py", "--stdio"],
-      "disabled": false
+      "command": "<PYTHON_EXE>",
+      "args": [
+        "<REPO_ROOT>\\src\\mcp_server.py",
+        "--stdio",
+        "--kb-path",
+        "<REPO_ROOT>\\prolog\\core.pl"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
     }
   }
 }
 ```
 
-**Note:** Replace `C:\\path\\to\\prolog-reasoning-v2` with your actual installation path.
+**Examples for `<PYTHON_EXE>`**:
+- Windows global Python: `C:\\Users\\<YourUsername>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe`
+- Windows virtualenv Python: `C:\\path\\to\\your\\env\\Scripts\\python.exe`
+- macOS/Linux virtualenv Python: `/path/to/your/env/bin/python`
 
 ### Step 2c: Test the Connection
 
@@ -298,8 +308,8 @@ python src/mcp_server.py --test
 # Use full path to Python
 C:\Users\<YourUsername>\AppData\Local\Programs\Python\Python312\python.exe src/mcp_server.py --stdio
 
-# Or in virtual environment:
-.venv\Scripts\python.exe src/mcp_server.py --stdio
+# Or use the Python executable from the environment where you installed
+# this repo's dependencies.
 ```
 
 ### Problem: LLM calls tool but gets "undefined entity" for everything

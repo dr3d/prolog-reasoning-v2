@@ -153,7 +153,28 @@ To expose the system to a local LLM through MCP:
 python src/mcp_server.py --stdio
 ```
 
-Then configure your MCP client or LM Studio to call it.
+For LM Studio, the app should launch the server for you from `mcp.json`. Replace `<PYTHON_EXE>` with the Python interpreter from the environment where you installed this repo's dependencies, and replace `<REPO_ROOT>` with wherever you cloned this repo:
+
+```json
+{
+  "mcpServers": {
+    "prolog-reasoning": {
+      "command": "<PYTHON_EXE>",
+      "args": [
+        "<REPO_ROOT>\\src\\mcp_server.py",
+        "--stdio",
+        "--kb-path",
+        "<REPO_ROOT>\\prolog\\core.pl"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}
+```
+
+LM Studio then owns the stdio process; you do not need to keep `mcp_server.py --stdio` running in a separate terminal.
 
 Relevant references:
 
