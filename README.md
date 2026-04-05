@@ -16,6 +16,14 @@
 
 This is a research-grade implementation addressing context decay in agent memory through deterministic symbolic reasoning.
 
+## New Product Direction: Constraint-Based Graphic Editor
+
+If you want a tangible "wow" use case for this stack, see:
+
+- [Constraint Editor MVP Playbook](docs/CONSTRAINT_EDITOR_MVP_PLAYBOOK.md)
+
+It outlines a low-friction path to a modern vector editor with rule-based layout behavior (graphical spreadsheet style), plus a second-track "music rules" MVP concept using the same propagation engine.
+
 ## 🚀 Quick Start for New AI Enthusiasts
 
 **New to LLMs and wondering how this helps with forgetful AI?**  
