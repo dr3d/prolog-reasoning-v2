@@ -1,6 +1,6 @@
 # Prolog Reasoning v2 — Session Tracker
 
-This file is now a compact index. Full narrative history lives in session parts.
+This file is a compact public summary of recent project state.
 
 ## Current Snapshot
 
@@ -10,13 +10,8 @@ This file is now a compact index. Full narrative history lives in session parts.
 - Latest actions: Fixed lm_only to preserve user-supplied rules; added Wilson CI + timing stats; fixed engine variable collision bug; implemented findall/3
 - Next priority: Roadmap based on external critique (Gemini); candidate projects include temporal logic, multi-session isolation, soft-fail buffer zone, fact auditor
 
-## Session History (Long Form)
-
-- [Session Log Structure](docs/sessions/README.md)
-- [2026 Part 01](docs/sessions/parts/2026-part-01.md)
-
 ## Usage Notes
 
 1. Keep this file short and current.
-2. Add detailed session write-ups to `docs/sessions/parts/`.
-3. Start a new part file when the active part becomes unwieldy.
+2. Keep this file focused on current state, not narrative history.
+3. Long-form working notes can stay local and do not need to be published.
