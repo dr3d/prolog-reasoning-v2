@@ -27,6 +27,24 @@ This repository explores a stricter contract:
 - use natural language only as an interface layer
 - explain failures instead of hiding them
 
+## Help It Grow
+
+If you want to help this repo "sprout legs," start here:
+
+- Collaboration map and idea prompts: [docs/research/collaboration-map.md](docs/research/collaboration-map.md)
+
+If you have a great idea to improve it: pull the repo, load it up with your AI
+of choice, play around, ask it to explain things, try your own ideas, and map
+the dead ends and unexplored crevices that lead to better solutions.
+
+We are especially interested in collaborators who want to improve:
+
+- grounding quality (NL -> IR)
+- fact intake and memory curation
+- reproducible benchmarks
+- real domain case studies
+- agent workflow reliability
+
 ## What This Project Is
 
 This repo is best understood in three layers:
@@ -115,6 +133,7 @@ python data/evaluate.py
 - Split-note compatibility stubs: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md), [docs/write-path-spec.md](docs/write-path-spec.md)
 - LM Studio classifier evaluation: [docs/research/lmstudio-classifier-matrix.md](docs/research/lmstudio-classifier-matrix.md)
 - Pre-thinker LoRA playbook: [docs/research/prethinker-lora-playbook.md](docs/research/prethinker-lora-playbook.md)
+- Collaboration lanes and idea prompts: [docs/research/collaboration-map.md](docs/research/collaboration-map.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)
 - Ontology routing spec (secondary track): [docs/secondary/ontology-context-routing-spec.md](docs/secondary/ontology-context-routing-spec.md)
 

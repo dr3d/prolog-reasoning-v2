@@ -44,6 +44,7 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 
 - [research/lmstudio-classifier-matrix.md](research/lmstudio-classifier-matrix.md): local-model classifier matrix findings.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
+- [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
 - [research/stretch-logic-scenarios.md](research/stretch-logic-scenarios.md): larger and more ambitious scenario ideas.
 - [research/neuro-symbolic-2026-landscape.md](research/neuro-symbolic-2026-landscape.md): landscape review framing.
 - [research/neuro-symbolic-2026-stack-pitch.md](research/neuro-symbolic-2026-stack-pitch.md): implementation pitch framing.

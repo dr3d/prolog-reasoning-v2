@@ -4,6 +4,7 @@ This folder holds exploratory framing and evaluation notes that inform direction
 
 - `lmstudio-classifier-matrix.md`: local model behavior comparisons for classifier/control-plane prompts.
 - `prethinker-lora-playbook.md`: practical plan for when to use stateless pre-thinker baselines vs LoRA fine-tuning.
+- `collaboration-map.md`: contribution lanes and open idea prompts for new collaborators.
 - `stretch-logic-scenarios.md`: trimmed appendix of advanced scenario ideas (canonical practical scenarios live in `docs/uses-and-scenarios.md`).
 - `neuro-symbolic-2026-landscape.md`: landscape-style synthesis and cautions.
 - `neuro-symbolic-2026-stack-pitch.md`: implementation-oriented positioning narrative.
