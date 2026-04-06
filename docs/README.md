@@ -6,7 +6,7 @@ This folder is the human-facing map of the project: setup, demos, design notes, 
 
 - [lm-studio-mcp-guide.md](lm-studio-mcp-guide.md): LM Studio + MCP setup and usage.
 - [mcp-chat-playbooks.md](mcp-chat-playbooks.md): copy/paste chat playbooks for deterministic tool use.
-- [index.html](index.html): default docs landing page (now routes to fantasy simulation).
+- [index.html](index.html): default docs landing page with project intro and primary demo links.
 - [docs-hub.html](docs-hub.html): styled docs hub page.
 
 ## Live Demo Artifacts
