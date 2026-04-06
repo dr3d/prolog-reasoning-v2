@@ -1,6 +1,6 @@
 # Development Status
 
-**Last Updated**: April 5, 2026  
+**Last Updated**: April 6, 2026  
 **Status**: Core logic layer is solid; fact intake and memory curation are the next serious build.
 
 ## Project Spine
@@ -67,7 +67,7 @@ Current suite:
 - MVP validation test
 - MCP server tests
 
-**Current total:** `72 passed`
+**Current total:** `84 passed`
 
 The only recurring warning is the existing `.pytest_cache` permission warning on
 Windows.

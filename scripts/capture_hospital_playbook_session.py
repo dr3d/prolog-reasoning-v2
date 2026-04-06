@@ -26,6 +26,55 @@ DEFAULT_MODEL = "qwen/qwen3.5-9b"
 DEFAULT_INTEGRATION = "mcp/prolog-reasoning"
 
 
+def _daily_ops_examples() -> list[dict[str, Any]]:
+    """Illustrative chat-first prompts that feel like live control-room use."""
+    return [
+        {
+            "title": "Morning Standup",
+            "question": "What can safely start this morning, and what is still waiting?",
+            "tool_calls": [
+                {"tool": "query_rows", "arguments": {"query": "safe_to_start(Task)."}},
+                {"tool": "query_rows", "arguments": {"query": "waiting_on(Task, Prereq)."}},
+            ],
+            "answer": (
+                "Ready now includes enclosure_glazing, roofing, and other tasks with satisfied prerequisites. "
+                "Most downstream work is still waiting on interior_buildout and then regulatory_inspection."
+            ),
+        },
+        {
+            "title": "Supplier Delay Update",
+            "question": "If the glass vendor is delayed today, what milestones are impacted first?",
+            "tool_calls": [
+                {"tool": "retract_fact", "arguments": {"fact": "supplier_status(glass_vendor, on_time)."}},
+                {"tool": "assert_fact", "arguments": {"fact": "supplier_status(glass_vendor, delayed)."}},
+                {"tool": "query_rows", "arguments": {"query": "blocked_task(Task, Supplier)."}},
+                {"tool": "query_rows", "arguments": {"query": "delayed_milestone(Milestone, Supplier)."}},
+            ],
+            "answer": (
+                "The first direct blocker is enclosure_glazing, and that propagates to regulatory_inspection, "
+                "occupancy_permit, and go_live through the critical dependency chain."
+            ),
+        },
+        {
+            "title": "End-of-Day Recovery",
+            "question": "We recovered glazing and completed rough-in items. What changed for tomorrow's plan?",
+            "tool_calls": [
+                {"tool": "retract_fact", "arguments": {"fact": "supplier_status(glass_vendor, delayed)."}},
+                {"tool": "assert_fact", "arguments": {"fact": "supplier_status(glass_vendor, on_time)."}},
+                {"tool": "assert_fact", "arguments": {"fact": "completed(enclosure_glazing)."}},
+                {"tool": "assert_fact", "arguments": {"fact": "completed(mep_rough_in)."}},
+                {"tool": "assert_fact", "arguments": {"fact": "completed(fireproofing)."}},
+                {"tool": "query_rows", "arguments": {"query": "safe_to_start(Task)."}},
+                {"tool": "query_rows", "arguments": {"query": "task_status(Task, Status)."}},
+            ],
+            "answer": (
+                "The ready set expands and several previously waiting tasks move into executable status. "
+                "Milestone risk decreases because no supplier remains in delayed state."
+            ),
+        },
+    ]
+
+
 def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[str, Any]:
     body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(url=url, data=body, method="POST")
@@ -46,11 +95,11 @@ def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[s
 def _user_prompt(step: str) -> str:
     prompts = {
         "reset": (
-            "Use ONLY reset_runtime_kb. Confirm success in one sentence."
+            "Use ONLY reset_kb. Confirm success in one sentence."
         ),
         "ingest": (
-            "Use bulk_assert_facts_raw with the full fact list below.\n"
-            "Then run query_prolog_rows_raw counts for:\n"
+            "Use bulk_assert_facts with the full fact list below.\n"
+            "Then run query_rows counts for:\n"
             "- task(Task).\n"
             "- depends_on(Task, Prereq).\n"
             "- task_supplier(Task, Supplier).\n"
@@ -115,7 +164,7 @@ def _user_prompt(step: str) -> str:
             "milestone(go_live).\n"
         ),
         "baseline": (
-            "Use ONLY query_prolog_rows_raw for these exact queries and return markdown tables plus row counts:\n"
+            "Use ONLY query_rows for these exact queries and return markdown tables plus row counts:\n"
             "- safe_to_start(Task).\n"
             "- waiting_on(Task, Prereq).\n"
             "- task_status(Task, Status).\n"
@@ -124,32 +173,32 @@ def _user_prompt(step: str) -> str:
         ),
         "shock_glass": (
             "Use only these tools in order:\n"
-            "1) retract_fact_raw supplier_status(glass_vendor, on_time).\n"
-            "2) assert_fact_raw supplier_status(glass_vendor, delayed).\n"
-            "3) query_prolog_rows_raw blocked_task(Task, Supplier).\n"
-            "4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n"
-            "5) query_prolog_rows_raw task_status(Task, Status).\n"
+            "1) retract_fact supplier_status(glass_vendor, on_time).\n"
+            "2) assert_fact supplier_status(glass_vendor, delayed).\n"
+            "3) query_rows blocked_task(Task, Supplier).\n"
+            "4) query_rows delayed_milestone(Milestone, Supplier).\n"
+            "5) query_rows task_status(Task, Status).\n"
             "Return three tables and one short propagation narrative.\n"
         ),
         "shock_medgas": (
             "Use only these tools in order:\n"
-            "1) retract_fact_raw supplier_status(medgas_vendor, on_time).\n"
-            "2) assert_fact_raw supplier_status(medgas_vendor, delayed).\n"
-            "3) query_prolog_rows_raw blocked_task(Task, Supplier).\n"
-            "4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n"
-            "5) query_prolog_rows_raw waiting_on(Task, Prereq).\n"
+            "1) retract_fact supplier_status(medgas_vendor, on_time).\n"
+            "2) assert_fact supplier_status(medgas_vendor, delayed).\n"
+            "3) query_rows blocked_task(Task, Supplier).\n"
+            "4) query_rows delayed_milestone(Milestone, Supplier).\n"
+            "5) query_rows waiting_on(Task, Prereq).\n"
             "Then provide top 3 interventions to protect go_live.\n"
         ),
         "recovery": (
             "Use only these tools in order:\n"
-            "1) retract_fact_raw supplier_status(glass_vendor, delayed).\n"
-            "2) assert_fact_raw supplier_status(glass_vendor, on_time).\n"
-            "3) assert_fact_raw completed(enclosure_glazing).\n"
-            "4) assert_fact_raw completed(mep_rough_in).\n"
-            "5) assert_fact_raw completed(fireproofing).\n"
-            "6) query_prolog_rows_raw safe_to_start(Task).\n"
-            "7) query_prolog_rows_raw waiting_on(Task, Prereq).\n"
-            "8) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n"
+            "1) retract_fact supplier_status(glass_vendor, delayed).\n"
+            "2) assert_fact supplier_status(glass_vendor, on_time).\n"
+            "3) assert_fact completed(enclosure_glazing).\n"
+            "4) assert_fact completed(mep_rough_in).\n"
+            "5) assert_fact completed(fireproofing).\n"
+            "6) query_rows safe_to_start(Task).\n"
+            "7) query_rows waiting_on(Task, Prereq).\n"
+            "8) query_rows delayed_milestone(Milestone, Supplier).\n"
             "Return sections: Ready now, Still waiting, Remaining milestone risks.\n"
         ),
     }
@@ -189,6 +238,29 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
         lines.append(step["assistant_message"].rstrip() or "(empty reply)")
         lines.append("")
 
+    lines.append("## Daily Ops Chat Snippets (Illustrative)")
+    lines.append("")
+    lines.append("These are realistic short prompts for day-to-day usage in chat mode.")
+    lines.append("")
+    for example in _daily_ops_examples():
+        lines.append(f"### {example['title']}")
+        lines.append("")
+        lines.append("#### User Prompt")
+        lines.append("")
+        lines.append("```text")
+        lines.append(example["question"])
+        lines.append("```")
+        lines.append("")
+        lines.append("#### Tool Calls")
+        lines.append("")
+        for call in example["tool_calls"]:
+            lines.append(f"- `{call['tool']}` `{json.dumps(call['arguments'], ensure_ascii=True)}`")
+        lines.append("")
+        lines.append("#### Assistant Reply")
+        lines.append("")
+        lines.append(example["answer"])
+        lines.append("")
+
     return "\n".join(lines).strip() + "\n"
 
 
@@ -223,6 +295,34 @@ def _render_html(transcript: dict[str, Any]) -> str:
         )
 
     body = "\n".join(card_blocks)
+    daily_cards: list[str] = []
+    for example in _daily_ops_examples():
+        question_html = html.escape(example["question"])
+        question_attr = html.escape(example["question"], quote=True)
+        answer_html = html.escape(example["answer"])
+        call_items = []
+        for call in example["tool_calls"]:
+            args = html.escape(json.dumps(call["arguments"], ensure_ascii=True))
+            call_items.append(f"<li><code>{html.escape(call['tool'])}</code> <code>{args}</code></li>")
+        calls_html = "<ul>" + "".join(call_items) + "</ul>"
+        daily_cards.append(
+            f"""
+<section class="step-card">
+  <h2>{html.escape(example["title"])}</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="{question_attr}" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>{question_html}</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div>{calls_html}</div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>{answer_html}</pre></div>
+</section>
+""".strip()
+        )
+    daily_body = "\n".join(daily_cards)
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -240,6 +340,16 @@ def _render_html(transcript: dict[str, Any]) -> str:
       --tool: #eef2e7;
       --border: #d9d1c2;
     }}
+    html[data-theme="dark"] {{
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --user: #3b2f23;
+      --assistant: #21394d;
+      --tool: #293229;
+      --border: #3b4652;
+    }}
     body {{
       margin: 0;
       font-family: Georgia, "Times New Roman", serif;
@@ -255,6 +365,28 @@ def _render_html(transcript: dict[str, Any]) -> str:
     h1 {{
       margin: 0 0 12px 0;
       font-size: 34px;
+    }}
+    .topbar {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }}
+    .theme-btn {{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }}
+    .theme-btn:hover {{
+      filter: brightness(1.06);
     }}
     .meta {{
       font-family: "Courier New", monospace;
@@ -339,12 +471,50 @@ def _render_html(transcript: dict[str, Any]) -> str:
 </head>
 <body>
   <div class="wrap">
-    <h1>Hospital CPM Playbook Session</h1>
+    <div class="topbar">
+      <h1>Hospital CPM Playbook Session</h1>
+      <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+    </div>
     <div class="meta">Captured: {html.escape(transcript["captured_at"])} | Model: {html.escape(transcript["model"])} | Integration: {html.escape(transcript["integration"])}</div>
     {body}
+    <section class="step-card">
+      <h2>Daily Ops Chat Snippets (Illustrative)</h2>
+      <div class="bubble assistant">
+        <div class="label">Note</div>
+        <pre>This section is intentionally conversational. It shows believable day-to-day prompts and reports, not test harness steps.</pre>
+      </div>
+    </section>
+    {daily_body}
   </div>
   <script>
     (() => {{
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('theme-toggle');
+      const storageKey = 'cpm_playbook_theme';
+
+      const setTheme = (theme) => {{
+        root.setAttribute('data-theme', theme);
+        if (themeToggle) {{
+          themeToggle.textContent = theme === 'dark' ? 'theme: dark' : 'theme: light';
+        }}
+      }};
+
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === 'dark' || stored === 'light') {{
+        setTheme(stored);
+      }} else {{
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(prefersDark ? 'dark' : 'light');
+      }}
+
+      if (themeToggle) {{
+        themeToggle.addEventListener('click', () => {{
+          const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          setTheme(next);
+          window.localStorage.setItem(storageKey, next);
+        }});
+      }}
+
       const buttons = document.querySelectorAll('.copy-btn');
       for (const button of buttons) {{
         button.addEventListener('click', async () => {{
@@ -456,7 +626,7 @@ def main() -> int:
     out_dir = Path(args.out_dir)
 
     if args.input_json:
-        transcript = json.loads(Path(args.input_json).read_text(encoding="utf-8"))
+        transcript = json.loads(Path(args.input_json).read_text(encoding="utf-8-sig"))
         outputs = _write_outputs(transcript, out_dir)
     else:
         api_key = args.api_key or None

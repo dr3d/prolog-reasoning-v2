@@ -1,4 +1,4 @@
-# Using Prolog Reasoning with LM Studio via MCP
+﻿# Using Prolog Reasoning with LM Studio via MCP
 
 **Model Context Protocol (MCP) integration for local LLMs in LM Studio**
 
@@ -6,7 +6,7 @@ This guide walks you through setting up and using the Prolog Reasoning system as
 
 ---
 
-## 🎯 What is MCP and Why Use It?
+## ðŸŽ¯ What is MCP and Why Use It?
 
 **MCP (Model Context Protocol)** allows AI tools (servers) to expose capabilities as tools to language models.
 
@@ -21,16 +21,16 @@ This guide walks you through setting up and using the Prolog Reasoning system as
 
 ---
 
-## 📋 Prerequisites
+## ðŸ“‹ Prerequisites
 
-- ✅ LM Studio installed ([download here](https://lmstudio.ai/))
-- ✅ Python 3.12+ 
-- ✅ Prolog Reasoning v2 repo cloned
-- ✅ Virtual environment set up (`pip install -r requirements.txt`)
+- âœ… LM Studio installed ([download here](https://lmstudio.ai/))
+- âœ… Python 3.12+ 
+- âœ… Prolog Reasoning v2 repo cloned
+- âœ… Virtual environment set up (`pip install -r requirements.txt`)
 
 ---
 
-## 🚀 Step 1: Start the MCP Server
+## ðŸš€ Step 1: Start the MCP Server
 
 ### Option A: Quick Start (Recommended for Testing)
 
@@ -41,12 +41,12 @@ cd d:\\_PROJECTS\prolog-reasoning-v2
 python src/mcp_server.py --test
 
 # You should see:
-# ✅ MCP Server initialized successfully
+# âœ… MCP Server initialized successfully
 # Available Tools:
-#   • query_prolog: ...
-#   • list_known_facts: ...
-#   • explain_error: ...
-#   • show_system_info: ...
+#   â€¢ query_prolog: ...
+#   â€¢ list_known_facts: ...
+#   â€¢ explain_error: ...
+#   â€¢ show_system_info: ...
 ```
 
 ### Option B: Run in Interactive Mode (for debugging)
@@ -71,13 +71,13 @@ This is the transport LM Studio will use. In normal use, LM Studio should launch
 
 ---
 
-## 🔧 Step 2: Configure LM Studio
+## ðŸ”§ Step 2: Configure LM Studio
 
 ### Step 2a: Access LM Studio Settings
 
 1. Open **LM Studio**
-2. Click ⚙️ **Settings** (bottom right)
-3. Go to **Developer** → **Model Context Protocol (MCP)**
+2. Click âš™ï¸ **Settings** (bottom right)
+3. Go to **Developer** â†’ **Model Context Protocol (MCP)**
 4. You should see a "servers" configuration section
 
 ### Step 2b: Add the Prolog Server
@@ -114,17 +114,19 @@ Add this configuration to your `servers` list. Replace `<PYTHON_EXE>` with the P
 2. Open a chat with your local model
 3. You should see **Prolog Reasoning** in the available tools list
 4. The tools should show:
-   - ✅ query_prolog
-   - ✅ query_prolog_raw
-   - ✅ query_prolog_rows_raw
-   - ✅ classify_statement
-   - ✅ list_known_facts
-   - ✅ assert_fact_raw
-   - ✅ bulk_assert_facts_raw
-   - ✅ retract_fact_raw
-   - ✅ reset_runtime_kb
-   - ✅ explain_error
-   - ✅ show_system_info
+   - âœ… query_prolog
+   - âœ… query_logic
+   - âœ… query_rows
+   - âœ… classify_statement
+   - âœ… list_known_facts
+   - âœ… assert_fact
+   - âœ… bulk_assert_facts
+   - âœ… retract_fact
+   - âœ… reset_kb
+   - âœ… explain_error
+   - âœ… show_system_info
+
+Use the alias names above in day-to-day chat. Legacy `_raw` variants are still available for compatibility with older prompts.
 
 ### Step 2d: API Token Note (for Scripted MCP Demos)
 
@@ -152,7 +154,7 @@ python scripts/demonstrate_family_tree_agent_mcp.py --api-key "<YOUR_LM_STUDIO_A
 
 ---
 
-## 💬 Step 3: Use with Your LLM
+## ðŸ’¬ Step 3: Use with Your LLM
 
 For chat-first copy/paste scenario scripts (including a CPM-like hospital
 dependency risk playbook), see:
@@ -210,7 +212,7 @@ Input: {"query": "What is Charlie allergic to?"}
       "message": "Entity 'charlie' not in KB",
       "severity": "high",
       "suggestion": "Use a known name like: john, alice, bob",
-      "explanation": "❌ I don't know who or what 'charlie' is\n\n📝 Why: The system only knows about: john, alice, bob, admin, read, write\n\n💡 Try: Make sure to tell me about charlie first, or use a name I know about"
+      "explanation": "âŒ I don't know who or what 'charlie' is\n\nðŸ“ Why: The system only knows about: john, alice, bob, admin, read, write\n\nðŸ’¡ Try: Make sure to tell me about charlie first, or use a name I know about"
     }
   ],
   "parsing_confidence": 5.0,
@@ -253,9 +255,9 @@ Input: {}
 
 ---
 
-## 🎓 Best Practices for LLMs Using Prolog Tools
+## ðŸŽ“ Best Practices for LLMs Using Prolog Tools
 
-### ✅ DO: Use for Deterministic Queries
+### âœ… DO: Use for Deterministic Queries
 
 ```
 Good uses:
@@ -265,7 +267,7 @@ Good uses:
 - "Show me all family relationships in the KB"
 ```
 
-### ❌ DON'T: Use for Creative Tasks
+### âŒ DON'T: Use for Creative Tasks
 
 ```
 Bad uses:
@@ -277,7 +279,7 @@ Instead: "The knowledge base only contains verified facts.
 I can't create new information, only reason about what's there."
 ```
 
-### ⚠️ Handle Errors Gracefully
+### âš ï¸ Handle Errors Gracefully
 
 When the tool returns a validation error:
 1. Read the `explanation` field (it's human friendly!)
@@ -287,7 +289,7 @@ When the tool returns a validation error:
 
 ---
 
-## 🔍 Understanding Tool Responses
+## ðŸ” Understanding Tool Responses
 
 ### Response Format
 
@@ -320,7 +322,7 @@ Every tool response has this structure:
 
 ---
 
-## 🛠️ Troubleshooting
+## ðŸ› ï¸ Troubleshooting
 
 ### Problem: "Tool not found" error
 
@@ -379,7 +381,7 @@ cat prolog/core.pl | head -20
 
 ---
 
-## 🚀 Advanced: Custom Knowledge Base
+## ðŸš€ Advanced: Custom Knowledge Base
 
 ### Step 1: Create Your Own KB
 
@@ -411,7 +413,7 @@ The LLM can now query your custom knowledge!
 
 ---
 
-## 📚 Learning More
+## ðŸ“š Learning More
 
 ### Courses on Using This System
 
@@ -432,7 +434,7 @@ The LLM can now query your custom knowledge!
 
 ---
 
-## 🎯 Example Workflow: Medical Assistant
+## ðŸŽ¯ Example Workflow: Medical Assistant
 
 Here's how you might use this with a medical AI:
 
@@ -447,7 +449,7 @@ Result: penicillin (severe), ibuprofen (moderate)
 Tool: query_prolog({"query": "What medications is John taking?"})
 Result: metformin, lisinopril
 
-LLM: ✅ The system confirms John is allergic to penicillin 
+LLM: âœ… The system confirms John is allergic to penicillin 
 (severe) and takes metformin + lisinopril. The new antibiotic 
 appears safe based on known allergies. However, verify the drug 
 interactions with current medications."
@@ -455,7 +457,7 @@ interactions with current medications."
 
 ---
 
-## 🎓 Creating a LLM-Friendly Course
+## ðŸŽ“ Creating a LLM-Friendly Course
 
 Would you like me to create a fourth course specifically for:
 - How to set up MCP in LM Studio
@@ -467,10 +469,11 @@ This would be **Course 04** in the training library!
 
 ---
 
-## 📞 Support & Feedback
+## ðŸ“ž Support & Feedback
 
 - GitHub Issues: [prolog-reasoning-v2](https://github.com/dr3d/prolog-reasoning-v2)
 - Found a bug? Please report it!
 - Want to contribute? PRs welcome!
 
-Happy reasoning! 🧠✨
+Happy reasoning! ðŸ§ âœ¨
+

@@ -99,6 +99,12 @@ class TestMCPServer:
 
         tool_names = [tool["name"] for tool in response["result"]["tools"]]
         assert "classify_statement" in tool_names
+        assert "query_logic" in tool_names
+        assert "query_rows" in tool_names
+        assert "assert_fact" in tool_names
+        assert "bulk_assert_facts" in tool_names
+        assert "retract_fact" in tool_names
+        assert "reset_kb" in tool_names
         assert "query_prolog_raw" in tool_names
         assert "query_prolog_rows_raw" in tool_names
         assert "assert_fact_raw" in tool_names
@@ -295,6 +301,18 @@ class TestMCPServer:
         assert result["result_type"] == "table"
         assert result["prolog_query"] == "task(Task)."
         assert any(row == {"Task": "site_prep"} for row in result["rows"])
+
+    def test_aliases_match_raw_tools(self):
+        server = PrologMCPServer(kb_path="prolog/core.pl")
+        server.reset_kb()
+        server.assert_fact("task(alias_task).")
+
+        rows_result = server.query_rows("task_status(Task, Status).")
+        raw_result = server.query_prolog_rows_raw("task_status(Task, Status).")
+
+        assert rows_result["status"] == "success"
+        assert raw_result["status"] == "success"
+        assert any(row == {"Task": "alias_task", "Status": "ready"} for row in rows_result["rows"])
 
     def test_assert_fact_raw_updates_entities(self):
         server = make_server(DummySkill({}, {"john"}))

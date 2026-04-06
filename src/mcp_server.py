@@ -133,6 +133,85 @@ class PrologMCPServer:
                 }
             },
             {
+                "name": "query_logic",
+                "description": "Query the Prolog engine with a literal Prolog query string. Preferred alias for query_prolog_raw.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Raw Prolog query string (e.g., 'allowed(alice, read).' or 'parent(john, X).')"
+                        }
+                    },
+                    "required": ["query"]
+                }
+            },
+            {
+                "name": "query_rows",
+                "description": "Query the Prolog engine and return all solution rows projected to query variables. Preferred alias for query_prolog_rows_raw.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Raw Prolog query with variables (e.g., 'waiting_on(Task, Prereq).')"
+                        }
+                    },
+                    "required": ["query"]
+                }
+            },
+            {
+                "name": "assert_fact",
+                "description": "Assert a ground Prolog fact into the runtime KB for this MCP server process. Preferred alias for assert_fact_raw.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "fact": {
+                            "type": "string",
+                            "description": "Ground Prolog fact string ending in '.' (e.g., 'depends_on(structure, foundation).')"
+                        }
+                    },
+                    "required": ["fact"]
+                }
+            },
+            {
+                "name": "bulk_assert_facts",
+                "description": "Assert multiple ground Prolog facts into the runtime KB in one call. Preferred alias for bulk_assert_facts_raw.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "facts": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of ground Prolog fact strings."
+                        }
+                    },
+                    "required": ["facts"]
+                }
+            },
+            {
+                "name": "retract_fact",
+                "description": "Retract one matching ground Prolog fact from the runtime KB for this MCP server process. Preferred alias for retract_fact_raw.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "fact": {
+                            "type": "string",
+                            "description": "Ground Prolog fact string ending in '.' to remove."
+                        }
+                    },
+                    "required": ["fact"]
+                }
+            },
+            {
+                "name": "reset_kb",
+                "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance. Preferred alias for reset_runtime_kb.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
+            },
+            {
                 "name": "query_prolog_raw",
                 "description": "Query the Prolog engine with a literal Prolog query string (for deterministic predicate-level checks). Example: allowed(alice, read).",
                 "inputSchema": {
@@ -525,6 +604,25 @@ class PrologMCPServer:
             "reasoning_basis": reasoning_basis,
         }
 
+    # Friendly aliases (preferred names)
+    def query_logic(self, query: str) -> Dict[str, Any]:
+        return self.query_prolog_raw(query)
+
+    def query_rows(self, query: str) -> Dict[str, Any]:
+        return self.query_prolog_rows_raw(query)
+
+    def assert_fact(self, fact: str) -> Dict[str, Any]:
+        return self.assert_fact_raw(fact)
+
+    def bulk_assert_facts(self, facts: List[str]) -> Dict[str, Any]:
+        return self.bulk_assert_facts_raw(facts)
+
+    def retract_fact(self, fact: str) -> Dict[str, Any]:
+        return self.retract_fact_raw(fact)
+
+    def reset_kb(self) -> Dict[str, Any]:
+        return self.reset_runtime_kb()
+
     def _extract_entities_from_fact(self, fact: str) -> Set[str]:
         """Extract atom-like entities from a fact's arguments."""
         entities: Set[str] = set()
@@ -804,6 +902,12 @@ class PrologMCPServer:
         """Route tool calls to appropriate handler."""
         handlers = {
             "query_prolog": lambda: self.query_prolog(tool_input.get("query", "")),
+            "query_logic": lambda: self.query_logic(tool_input.get("query", "")),
+            "query_rows": lambda: self.query_rows(tool_input.get("query", "")),
+            "assert_fact": lambda: self.assert_fact(tool_input.get("fact", "")),
+            "bulk_assert_facts": lambda: self.bulk_assert_facts(tool_input.get("facts", [])),
+            "retract_fact": lambda: self.retract_fact(tool_input.get("fact", "")),
+            "reset_kb": lambda: self.reset_kb(),
             "query_prolog_raw": lambda: self.query_prolog_raw(tool_input.get("query", "")),
             "query_prolog_rows_raw": lambda: self.query_prolog_rows_raw(tool_input.get("query", "")),
             "assert_fact_raw": lambda: self.assert_fact_raw(tool_input.get("fact", "")),

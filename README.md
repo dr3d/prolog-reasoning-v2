@@ -6,7 +6,7 @@ Prolog Reasoning v2 is a local-first deterministic logic layer for LLM agents. I
 
 Here, `local-first` means the core reasoning loop can run on your own machine with local files, local models, and local tooling first, rather than depending on a cloud service as the source of truth.
 
-[![Tests](https://img.shields.io/badge/tests-72%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-84%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -51,7 +51,7 @@ These parts are implemented and working:
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `72 passed`
+- Test suite currently passing: `84 passed`
 
 What is still simplified or partly mocked:
 
@@ -71,17 +71,19 @@ pip install -r requirements.txt
 
 # Verify the current baseline
 python -m pytest tests -q
+```
 
-# Try semantic grounding
+Then start with a markdown walkthrough:
+
+- Chat-first MCP playbook (no coding required): [docs/mcp-chat-playbooks.md](docs/mcp-chat-playbooks.md)
+- LM Studio MCP setup guide: [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
+
+If you want runnable Python demos after that:
+
+```bash
 python scripts/demonstrate_semantic.py
-
-# Try failure explanations
 python scripts/demonstrate_failures.py
-
-# Try the agent-facing skill demo
 python scripts/demonstrate_agent.py
-
-# Run benchmark evaluation
 python data/evaluate.py
 ```
 
@@ -90,7 +92,7 @@ python data/evaluate.py
 ### Use It
 
 - Ask natural-language questions through `SemanticPrologSkill`
-- Run the MCP server for local LLM tools via [src/mcp_server.py](src/mcp_server.py)
+- Run the MCP server for local LLM tools via [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
 - Configure Hermes agent skill usage with [HERMES-AGENT-INSTALL.md](HERMES-AGENT-INSTALL.md)
 - Configure OpenClaw agent skill usage with [OPENCLAW-AGENT-INSTALL.md](OPENCLAW-AGENT-INSTALL.md)
@@ -147,7 +149,7 @@ src/
 scripts/         Demos and utility scripts
 tests/           Unit and integration tests
 data/            Benchmarks and evaluation artifacts
-docs/            Design docs, guides, reviews, and session notes
+docs/            Design docs, guides, diagrams, and session notes
 training/        Beginner-facing learning materials
 prolog/          Knowledge-base files
 mvp/             Experimental constraint-graphics prototype

@@ -9,12 +9,12 @@
 ### User Prompt
 
 ```text
-Use ONLY reset_runtime_kb. Confirm success in one sentence.
+Use ONLY reset_kb. Confirm success in one sentence.
 ```
 
 ### Tool Calls
 
-- `reset_runtime_kb` `{}`
+- `reset_kb` `{}`
 
 ### Assistant Reply
 
@@ -27,8 +27,8 @@ Runtime KB successfully reset to baseline seed state.
 ### User Prompt
 
 ```text
-Use bulk_assert_facts_raw with the full fact list below.
-Then run query_prolog_rows_raw counts for:
+Use bulk_assert_facts with the full fact list below.
+Then run query_rows counts for:
 - task(Task).
 - depends_on(Task, Prereq).
 - task_supplier(Task, Supplier).
@@ -96,13 +96,13 @@ milestone(go_live).
 
 ### Tool Calls
 
-- `bulk_assert_facts_raw` `{"facts": ["task(site_prep).", "task(foundation).", "task(structural_frame).", "task(mep_rough_in).", "task(fireproofing).", "task(enclosure_glazing).", "task(roofing).", "task(interior_buildout).", "task(hvac_commissioning).", "task(medical_gas_cert).", "task(or_fitout).", "task(imaging_suite_install).", "task(it_network_core).", "task(regulatory_inspection).", "task(occupancy_permit).", "task(go_live).", "depends_on(foundation, site_prep).", "depends_on(structural_frame, foundation).", "depends_on(mep_rough_in, structural_frame).", "depends_on(fireproofing, structural_frame).", "depends_on(enclosure_glazing, structural_frame).", "depends_on(roofing, structural_frame).", "depends_on(interior_buildout, mep_rough_in).", "depends_on(interior_buildout, fireproofing).", "depends_on(hvac_commissioning, interior_buildout).", "depends_on(medical_gas_cert, interior_buildout).", "depends_on(or_fitout, medical_gas_cert).", "depends_on(imaging_suite_install, interior_buildout).", "depends_on(it_network_core, interior_buildout).", "depends_on(regulatory_inspection, hvac_commissioning).", "depends_on(regulatory_inspection, medical_gas_cert).", "depends_on(regulatory_inspection, it_network_core).", "depends_on(occupancy_permit, regulatory_inspection).", "depends_on(go_live, occupancy_permit).", "depends_on(go_live, or_fitout).", "depends_on(go_live, imaging_suite_install).", "duration_days(site_prep, 12).", "duration_days(foundation, 21).", "duration_days(structural_frame, 35).", "duration_days(interior_buildout, 40).", "duration_days(regulatory_inspection, 14).", "duration_days(occupancy_permit, 7).", "duration_days(go_live, 2).", "task_supplier(enclosure_glazing, glass_vendor).", "task_supplier(medical_gas_cert, medgas_vendor).", "task_supplier(imaging_suite_install, imaging_vendor).", "supplier_status(glass_vendor, on_time).", "supplier_status(medgas_vendor, on_time).", "supplier_status(imaging_vendor, on_time).", "completed(site_prep).", "completed(foundation).", "completed(structural_frame).", "milestone(regulatory_inspection).", "milestone(occupancy_permit).", "milestone(go_live)."]}`
-- `query_prolog_rows_raw` `{"query": "task(Task)."}`
-- `query_prolog_rows_raw` `{"query": "depends_on(Task, Prereq)."}`
-- `query_prolog_rows_raw` `{"query": "task_supplier(Task, Supplier)."}`
-- `query_prolog_rows_raw` `{"query": "supplier_status(Supplier, Status)."}`
-- `query_prolog_rows_raw` `{"query": "completed(Task)."}`
-- `query_prolog_rows_raw` `{"query": "milestone(M)."}`
+- `bulk_assert_facts` `{"facts": ["task(site_prep).", "task(foundation).", "task(structural_frame).", "task(mep_rough_in).", "task(fireproofing).", "task(enclosure_glazing).", "task(roofing).", "task(interior_buildout).", "task(hvac_commissioning).", "task(medical_gas_cert).", "task(or_fitout).", "task(imaging_suite_install).", "task(it_network_core).", "task(regulatory_inspection).", "task(occupancy_permit).", "task(go_live).", "depends_on(foundation, site_prep).", "depends_on(structural_frame, foundation).", "depends_on(mep_rough_in, structural_frame).", "depends_on(fireproofing, structural_frame).", "depends_on(enclosure_glazing, structural_frame).", "depends_on(roofing, structural_frame).", "depends_on(interior_buildout, mep_rough_in).", "depends_on(interior_buildout, fireproofing).", "depends_on(hvac_commissioning, interior_buildout).", "depends_on(medical_gas_cert, interior_buildout).", "depends_on(or_fitout, medical_gas_cert).", "depends_on(imaging_suite_install, interior_buildout).", "depends_on(it_network_core, interior_buildout).", "depends_on(regulatory_inspection, hvac_commissioning).", "depends_on(regulatory_inspection, medical_gas_cert).", "depends_on(regulatory_inspection, it_network_core).", "depends_on(occupancy_permit, regulatory_inspection).", "depends_on(go_live, occupancy_permit).", "depends_on(go_live, or_fitout).", "depends_on(go_live, imaging_suite_install).", "duration_days(site_prep, 12).", "duration_days(foundation, 21).", "duration_days(structural_frame, 35).", "duration_days(interior_buildout, 40).", "duration_days(regulatory_inspection, 14).", "duration_days(occupancy_permit, 7).", "duration_days(go_live, 2).", "task_supplier(enclosure_glazing, glass_vendor).", "task_supplier(medical_gas_cert, medgas_vendor).", "task_supplier(imaging_suite_install, imaging_vendor).", "supplier_status(glass_vendor, on_time).", "supplier_status(medgas_vendor, on_time).", "supplier_status(imaging_vendor, on_time).", "completed(site_prep).", "completed(foundation).", "completed(structural_frame).", "milestone(regulatory_inspection).", "milestone(occupancy_permit).", "milestone(go_live)."]}`
+- `query_rows` `{"query": "task(Task)."}`
+- `query_rows` `{"query": "depends_on(Task, Prereq)."}`
+- `query_rows` `{"query": "task_supplier(Task, Supplier)."}`
+- `query_rows` `{"query": "supplier_status(Supplier, Status)."}`
+- `query_rows` `{"query": "completed(Task)."}`
+- `query_rows` `{"query": "milestone(M)."}`
 
 ### Assistant Reply
 
@@ -136,7 +136,7 @@ All counts match the expected values from the bulk assertion. No mismatches dete
 ### User Prompt
 
 ```text
-Use ONLY query_prolog_rows_raw for these exact queries and return markdown tables plus row counts:
+Use ONLY query_rows for these exact queries and return markdown tables plus row counts:
 - safe_to_start(Task).
 - waiting_on(Task, Prereq).
 - task_status(Task, Status).
@@ -146,10 +146,10 @@ Do not call query_prolog.
 
 ### Tool Calls
 
-- `query_prolog_rows_raw` `{"query": "safe_to_start(Task)."}`
-- `query_prolog_rows_raw` `{"query": "waiting_on(Task, Prereq)."}`
-- `query_prolog_rows_raw` `{"query": "task_status(Task, Status)."}`
-- `query_prolog_rows_raw` `{"query": "delayed_milestone(Milestone, Supplier)."}`
+- `query_rows` `{"query": "safe_to_start(Task)."}`
+- `query_rows` `{"query": "waiting_on(Task, Prereq)."}`
+- `query_rows` `{"query": "task_status(Task, Status)."}`
+- `query_rows` `{"query": "delayed_milestone(Milestone, Supplier)."}`
 
 ### Assistant Reply
 
@@ -229,21 +229,21 @@ Do not call query_prolog.
 
 ```text
 Use only these tools in order:
-1) retract_fact_raw supplier_status(glass_vendor, on_time).
-2) assert_fact_raw supplier_status(glass_vendor, delayed).
-3) query_prolog_rows_raw blocked_task(Task, Supplier).
-4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
-5) query_prolog_rows_raw task_status(Task, Status).
+1) retract_fact supplier_status(glass_vendor, on_time).
+2) assert_fact supplier_status(glass_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows task_status(Task, Status).
 Return three tables and one short propagation narrative.
 ```
 
 ### Tool Calls
 
-- `retract_fact_raw` `{"fact": "supplier_status(glass_vendor, on_time)."}`
-- `assert_fact_raw` `{"fact": "supplier_status(glass_vendor, delayed)."}`
-- `query_prolog_rows_raw` `{"query": "blocked_task(Task, Supplier)."}`
-- `query_prolog_rows_raw` `{"query": "delayed_milestone(Milestone, Supplier)."}`
-- `query_prolog_rows_raw` `{"query": "task_status(Task, Status)."}`
+- `retract_fact` `{"fact": "supplier_status(glass_vendor, on_time)."}`
+- `assert_fact` `{"fact": "supplier_status(glass_vendor, delayed)."}`
+- `query_rows` `{"query": "blocked_task(Task, Supplier)."}`
+- `query_rows` `{"query": "delayed_milestone(Milestone, Supplier)."}`
+- `query_rows` `{"query": "task_status(Task, Status)."}`
 
 ### Assistant Reply
 
@@ -293,21 +293,21 @@ The supplier_status fact for glass_vendor was retracted from "on_time" and asser
 
 ```text
 Use only these tools in order:
-1) retract_fact_raw supplier_status(medgas_vendor, on_time).
-2) assert_fact_raw supplier_status(medgas_vendor, delayed).
-3) query_prolog_rows_raw blocked_task(Task, Supplier).
-4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
-5) query_prolog_rows_raw waiting_on(Task, Prereq).
+1) retract_fact supplier_status(medgas_vendor, on_time).
+2) assert_fact supplier_status(medgas_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows waiting_on(Task, Prereq).
 Then provide top 3 interventions to protect go_live.
 ```
 
 ### Tool Calls
 
-- `retract_fact_raw` `{"fact": "supplier_status(medgas_vendor, on_time)."}`
-- `assert_fact_raw` `{"fact": "supplier_status(medgas_vendor, delayed)."}`
-- `query_prolog_rows_raw` `{"query": "blocked_task(Task, Supplier)."}`
-- `query_prolog_rows_raw` `{"query": "delayed_milestone(Milestone, Supplier)."}`
-- `query_prolog_rows_raw` `{"query": "waiting_on(Task, Prereq)."}`
+- `retract_fact` `{"fact": "supplier_status(medgas_vendor, on_time)."}`
+- `assert_fact` `{"fact": "supplier_status(medgas_vendor, delayed)."}`
+- `query_rows` `{"query": "blocked_task(Task, Supplier)."}`
+- `query_rows` `{"query": "delayed_milestone(Milestone, Supplier)."}`
+- `query_rows` `{"query": "waiting_on(Task, Prereq)."}`
 
 ### Assistant Reply
 
@@ -355,27 +355,27 @@ Based on the tool execution sequence, here's what we discovered:
 
 ```text
 Use only these tools in order:
-1) retract_fact_raw supplier_status(glass_vendor, delayed).
-2) assert_fact_raw supplier_status(glass_vendor, on_time).
-3) assert_fact_raw completed(enclosure_glazing).
-4) assert_fact_raw completed(mep_rough_in).
-5) assert_fact_raw completed(fireproofing).
-6) query_prolog_rows_raw safe_to_start(Task).
-7) query_prolog_rows_raw waiting_on(Task, Prereq).
-8) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+1) retract_fact supplier_status(glass_vendor, delayed).
+2) assert_fact supplier_status(glass_vendor, on_time).
+3) assert_fact completed(enclosure_glazing).
+4) assert_fact completed(mep_rough_in).
+5) assert_fact completed(fireproofing).
+6) query_rows safe_to_start(Task).
+7) query_rows waiting_on(Task, Prereq).
+8) query_rows delayed_milestone(Milestone, Supplier).
 Return sections: Ready now, Still waiting, Remaining milestone risks.
 ```
 
 ### Tool Calls
 
-- `retract_fact_raw` `{"fact": "supplier_status(glass_vendor, delayed)."}`
-- `assert_fact_raw` `{"fact": "supplier_status(glass_vendor, on_time)."}`
-- `assert_fact_raw` `{"fact": "completed(enclosure_glazing)."}`
-- `assert_fact_raw` `{"fact": "completed(mep_rough_in)."}`
-- `assert_fact_raw` `{"fact": "completed(fireproofing)."}`
-- `query_prolog_rows_raw` `{"query": "safe_to_start(Task)."}`
-- `query_prolog_rows_raw` `{"query": "waiting_on(Task, Prereq)."}`
-- `query_prolog_rows_raw` `{"query": "delayed_milestone(Milestone, Supplier)."}`
+- `retract_fact` `{"fact": "supplier_status(glass_vendor, delayed)."}`
+- `assert_fact` `{"fact": "supplier_status(glass_vendor, on_time)."}`
+- `assert_fact` `{"fact": "completed(enclosure_glazing)."}`
+- `assert_fact` `{"fact": "completed(mep_rough_in)."}`
+- `assert_fact` `{"fact": "completed(fireproofing)."}`
+- `query_rows` `{"query": "safe_to_start(Task)."}`
+- `query_rows` `{"query": "waiting_on(Task, Prereq)."}`
+- `query_rows` `{"query": "delayed_milestone(Milestone, Supplier)."}`
 
 ### Assistant Reply
 
@@ -405,3 +405,65 @@ The following milestones have delays associated with suppliers:
 - regulatory_inspection (Supplier: medgas_vendor)
 - occupancy_permit (Supplier: medgas_vendor)
 - go_live (Supplier: medgas_vendor)
+
+## Daily Ops Chat Snippets (Illustrative)
+
+These are realistic short prompts for day-to-day usage in chat mode.
+
+### Morning Standup
+
+#### User Prompt
+
+```text
+What can safely start this morning, and what is still waiting?
+```
+
+#### Tool Calls
+
+- `query_rows` `{"query": "safe_to_start(Task)."}`
+- `query_rows` `{"query": "waiting_on(Task, Prereq)."}`
+
+#### Assistant Reply
+
+Ready now includes enclosure_glazing, roofing, and other tasks with satisfied prerequisites. Most downstream work is still waiting on interior_buildout and then regulatory_inspection.
+
+### Supplier Delay Update
+
+#### User Prompt
+
+```text
+If the glass vendor is delayed today, what milestones are impacted first?
+```
+
+#### Tool Calls
+
+- `retract_fact` `{"fact": "supplier_status(glass_vendor, on_time)."}`
+- `assert_fact` `{"fact": "supplier_status(glass_vendor, delayed)."}`
+- `query_rows` `{"query": "blocked_task(Task, Supplier)."}`
+- `query_rows` `{"query": "delayed_milestone(Milestone, Supplier)."}`
+
+#### Assistant Reply
+
+The first direct blocker is enclosure_glazing, and that propagates to regulatory_inspection, occupancy_permit, and go_live through the critical dependency chain.
+
+### End-of-Day Recovery
+
+#### User Prompt
+
+```text
+We recovered glazing and completed rough-in items. What changed for tomorrow's plan?
+```
+
+#### Tool Calls
+
+- `retract_fact` `{"fact": "supplier_status(glass_vendor, delayed)."}`
+- `assert_fact` `{"fact": "supplier_status(glass_vendor, on_time)."}`
+- `assert_fact` `{"fact": "completed(enclosure_glazing)."}`
+- `assert_fact` `{"fact": "completed(mep_rough_in)."}`
+- `assert_fact` `{"fact": "completed(fireproofing)."}`
+- `query_rows` `{"query": "safe_to_start(Task)."}`
+- `query_rows` `{"query": "task_status(Task, Status)."}`
+
+#### Assistant Reply
+
+The ready set expands and several previously waiting tasks move into executable status. Milestone risk decreases because no supplier remains in delayed state.

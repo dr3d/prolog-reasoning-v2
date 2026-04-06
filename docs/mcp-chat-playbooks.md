@@ -1,4 +1,4 @@
-# MCP Chat Playbooks (Copy/Paste, No Python Required)
+﻿# MCP Chat Playbooks (Copy/Paste, No Python Required)
 
 Status: Draft  
 Date: 2026-04-06
@@ -8,6 +8,8 @@ These playbooks are for direct chat use with MCP enabled in LM Studio.
 Goal: turn on `mcp/prolog-reasoning`, paste prompts, and watch the model call
 deterministic tools.
 
+Preferred tool names in this guide are the clean aliases (`query_rows`, `assert_fact`, `reset_kb`, etc.). Legacy `_raw` names still work for backward compatibility.
+
 ## Before You Start
 
 1. Enable `mcp/prolog-reasoning` in LM Studio.
@@ -16,7 +18,7 @@ deterministic tools.
 
 ```text
 Use show_system_info and list_known_facts first.
-Confirm that query_prolog_raw, query_prolog_rows_raw, assert_fact_raw, bulk_assert_facts_raw, retract_fact_raw, and reset_runtime_kb are available.
+Confirm that query_logic, query_rows, assert_fact, bulk_assert_facts, retract_fact, and reset_kb are available.
 Then wait for my next instruction.
 ```
 
@@ -27,9 +29,9 @@ API demos. In normal interactive chat use, LM Studio handles MCP tool transport.
 
 For these playbooks, entries are facts asserted at runtime:
 
-- `assert_fact_raw` adds a fact to the current in-memory KB
-- `retract_fact_raw` removes a fact
-- `reset_runtime_kb` resets to baseline
+- `assert_fact` adds a fact to the current in-memory KB
+- `retract_fact` removes a fact
+- `reset_kb` resets to baseline
 
 This is perfect for what-if sessions: you can simulate disruptions and recoveries
 without editing code.
@@ -45,7 +47,7 @@ risk tracing.
 Paste:
 
 ```text
-Call reset_runtime_kb, confirm reset succeeded, then wait.
+Call reset_kb, confirm reset succeeded, then wait.
 ```
 
 ### Step A2: Ingest Baseline Givens
@@ -53,8 +55,8 @@ Call reset_runtime_kb, confirm reset succeeded, then wait.
 Paste:
 
 ```text
-Use bulk_assert_facts_raw with the full fact list below.
-Then run these verification queries with query_prolog_rows_raw and report row counts:
+Use bulk_assert_facts with the full fact list below.
+Then run these verification queries with query_rows and report row counts:
 - task(Task).
 - depends_on(Task, Prereq).
 - task_supplier(Task, Supplier).
@@ -69,7 +71,7 @@ Expected counts are:
 - supplier_status: 3
 - completed: 3
 - milestone: 3
-- asserted_count from bulk_assert_facts_raw: 55
+- asserted_count from bulk_assert_facts: 55
 
 task(site_prep).
 task(foundation).
@@ -142,9 +144,9 @@ Paste this exact recovery prompt:
 Do diagnostics in order:
 1) list_known_facts
 2) show_system_info
-3) query_prolog_rows_raw task(Task).
+3) query_rows task(Task).
 
-If task(Task) returns 0 rows, call reset_runtime_kb and re-run Step A2 ingestion using bulk_assert_facts_raw.
+If task(Task) returns 0 rows, call reset_kb and re-run Step A2 ingestion using bulk_assert_facts.
 Then verify counts again before continuing.
 ```
 
@@ -154,10 +156,10 @@ Paste:
 
 ```text
 Run these raw queries in order and return markdown tables:
-1) query_prolog_rows_raw safe_to_start(Task).
-2) query_prolog_rows_raw waiting_on(Task, Prereq).
-3) query_prolog_rows_raw task_status(Task, Status).
-4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+1) query_rows safe_to_start(Task).
+2) query_rows waiting_on(Task, Prereq).
+3) query_rows task_status(Task, Status).
+4) query_rows delayed_milestone(Milestone, Supplier).
 
 Then give a 5-bullet control-room summary:
 - what can start now
@@ -173,13 +175,13 @@ Paste:
 
 ```text
 Apply this change set:
-1) retract_fact_raw supplier_status(glass_vendor, on_time).
-2) assert_fact_raw supplier_status(glass_vendor, delayed).
+1) retract_fact supplier_status(glass_vendor, on_time).
+2) assert_fact supplier_status(glass_vendor, delayed).
 
 Then run:
-- query_prolog_rows_raw blocked_task(Task, Supplier).
-- query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
-- query_prolog_rows_raw task_status(Task, Status).
+- query_rows blocked_task(Task, Supplier).
+- query_rows delayed_milestone(Milestone, Supplier).
+- query_rows task_status(Task, Status).
 
 Return:
 1) impacted tasks table
@@ -193,12 +195,12 @@ Paste:
 
 ```text
 Apply:
-1) retract_fact_raw supplier_status(medgas_vendor, on_time).
-2) assert_fact_raw supplier_status(medgas_vendor, delayed).
+1) retract_fact supplier_status(medgas_vendor, on_time).
+2) assert_fact supplier_status(medgas_vendor, delayed).
 
 Then run:
-- query_prolog_rows_raw blocked_task(Task, Supplier).
-- query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+- query_rows blocked_task(Task, Supplier).
+- query_rows delayed_milestone(Milestone, Supplier).
 
 Return the top 3 interventions to protect go_live, based on deterministic dependencies.
 ```
@@ -209,16 +211,16 @@ Paste:
 
 ```text
 Apply recovery:
-1) retract_fact_raw supplier_status(glass_vendor, delayed).
-2) assert_fact_raw supplier_status(glass_vendor, on_time).
-3) assert_fact_raw completed(enclosure_glazing).
-4) assert_fact_raw completed(mep_rough_in).
-5) assert_fact_raw completed(fireproofing).
+1) retract_fact supplier_status(glass_vendor, delayed).
+2) assert_fact supplier_status(glass_vendor, on_time).
+3) assert_fact completed(enclosure_glazing).
+4) assert_fact completed(mep_rough_in).
+5) assert_fact completed(fireproofing).
 
 Then run:
-- query_prolog_rows_raw safe_to_start(Task).
-- query_prolog_rows_raw waiting_on(Task, Prereq).
-- query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+- query_rows safe_to_start(Task).
+- query_rows waiting_on(Task, Prereq).
+- query_rows delayed_milestone(Milestone, Supplier).
 
 Return an updated execution plan in three sections:
 - Ready now
@@ -261,3 +263,4 @@ Render existing transcript artifacts without re-running the API session:
 ```bash
 python scripts/capture_hospital_playbook_session.py --input-json docs/examples/hospital-cpm-playbook-session.json --out-dir docs/examples
 ```
+
