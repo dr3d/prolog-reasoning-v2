@@ -7,7 +7,7 @@ This file is a compact public summary of recent project state.
 - Last major track completed: Simulation-oriented MCP demos with visible internals, plus pre-thinker LoRA bootstrap scaffolding
 - Current product direction: Core symbolic reliability first, with MVP editor treated as experimental
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13 (improved from 6/13)
-- Latest actions: Hardened MCP tool-result semantics so deterministic `no_results` are no longer flagged as MCP errors (`src/mcp_server.py`), added a regression test (`tests/test_mcp_server.py`), and validated live Hermes/LM Studio behavior after `/reload-mcp`; removed the unused minimal-bundle artifacts (`MCP-MINIMAL.md`, `scripts/build_mcp_minimal_bundle.py`); retained fast Hermes MCP wiring guidance in `HERMES-AGENT-INSTALL.md` backed by `scripts/install_hermes_mcp.py`.
+- Latest actions: Re-ran the hospital CPM capture script against local LM Studio (`qwen/qwen3.5-9b`) with MCP integration and regenerated canonical artifacts in `docs/examples/`; fixed a broken local nav link in the generated transcript/template (`docs/examples/hospital-cpm-playbook-session.html`, `scripts/capture_hospital_playbook_session.py`) by correcting `./docs-hub.html` to `../docs-hub.html`; verified no further broken local links under `docs/*.html`.
 - Next priority: Continue pre-thinker data collection from reviewed live sessions while stabilizing chat-playbook reliability (especially prompt discipline after multi-tool query batches) before expanding write-path authority.
 
 ## Usage Notes
