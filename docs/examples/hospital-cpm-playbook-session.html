@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hospital CPM Playbook Session</title>
+  <style>
+    :root {
+      --bg: #f7f2e6;
+      --panel: #fffdf8;
+      --ink: #1f1f1f;
+      --muted: #5a554c;
+      --user: #fbe1c8;
+      --assistant: #dfeef7;
+      --tool: #eef2e7;
+      --border: #d9d1c2;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }
+    .meta {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .step-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+    }
+    .bubble {
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    .bubble-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .bubble.user { background: var(--user); }
+    .bubble.assistant { background: var(--assistant); }
+    .copy-btn {
+      border: 1px solid #b7a990;
+      background: #fff4df;
+      border-radius: 8px;
+      color: #3e3a31;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #f8ebd2;
+    }
+    .copy-btn.copied {
+      border-color: #7e9e73;
+      background: #e5f0dd;
+      color: #2f5130;
+    }
+    .toolbox {
+      background: var(--tool);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    .label {
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: "Courier New", monospace;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Hospital CPM Playbook Session</h1>
+    <div class="meta">Captured: 2026-04-06T04:52:35.696966+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning</div>
+    <section class="step-card">
+  <h2>reset</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use ONLY reset_runtime_kb. Confirm success in one sentence." aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use ONLY reset_runtime_kb. Confirm success in one sentence.</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>reset_runtime_kb</code> <code>{}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Runtime KB successfully reset to baseline seed state.</pre></div>
+</section>
+<section class="step-card">
+  <h2>ingest</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use ONLY assert_fact_raw calls. Do not use query_prolog or query_prolog_raw.
+Assert each fact once and then give the final count.
+
+task(site_prep).
+task(foundation).
+task(structural_frame).
+task(mep_rough_in).
+task(fireproofing).
+task(enclosure_glazing).
+task(roofing).
+task(interior_buildout).
+task(hvac_commissioning).
+task(medical_gas_cert).
+task(or_fitout).
+task(imaging_suite_install).
+task(it_network_core).
+task(regulatory_inspection).
+task(occupancy_permit).
+task(go_live).
+depends_on(foundation, site_prep).
+depends_on(structural_frame, foundation).
+depends_on(mep_rough_in, structural_frame).
+depends_on(fireproofing, structural_frame).
+depends_on(enclosure_glazing, structural_frame).
+depends_on(roofing, structural_frame).
+depends_on(interior_buildout, mep_rough_in).
+depends_on(interior_buildout, fireproofing).
+depends_on(hvac_commissioning, interior_buildout).
+depends_on(medical_gas_cert, interior_buildout).
+depends_on(or_fitout, medical_gas_cert).
+depends_on(imaging_suite_install, interior_buildout).
+depends_on(it_network_core, interior_buildout).
+depends_on(regulatory_inspection, hvac_commissioning).
+depends_on(regulatory_inspection, medical_gas_cert).
+depends_on(regulatory_inspection, it_network_core).
+depends_on(occupancy_permit, regulatory_inspection).
+depends_on(go_live, occupancy_permit).
+depends_on(go_live, or_fitout).
+depends_on(go_live, imaging_suite_install).
+duration_days(site_prep, 12).
+duration_days(foundation, 21).
+duration_days(structural_frame, 35).
+duration_days(interior_buildout, 40).
+duration_days(regulatory_inspection, 14).
+duration_days(occupancy_permit, 7).
+duration_days(go_live, 2).
+task_supplier(enclosure_glazing, glass_vendor).
+task_supplier(medical_gas_cert, medgas_vendor).
+task_supplier(imaging_suite_install, imaging_vendor).
+supplier_status(glass_vendor, on_time).
+supplier_status(medgas_vendor, on_time).
+supplier_status(imaging_vendor, on_time).
+completed(site_prep).
+completed(foundation).
+completed(structural_frame).
+milestone(regulatory_inspection).
+milestone(occupancy_permit).
+milestone(go_live).
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use ONLY assert_fact_raw calls. Do not use query_prolog or query_prolog_raw.
+Assert each fact once and then give the final count.
+
+task(site_prep).
+task(foundation).
+task(structural_frame).
+task(mep_rough_in).
+task(fireproofing).
+task(enclosure_glazing).
+task(roofing).
+task(interior_buildout).
+task(hvac_commissioning).
+task(medical_gas_cert).
+task(or_fitout).
+task(imaging_suite_install).
+task(it_network_core).
+task(regulatory_inspection).
+task(occupancy_permit).
+task(go_live).
+depends_on(foundation, site_prep).
+depends_on(structural_frame, foundation).
+depends_on(mep_rough_in, structural_frame).
+depends_on(fireproofing, structural_frame).
+depends_on(enclosure_glazing, structural_frame).
+depends_on(roofing, structural_frame).
+depends_on(interior_buildout, mep_rough_in).
+depends_on(interior_buildout, fireproofing).
+depends_on(hvac_commissioning, interior_buildout).
+depends_on(medical_gas_cert, interior_buildout).
+depends_on(or_fitout, medical_gas_cert).
+depends_on(imaging_suite_install, interior_buildout).
+depends_on(it_network_core, interior_buildout).
+depends_on(regulatory_inspection, hvac_commissioning).
+depends_on(regulatory_inspection, medical_gas_cert).
+depends_on(regulatory_inspection, it_network_core).
+depends_on(occupancy_permit, regulatory_inspection).
+depends_on(go_live, occupancy_permit).
+depends_on(go_live, or_fitout).
+depends_on(go_live, imaging_suite_install).
+duration_days(site_prep, 12).
+duration_days(foundation, 21).
+duration_days(structural_frame, 35).
+duration_days(interior_buildout, 40).
+duration_days(regulatory_inspection, 14).
+duration_days(occupancy_permit, 7).
+duration_days(go_live, 2).
+task_supplier(enclosure_glazing, glass_vendor).
+task_supplier(medical_gas_cert, medgas_vendor).
+task_supplier(imaging_suite_install, imaging_vendor).
+supplier_status(glass_vendor, on_time).
+supplier_status(medgas_vendor, on_time).
+supplier_status(imaging_vendor, on_time).
+completed(site_prep).
+completed(foundation).
+completed(structural_frame).
+milestone(regulatory_inspection).
+milestone(occupancy_permit).
+milestone(go_live).
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(site_prep).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(foundation).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(structural_frame).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(mep_rough_in).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(fireproofing).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(enclosure_glazing).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(roofing).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(interior_buildout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(hvac_commissioning).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(medical_gas_cert).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(or_fitout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(imaging_suite_install).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(it_network_core).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(regulatory_inspection).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(occupancy_permit).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task(go_live).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(foundation, site_prep).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(structural_frame, foundation).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(mep_rough_in, structural_frame).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(fireproofing, structural_frame).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(enclosure_glazing, structural_frame).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(roofing, structural_frame).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(interior_buildout, mep_rough_in).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(interior_buildout, fireproofing).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(hvac_commissioning, interior_buildout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(medical_gas_cert, interior_buildout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(or_fitout, medical_gas_cert).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(imaging_suite_install, interior_buildout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(it_network_core, interior_buildout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(regulatory_inspection, hvac_commissioning).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(regulatory_inspection, medical_gas_cert).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(regulatory_inspection, it_network_core).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(occupancy_permit, regulatory_inspection).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(go_live, occupancy_permit).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(go_live, or_fitout).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;depends_on(go_live, imaging_suite_install).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(site_prep, 12).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(foundation, 21).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(structural_frame, 35).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(interior_buildout, 40).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(regulatory_inspection, 14).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(occupancy_permit, 7).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;duration_days(go_live, 2).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task_supplier(enclosure_glazing, glass_vendor).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task_supplier(medical_gas_cert, medgas_vendor).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;task_supplier(imaging_suite_install, imaging_vendor).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, on_time).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(imaging_vendor, on_time).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;completed(site_prep).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;completed(foundation).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;completed(structural_frame).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;milestone(regulatory_inspection).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;milestone(occupancy_permit).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;milestone(go_live).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+All facts have been successfully asserted using ONLY `assert_fact_raw` calls. 
+
+**Final Count: 55 facts**
+
+Breakdown by fact type:
+- **task()**: 16 facts (site_prep, foundation, structural_frame, mep_rough_in, fireproofing, enclosure_glazing, roofing, interior_buildout, hvac_commissioning, medical_gas_cert, or_fitout, imaging_suite_install, it_network_core, regulatory_inspection, occupancy_permit, go_live)
+- **depends_on()**: 20 facts (project dependencies)
+- **duration_days()**: 7 facts (task durations in days)
+- **task_supplier()**: 3 facts (vendor assignments)
+- **supplier_status()**: 3 facts (vendor status)
+- **completed()**: 3 facts (completed tasks)
+- **milestone()**: 3 facts (key milestones)
+
+All assertions returned success status and were added to the runtime knowledge base.</pre></div>
+</section>
+<section class="step-card">
+  <h2>baseline</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use ONLY query_prolog_rows_raw for these exact queries and then produce markdown tables from returned rows:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+Do not call query_prolog.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use ONLY query_prolog_rows_raw for these exact queries and then produce markdown tables from returned rows:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+Do not call query_prolog.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Here are the results formatted as markdown tables:
+
+### safe_to_start(Task)
+
+| Task |
+|------|
+| site_prep |
+| foundation |
+| structural_frame |
+| mep_rough_in |
+| fireproofing |
+| enclosure_glazing |
+| roofing |
+
+---
+
+### waiting_on(Task, Prereq)
+
+| Task | Prereq |
+|------|--------|
+| interior_buildout | mep_rough_in |
+| interior_buildout | fireproofing |
+| hvac_commissioning | interior_buildout |
+| medical_gas_cert | interior_buildout |
+| or_fitout | medical_gas_cert |
+| imaging_suite_install | interior_buildout |
+| it_network_core | interior_buildout |
+| regulatory_inspection | hvac_commissioning |
+| regulatory_inspection | medical_gas_cert |
+| regulatory_inspection | it_network_core |
+| occupancy_permit | regulatory_inspection |
+| go_live | occupancy_permit |
+| go_live | or_fitout |
+| go_live | imaging_suite_install |
+
+---
+
+### task_status(Task, Status)
+
+| Task | Status |
+|------|--------|
+| site_prep | ready |
+| foundation | ready |
+| structural_frame | ready |
+| mep_rough_in | ready |
+| fireproofing | ready |
+| enclosure_glazing | ready |
+| roofing | ready |
+| interior_buildout | waiting |
+| hvac_commissioning | waiting |
+| medical_gas_cert | waiting |
+| or_fitout | waiting |
+| imaging_suite_install | waiting |
+| it_network_core | waiting |
+| regulatory_inspection | waiting |
+| occupancy_permit | waiting |
+| go_live | waiting |
+
+---
+
+### delayed_milestone(Milestone, Supplier)
+
+*(No results found - 0 rows)*</pre></div>
+</section>
+<section class="step-card">
+  <h2>shock_glass</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use only these tools in order:
+1) retract_fact_raw supplier_status(glass_vendor, on_time).
+2) assert_fact_raw supplier_status(glass_vendor, delayed).
+3) query_prolog_rows_raw blocked_task(Task, Supplier).
+4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+Return two tables.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use only these tools in order:
+1) retract_fact_raw supplier_status(glass_vendor, on_time).
+2) assert_fact_raw supplier_status(glass_vendor, delayed).
+3) query_prolog_rows_raw blocked_task(Task, Supplier).
+4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+Return two tables.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Here are the two tables from the queries executed in order:
+
+**Table 1: Blocked Tasks**
+| Task | Supplier |
+|------|----------|
+| enclosure_glazing | glass_vendor |
+
+**Table 2: Delayed Milestones**
+| Milestone | Supplier |
+|-----------|----------|
+| *(no results)* | *(no results)* |
+
+The first table shows one blocked task (enclosure_glazing) associated with the glass_vendor supplier. The second query returned no results for delayed milestones, indicating there are currently no delayed milestones in the knowledge base.</pre></div>
+</section>
+<section class="step-card">
+  <h2>shock_medgas</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use only these tools in order:
+1) retract_fact_raw supplier_status(medgas_vendor, on_time).
+2) assert_fact_raw supplier_status(medgas_vendor, delayed).
+3) query_prolog_rows_raw blocked_task(Task, Supplier).
+4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+Then provide top 3 interventions to protect go_live.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use only these tools in order:
+1) retract_fact_raw supplier_status(medgas_vendor, on_time).
+2) assert_fact_raw supplier_status(medgas_vendor, delayed).
+3) query_prolog_rows_raw blocked_task(Task, Supplier).
+4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+Then provide top 3 interventions to protect go_live.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, on_time).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, delayed).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Based on the query results, here are the top 3 interventions to protect go_live:
+
+## **Top 3 Interventions to Protect Go-Live**
+
+### **1. Immediate Escalation &amp; Expedited Delivery for MedGas Vendor**
+- **Critical Issue**: `medgas_vendor` is now marked as &quot;delayed&quot; and has **5 blocked tasks** + **3 delayed milestones**, including the critical `go_live` milestone itself
+- **Action Required**: 
+  - Immediately escalate to medgas_vendor management with SLA breach notification
+  - Request expedited delivery/priority scheduling for all pending gas certification work
+  - Assign dedicated account manager to monitor daily progress
+
+### **2. Parallel-Track Regulatory &amp; Occupancy Dependencies**
+- **Critical Issue**: Both `regulatory_inspection` and `occupancy_permit` are blocked by medgas_vendor but are critical path items for go_live
+- **Action Required**:
+  - Identify alternative pathways or pre-compliance work that can proceed independently
+  - Engage regulatory bodies to explore conditional approval options
+  - Prepare contingency documentation to minimize wait time once gas certification is complete
+
+### **3. Contingency Planning for Glass Vendor Enclosure Glazing**
+- **Critical Issue**: `enclosure_glazing` (glass_vendor) is also blocked, creating a compound bottleneck risk
+- **Action Required**:
+  - Assess if enclosure work can proceed with temporary measures while glass vendor resolves issues
+  - Evaluate alternative suppliers or expedited shipping options for glass components
+  - Ensure this task doesn&#x27;t create additional cascading delays on the critical path
+
+---
+
+**Risk Summary**: The medgas_vendor delay is the primary threat to go_live, directly blocking 3 milestones including go_live itself. Immediate intervention on supplier performance and parallel workarounds are essential to protect the launch timeline.</pre></div>
+</section>
+<section class="step-card">
+  <h2>recovery</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use only these tools in order:
+1) retract_fact_raw supplier_status(glass_vendor, delayed).
+2) assert_fact_raw supplier_status(glass_vendor, on_time).
+3) assert_fact_raw completed(enclosure_glazing).
+4) assert_fact_raw completed(mep_rough_in).
+5) assert_fact_raw completed(fireproofing).
+6) query_prolog_rows_raw safe_to_start(Task).
+7) query_prolog_rows_raw waiting_on(Task, Prereq).
+8) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+Return sections: Ready now, Still waiting, Remaining milestone risks.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use only these tools in order:
+1) retract_fact_raw supplier_status(glass_vendor, delayed).
+2) assert_fact_raw supplier_status(glass_vendor, on_time).
+3) assert_fact_raw completed(enclosure_glazing).
+4) assert_fact_raw completed(mep_rough_in).
+5) assert_fact_raw completed(fireproofing).
+6) query_prolog_rows_raw safe_to_start(Task).
+7) query_prolog_rows_raw waiting_on(Task, Prereq).
+8) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).
+Return sections: Ready now, Still waiting, Remaining milestone risks.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact_raw</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_prolog_rows_raw</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Based on the operations executed, here are the results organized into the requested sections:
+
+## Ready now
+The following tasks are safe to start:
+- site_prep
+- foundation
+- structural_frame
+- mep_rough_in
+- fireproofing
+- enclosure_glazing
+- roofing
+- interior_buildout
+
+## Still waiting
+The following tasks are waiting on prerequisites:
+- hvac_commissioning (waiting on: interior_buildout)
+- imaging_suite_install (waiting on: interior_buildout)
+- it_network_core (waiting on: interior_buildout)
+
+## Remaining milestone risks
+The following milestones have delays associated with suppliers:
+- regulatory_inspection (delayed by: medgas_vendor)
+- occupancy_permit (delayed by: medgas_vendor)
+- go_live (delayed by: medgas_vendor)</pre></div>
+</section>
+  </div>
+  <script>
+    (() => {
+      const buttons = document.querySelectorAll('.copy-btn');
+      for (const button of buttons) {
+        button.addEventListener('click', async () => {
+          const text = button.getAttribute('data-copy') || '';
+          const before = '[copy]';
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = '[copied]';
+            button.classList.add('copied');
+          } catch (error) {
+            button.textContent = '[copy-failed]';
+          }
+          window.setTimeout(() => {
+            button.textContent = before;
+            button.classList.remove('copied');
+          }, 1200);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

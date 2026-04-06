@@ -22,7 +22,7 @@ import json
 import sys
 import argparse
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Set
 from pathlib import Path
 
 # Add src to path
@@ -30,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from parser.semantic import SemanticPrologSkill
 from parser.statement_classifier import StatementClassifier
+from engine.core import Term
 
 
 class PrologMCPServer:
@@ -47,6 +48,17 @@ class PrologMCPServer:
         "allowed",
         "can_access",
         "child",
+        "interacts",
+        "triage",
+        "safe_candidate",
+        "downstream",
+        "blocked_task",
+        "unmet_prereq",
+        "task_status",
+        "safe_to_start",
+        "waiting_on",
+        "impacts_milestone",
+        "delayed_milestone",
     }
     SUPPORTED_PREDICATES = [
         "parent",
@@ -62,6 +74,29 @@ class PrologMCPServer:
         "can_access",
         "granted_permission",
         "allowed",
+        "patient",
+        "renal_risk",
+        "candidate_drug",
+        "interaction",
+        "drug_class",
+        "interacts",
+        "triage",
+        "safe_candidate",
+        "task",
+        "depends_on",
+        "duration_days",
+        "task_supplier",
+        "supplier_status",
+        "completed",
+        "milestone",
+        "downstream",
+        "blocked_task",
+        "unmet_prereq",
+        "task_status",
+        "safe_to_start",
+        "waiting_on",
+        "impacts_milestone",
+        "delayed_milestone",
     ]
     
     def __init__(self, kb_path: str = "prolog/core.pl"):
@@ -95,6 +130,85 @@ class PrologMCPServer:
                         }
                     },
                     "required": ["query"]
+                }
+            },
+            {
+                "name": "query_prolog_raw",
+                "description": "Query the Prolog engine with a literal Prolog query string (for deterministic predicate-level checks). Example: allowed(alice, read).",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Raw Prolog query string (e.g., 'allowed(alice, read).' or 'parent(john, X).')"
+                        }
+                    },
+                    "required": ["query"]
+                }
+            },
+            {
+                "name": "query_prolog_rows_raw",
+                "description": "Query the Prolog engine and return all solution rows projected to the query variables. Best for deterministic table/report building.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Raw Prolog query with variables (e.g., 'waiting_on(Task, Prereq).')"
+                        }
+                    },
+                    "required": ["query"]
+                }
+            },
+            {
+                "name": "assert_fact_raw",
+                "description": "Assert a ground Prolog fact into the runtime KB for this MCP server process. Example: task(foundation).",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "fact": {
+                            "type": "string",
+                            "description": "Ground Prolog fact string ending in '.' (e.g., 'depends_on(structure, foundation).')"
+                        }
+                    },
+                    "required": ["fact"]
+                }
+            },
+            {
+                "name": "bulk_assert_facts_raw",
+                "description": "Assert multiple ground Prolog facts into the runtime KB in one call. Returns per-fact successes/failures.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "facts": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "List of ground Prolog fact strings."
+                        }
+                    },
+                    "required": ["facts"]
+                }
+            },
+            {
+                "name": "retract_fact_raw",
+                "description": "Retract one matching ground Prolog fact from the runtime KB for this MCP server process.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "fact": {
+                            "type": "string",
+                            "description": "Ground Prolog fact string ending in '.' to remove."
+                        }
+                    },
+                    "required": ["fact"]
+                }
+            },
+            {
+                "name": "reset_runtime_kb",
+                "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
                 }
             },
             {
@@ -175,11 +289,33 @@ class PrologMCPServer:
                 return predicate
 
         nl_query = result.get("nl_query", "")
-        match = re.search(r"\b(parent|sibling|ancestor|child|allergic_to|takes_medication|user|role|permission|access_level|can_access|granted_permission|allowed)\b", nl_query)
+        pattern = r"\b(" + "|".join(re.escape(name) for name in self.SUPPORTED_PREDICATES) + r")\b"
+        match = re.search(pattern, nl_query)
         if match:
             return match.group(1)
 
         return None
+
+    def _extract_predicate_from_prolog_query(self, query: str) -> Optional[str]:
+        """Extract predicate name from a raw Prolog query string."""
+        match = re.match(r"^\s*([a-z_][a-z0-9_]*)\s*\(", query.strip(), re.IGNORECASE)
+        if match:
+            return match.group(1).lower()
+        return None
+
+    def _normalize_raw_query(self, query: str) -> str:
+        """
+        Normalize chat-produced query strings.
+
+        Handles common list/bullet formatting artifacts such as:
+        - "- safe_to_start(Task)."
+        - "1) waiting_on(Task, Prereq)."
+        - "`task_status(Task, Status).`"
+        """
+        text = (query or "").strip()
+        text = text.strip("`").strip()
+        text = re.sub(r"^\s*(?:[-*•]\s+|\d+[\)\.:]\s*)", "", text)
+        return text.strip()
 
     def _infer_reasoning_basis(self, predicate: Optional[str]) -> Dict[str, str]:
         """Describe whether the answer is likely fact-based or rule-derived."""
@@ -261,6 +397,269 @@ class PrologMCPServer:
                     "nl_query": query,
                     "reasoning_basis": reasoning_basis
                 }
+
+    def query_prolog_raw(self, query: str) -> Dict[str, Any]:
+        """Execute a raw Prolog query string against the deterministic engine."""
+        normalized_query = self._normalize_raw_query(query)
+        predicate = self._extract_predicate_from_prolog_query(normalized_query)
+        reasoning_basis = self._infer_reasoning_basis(predicate)
+        result = self.skill.prolog_skill.query(normalized_query)
+
+        if result.get("success"):
+            explanation = result.get("explanation", "Query succeeded").strip()
+            first_line = explanation.splitlines()[0].strip() if explanation else "Query succeeded."
+            return {
+                "status": "success",
+                "result_type": "success",
+                "predicate": predicate,
+                "answer_short": first_line,
+                "answer_detailed": explanation or "Query succeeded",
+                "confidence": result.get("confidence", 0.0),
+                "prolog_query": normalized_query,
+                "reasoning_basis": reasoning_basis,
+                "metadata": {
+                    "proof_trace": result.get("proof_trace"),
+                    "bindings": result.get("bindings"),
+                    "num_solutions": result.get("num_solutions"),
+                },
+            }
+
+        error = result.get("error")
+        if error:
+            return {
+                "status": "error",
+                "result_type": "execution_error",
+                "predicate": predicate,
+                "prolog_query": normalized_query,
+                "message": str(error),
+                "reasoning_basis": reasoning_basis,
+            }
+
+        return {
+            "status": "no_results",
+            "result_type": "no_result",
+            "predicate": predicate,
+            "prolog_query": normalized_query,
+            "message": result.get("explanation", "No results found for this query"),
+            "reasoning_basis": reasoning_basis,
+            "metadata": {
+                "proof_trace": result.get("proof_trace"),
+                "bindings": result.get("bindings"),
+                "num_solutions": result.get("num_solutions"),
+            },
+        }
+
+    def _collect_query_variables(self, term: Any) -> List[str]:
+        """Collect original variable names from a parsed query term."""
+        names: List[str] = []
+
+        def walk(node: Any) -> None:
+            if getattr(node, "is_variable", False):
+                name = getattr(node, "name", "")
+                if isinstance(name, str) and name not in names:
+                    names.append(name)
+            for arg in getattr(node, "args", []):
+                walk(arg)
+
+        walk(term)
+        return names
+
+    def query_prolog_rows_raw(self, query: str) -> Dict[str, Any]:
+        """
+        Execute a raw Prolog query and return all rows projected to query vars.
+        """
+        normalized_query = self._normalize_raw_query(query)
+        predicate = self._extract_predicate_from_prolog_query(normalized_query)
+        reasoning_basis = self._infer_reasoning_basis(predicate)
+
+        try:
+            query_term = self.skill.prolog_skill._parse_query(normalized_query)
+            variable_names = self._collect_query_variables(query_term)
+            solutions = self.skill.prolog_skill.engine.resolve(query_term)
+        except Exception as error:
+            return {
+                "status": "error",
+                "result_type": "execution_error",
+                "predicate": predicate,
+                "prolog_query": normalized_query,
+                "message": str(error),
+                "reasoning_basis": reasoning_basis,
+            }
+
+        if not solutions:
+            return {
+                "status": "no_results",
+                "result_type": "no_result",
+                "predicate": predicate,
+                "prolog_query": normalized_query,
+                "variables": variable_names,
+                "rows": [],
+                "num_rows": 0,
+                "reasoning_basis": reasoning_basis,
+            }
+
+        rows: List[Dict[str, str]] = []
+        seen_rows: Set[str] = set()
+
+        if variable_names:
+            for solution in solutions:
+                row: Dict[str, str] = {}
+                for variable_name in variable_names:
+                    bound = solution.apply(Term(variable_name, is_variable=True))
+                    row[variable_name] = str(bound)
+                key = json.dumps(row, sort_keys=True)
+                if key not in seen_rows:
+                    seen_rows.add(key)
+                    rows.append(row)
+        else:
+            rows.append({})
+
+        return {
+            "status": "success",
+            "result_type": "table",
+            "predicate": predicate,
+            "prolog_query": normalized_query,
+            "variables": variable_names,
+            "rows": rows,
+            "num_rows": len(rows),
+            "reasoning_basis": reasoning_basis,
+        }
+
+    def _extract_entities_from_fact(self, fact: str) -> Set[str]:
+        """Extract atom-like entities from a fact's arguments."""
+        entities: Set[str] = set()
+        term = None
+
+        parse_method = getattr(self.skill.prolog_skill, "_parse_query", None)
+        if parse_method:
+            try:
+                term = parse_method(fact)
+            except Exception:
+                term = None
+
+        if term is not None:
+            stack: List[Any] = list(getattr(term, "args", []))
+            while stack:
+                node = stack.pop()
+                if getattr(node, "is_variable", False):
+                    continue
+                args = getattr(node, "args", [])
+                if args:
+                    stack.extend(args)
+                else:
+                    name = getattr(node, "name", "")
+                    if re.match(r"^[a-z_][a-z0-9_]*$", str(name)):
+                        entities.add(str(name))
+            return entities
+
+        for token in re.findall(r"\b[a-z_][a-z0-9_]*\b", fact):
+            entities.add(token)
+        return entities
+
+    def assert_fact_raw(self, fact: str) -> Dict[str, Any]:
+        """Assert one runtime fact into the current in-memory KB."""
+        normalized = (fact or "").strip()
+        if not normalized:
+            return {
+                "status": "validation_error",
+                "message": "No fact provided.",
+                "fact": fact,
+            }
+        if not normalized.endswith("."):
+            normalized = normalized + "."
+
+        added = self.skill.prolog_skill.add_fact(normalized)
+        if not added:
+            return {
+                "status": "validation_error",
+                "message": "Fact assertion failed. Ensure this is a ground fact (no variables) and not a rule.",
+                "fact": normalized,
+            }
+
+        if hasattr(self.skill, "validator"):
+            self.skill.validator.kb_entities.update(self._extract_entities_from_fact(normalized))
+
+        return {
+            "status": "success",
+            "result_type": "fact_asserted",
+            "fact": normalized,
+            "message": "Fact asserted into runtime KB for this server process.",
+            "note": "Use reset_runtime_kb to clear runtime changes.",
+        }
+
+    def bulk_assert_facts_raw(self, facts: List[str]) -> Dict[str, Any]:
+        """Assert multiple facts in one call."""
+        if not isinstance(facts, list) or not facts:
+            return {
+                "status": "validation_error",
+                "message": "facts must be a non-empty list of fact strings.",
+                "requested_count": 0,
+            }
+
+        successes: List[str] = []
+        failures: List[Dict[str, str]] = []
+        for raw_fact in facts:
+            result = self.assert_fact_raw(str(raw_fact))
+            if result.get("status") == "success":
+                successes.append(result["fact"])
+            else:
+                failures.append(
+                    {
+                        "fact": str(raw_fact),
+                        "status": result.get("status", "error"),
+                        "message": result.get("message", "Assertion failed."),
+                    }
+                )
+
+        status = "success" if not failures else "partial_success"
+        return {
+            "status": status,
+            "result_type": "bulk_fact_assertion",
+            "requested_count": len(facts),
+            "asserted_count": len(successes),
+            "failed_count": len(failures),
+            "asserted_facts": successes,
+            "failed_facts": failures,
+            "message": "Bulk assertion complete.",
+        }
+
+    def retract_fact_raw(self, fact: str) -> Dict[str, Any]:
+        """Retract one runtime fact from the current in-memory KB."""
+        normalized = (fact or "").strip()
+        if not normalized:
+            return {
+                "status": "validation_error",
+                "message": "No fact provided.",
+                "fact": fact,
+            }
+        if not normalized.endswith("."):
+            normalized = normalized + "."
+
+        removed = self.skill.prolog_skill.retract_fact(normalized)
+        if not removed:
+            return {
+                "status": "no_results",
+                "result_type": "no_result",
+                "fact": normalized,
+                "message": "No matching fact found to retract.",
+            }
+
+        return {
+            "status": "success",
+            "result_type": "fact_retracted",
+            "fact": normalized,
+            "message": "Fact retracted from runtime KB.",
+        }
+
+    def reset_runtime_kb(self) -> Dict[str, Any]:
+        """Reset in-memory runtime assertions by recreating the semantic skill."""
+        self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
+        return {
+            "status": "success",
+            "result_type": "runtime_reset",
+            "message": "Runtime KB reset to baseline seed state.",
+            "knowledge_base_path": str(self.kb_path),
+        }
     
     def list_known_facts(self) -> Dict[str, Any]:
         """List known entities plus the supported predicate vocabulary."""
@@ -374,6 +773,7 @@ class PrologMCPServer:
                 "Natural language query processing",
                 "Statement classification before query or ingestion decisions",
                 "Deterministic knowledge-base reasoning",
+                "Runtime fact assertion/retraction for chat-driven scenarios",
                 "Semantic validation before query execution",
                 "Friendly failure explanations with suggestions",
                 "Proof-trace generation"
@@ -381,6 +781,8 @@ class PrologMCPServer:
             "supported_domains": [
                 "Family relationships (parent, sibling, ancestor)",
                 "Access control (permissions, roles, users)",
+                "Clinical medication triage (deterministic risk flags)",
+                "Project dependency risk analysis (CPM-like milestone impact)",
                 "General knowledge representations"
             ],
             "example_queries": [
@@ -402,6 +804,12 @@ class PrologMCPServer:
         """Route tool calls to appropriate handler."""
         handlers = {
             "query_prolog": lambda: self.query_prolog(tool_input.get("query", "")),
+            "query_prolog_raw": lambda: self.query_prolog_raw(tool_input.get("query", "")),
+            "query_prolog_rows_raw": lambda: self.query_prolog_rows_raw(tool_input.get("query", "")),
+            "assert_fact_raw": lambda: self.assert_fact_raw(tool_input.get("fact", "")),
+            "bulk_assert_facts_raw": lambda: self.bulk_assert_facts_raw(tool_input.get("facts", [])),
+            "retract_fact_raw": lambda: self.retract_fact_raw(tool_input.get("fact", "")),
+            "reset_runtime_kb": lambda: self.reset_runtime_kb(),
             "classify_statement": lambda: self.classify_statement(tool_input.get("text", "")),
             "list_known_facts": lambda: self.list_known_facts(),
             "explain_error": lambda: self.explain_error(tool_input.get("error_message", "")),

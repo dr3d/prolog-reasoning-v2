@@ -2,9 +2,11 @@
 
 **Memories are timestamped. Facts are not. Hallucinations begin when facts collapse into memories.**
 
-Prolog Reasoning v2 is a local-first neuro-symbolic reliability layer for LLM agents. It combines deterministic symbolic reasoning, structured validation, and human-readable explanations, then exposes that through practical integration paths like MCP.
+Prolog Reasoning v2 is a local-first deterministic logic layer for LLM agents. It combines symbolic reasoning, structured validation, and human-readable explanations, then exposes that through practical integration paths like MCP. The longer-term direction is to pair that logic layer with a classifier-driven fact intake pipeline for curated symbolic memory.
 
-[![Tests](https://img.shields.io/badge/tests-68%20passed-brightgreen)](tests/)
+Here, `local-first` means the core reasoning loop can run on your own machine with local files, local models, and local tooling first, rather than depending on a cloud service as the source of truth.
+
+[![Tests](https://img.shields.io/badge/tests-72%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -27,19 +29,16 @@ This repository explores a stricter contract:
 
 ## What This Project Is
 
-This repo is best understood through four pillars:
+This repo is best understood in three layers:
 
-1. **Deterministic reasoning**
-   A pure Python Prolog interpreter answers the same query the same way and can show its proof steps.
+1. **Deterministic logic layer**
+   A pure Python Prolog interpreter and a deterministic propagation engine answer the same inputs the same way and can show why.
 
-2. **Validation before belief**
-   Natural-language inputs are grounded into structured representations and checked before they are allowed to act like facts.
+2. **Fact intake / memory curation layer**
+   Natural-language inputs are classified, grounded, validated, and eventually routed toward hard fact, tentative memory, session state, preference, or rejection.
 
-3. **Failure explanations for humans**
-   The system tries to teach when something is wrong instead of returning cryptic failure modes.
-
-4. **Practical integration**
-   MCP, agent-facing skill wrappers, demos, and manifests make the symbolic layer usable from real agent workflows.
+3. **Agent integration layer**
+   MCP, agent-facing skill wrappers, LM Studio workflows, and install playbooks make the symbolic layer callable from real agent systems.
 
 ## What Is Real Today
 
@@ -50,13 +49,15 @@ These parts are implemented and working:
 - Semantic grounding and semantic validation pipeline in [src/parser/semantic.py](src/parser/semantic.py)
 - Failure explanation layer in [src/explain/failure_translator.py](src/explain/failure_translator.py)
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
+- Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `68 passed`
+- Test suite currently passing: `72 passed`
 
 What is still simplified or partly mocked:
 
 - some demo and agent paths use stub knowledge-base loading rather than full `.pl` parsing
 - the default semantic grounding path still includes a mock LLM mode
+- the write path for durable memory is still a design/early-engineering area rather than a finished subsystem
 - the graphics editor is exploratory and not the mainline product focus
 
 That is intentional to state plainly: the core symbolic layer is real, but not every surrounding integration path is equally mature yet.
@@ -100,16 +101,19 @@ python data/evaluate.py
 - Semantic grounding: [docs/semantic-grounding.md](docs/semantic-grounding.md)
 - Failure explanations: [docs/failure-explanations.md](docs/failure-explanations.md)
 - LM Studio + MCP guide: [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
+- MCP chat playbooks (copy/paste): [docs/mcp-chat-playbooks.md](docs/mcp-chat-playbooks.md)
 - Session summaries: [sessions.md](sessions.md) and [docs/sessions/parts/2026-part-01.md](docs/sessions/parts/2026-part-01.md)
 
 ### Build On It
 
 - Current implementation status: [status.md](status.md)
 - Planned work: [roadmap.md](roadmap.md)
-- Ontology routing spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md)
-- Memory ingestion notes: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md)
+- Fact intake pipeline: [docs/fact-intake-pipeline.md](docs/fact-intake-pipeline.md)
+- Fact intake and revision notes: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md)
 - Write-path contract: [docs/write-path-spec.md](docs/write-path-spec.md)
+- LM Studio classifier evaluation: [docs/lmstudio-classifier-matrix.md](docs/lmstudio-classifier-matrix.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)
+- Ontology routing spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md)
 
 ## Architecture Snapshot
 
@@ -124,8 +128,9 @@ The main execution path is:
 This keeps neural and symbolic responsibilities separate:
 
 - language models help interpret intent
+- intake logic decides what deserves symbolic treatment
 - symbolic structures hold explicit facts and rules
-- the engine decides truth
+- the engine decides truth and consequences
 
 ## Repo Map
 
@@ -179,6 +184,22 @@ For LM Studio, the app should launch the server for you from `mcp.json`. Replace
 
 LM Studio then owns the stdio process; you do not need to keep `mcp_server.py --stdio` running in a separate terminal.
 
+If you run the repo's MCP demo scripts that call LM Studio's HTTP API (for
+example `scripts/demonstrate_*_agent_mcp.py`), and LM Studio API auth is
+enabled, you must provide a token:
+
+```bash
+# PowerShell
+$env:LMSTUDIO_API_KEY = "<YOUR_LM_STUDIO_API_TOKEN>"
+python scripts/demonstrate_rule_table_agent_mcp.py
+```
+
+Or pass it directly:
+
+```bash
+python scripts/demonstrate_rule_table_agent_mcp.py --api-key "<YOUR_LM_STUDIO_API_TOKEN>"
+```
+
 Relevant references:
 
 - [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
@@ -212,15 +233,17 @@ Related doc:
 
 ## Current Status
 
-The project has a working symbolic core, validation layer, failure-explanation layer, MCP server, and constraint propagation engine.
+The project has a working deterministic logic layer, validation layer,
+failure-explanation layer, MCP server, classifier, and constraint propagation
+engine.
 
 The next serious work is around:
 
-- temporal reasoning
-- dependency separation
-- multi-session isolation
-- ontology-aware routing
-- memory ingestion and revision workflows
+- fact intake and memory curation
+- predicate identification and canonicalization
+- tentative memory and revision workflows
+- contradiction handling
+- later, stateless pre-thinker experiments
 
 See [status.md](status.md), [roadmap.md](roadmap.md), and [sessions.md](sessions.md) for the current planning picture.
 

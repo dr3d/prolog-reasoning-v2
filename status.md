@@ -1,187 +1,159 @@
 # Development Status
 
 **Last Updated**: April 5, 2026  
-**Status**: ✅ **CORE SYMBOLIC LAYER + MVP HANDOFF COMPLETE** — Ready for integration testing and iterative product refinement  
+**Status**: Core logic layer is solid; fact intake and memory curation are the next serious build.
 
-## ✅ Completed
+## Project Spine
 
-### Phase 1: Core Infrastructure
-- [x] Project structure and scaffolding
-- [x] Architecture documentation (architecture.md)
-- [x] Prolog engine (pure Python)
-  - [x] Term/Clause representation
-  - [x] Unification algorithm with occurs check
-  - [x] Backward-chaining resolution with backtracking
-  - [x] Depth limiting (prevent infinite loops)
-  - [x] Variable renaming (avoid conflicts)
-  - [x] Substitution/binding tracking
-- [x] Built-in predicates
-  - [x] Arithmetic (is, +, -, *, /, mod)
-  - [x] Comparisons (>, <, >=, =<, =:=, =\=)
-  - [x] Unification (=, \=)
-  - [x] Negation as failure (\+)
-  - [x] Cut (!) — simplified
-  - [x] findall/3 — stub
+The repository now has a clearer center of gravity:
 
-### Phase 2: Type-Safe Intermediate Representation
-- [x] IR schema (src/ir/schema.py)
-  - [x] Term representation
-  - [x] Predicate signatures
-  - [x] Domain schemas (family, access control)
-  - [x] IR validation
-- [x] IR compiler (src/compiler/ir_compiler.py)
-  - [x] JSON → Prolog conversion
-  - [x] Schema validation
-  - [x] Deduplication
+1. **Deterministic logic layer**
+   The Prolog engine, constraint propagation, and explanation paths provide
+   exact rule application and inspectable reasoning.
 
-### Phase 3: Explanation & Tracing
-- [x] Proof trace generation (src/explain/explanation.py)
-  - [x] Proof nodes and trees
-  - [x] Step-by-step execution logs
-  - [x] Human-readable explanations
+2. **Fact intake / memory curation layer**
+   This is the next active frontier: statement typing, predicate identification,
+   symbolic suitability, tentative memory, correction handling, and revision.
 
-### Phase 4: Semantic Validation ✅ COMPLETED
-- [x] Semantic Validator (`src/validator/semantic_validator.py`)
-  - [x] Entity grounding checks (undefined entities flagged)
-  - [x] Predicate grounding validation (ungrounded predicates warned)
-  - [x] Consistency checks for facts and rules
-  - [x] Confidence scoring and error reporting
-  - [x] Integration with SemanticPrologSkill (blocks invalid queries)
-- [x] Validation feedback loop
-  - [x] Structured error messages with suggestions
-  - [x] Confidence degradation for issues
-  - [x] Prevents "false certainty" from incorrect facts
-- [x] **17 semantic validation tests** (test_semantic.py)
+3. **Agent integration layer**
+   MCP, LM Studio, Hermes/OpenClaw skills, and demos make the symbolic layer
+   callable from real agent workflows.
 
-### Phase 5: Failure Explanation Layer ✅ COMPLETED
-- [x] Failure Translator (`src/explain/failure_translator.py`)
-  - [x] Explanation for undefined entities
-  - [x] Explanation for ungrounded predicates
-  - [x] Explanation for query failures
-  - [x] Explanation for timeouts/depth limits
-  - [x] Explanation for ambiguous inputs
-  - [x] "Did you mean?" suggestions with fuzzy matching
-  - [x] Dual output formats (human-friendly with emojis, LLM-structured)
-- [x] **16 failure translator tests** (test_failures.py)
-- [x] Integration with SemanticPrologSkill
-  - [x] Automatic failure explanation in query responses
-  - [x] Structured error feedback for LLM agents
-- [x] Complete documentation (docs/failure-explanations.md)
+The graphics editor and ontology-routing ideas remain in the repo, but they are
+not the current center of the project.
 
-### Phase 6: Comprehensive Testing ✅ COMPLETED
-- [x] Core engine tests (**21 tests** in `tests/test_engine.py`)
-  - [x] Term creation, unification, substitution
-  - [x] Resolution, backtracking, built-ins
-- [x] Semantic validation tests (**17 tests** in `tests/test_semantic.py`)
-  - [x] Validator success/failure scenarios
-  - [x] Grounder parsing accuracy
-  - [x] Integrated skill validation
-  - [x] End-to-end workflow testing
-  - [x] Confidence degradation testing
-- [x] Failure translator tests (**16 tests** in `tests/test_failures.py`)
-  - [x] All failure type explanations
-  - [x] "Did you mean?" suggestions
-  - [x] Format variations (human/LLM)
-  - [x] Integration scenarios
-- [x] Constraint propagation tests (**5 tests** across `tests/test_constraint_propagation.py` and `tests/test_runner_propagation.py`)
-  - [x] Fixed-point propagation scenarios
-  - [x] Domain narrowing and contradiction checks
-  - [x] Runner propagation mode coverage
-- [x] MVP validation tests (**1 test** in `tests/test_mvp_validation.py`)
-  - [x] Constraint-editor validation script coverage
-- [x] MCP server tests (**8 tests** in `tests/test_mcp_server.py`)
-  - [x] Handshake and protocol negotiation
-  - [x] Tool result wrapping and JSON-safe serialization
-  - [x] Query/list/error response shaping
-- [x] **Total: 68 tests passing** (100% success rate)
-  - [x] Structured responses for agent consumption
-  - [x] Parsing metadata and confidence tracking
-  - [x] Failure handling and recovery suggestions
-- [x] Mock LLM implementation for testing
-- [x] Comprehensive validation demo script
-- [x] Demo scripts for all major features
-  - [x] `demonstrate_agent.py` - Basic agent workflow
-  - [x] `demonstrate_semantic.py` - Semantic grounding
-  - [x] `demonstrate_healthcare.py` - Real-world healthcare scenario
-  - [x] `demonstrate_failures.py` - Failure explanations (NEW!)
+## Working Now
 
-### Phase 7: Training & Documentation ✅ COMPLETED
-- [x] Training library structure (training/ folder)
-  - [x] Beginner-friendly course materials
-  - [x] YAML frontmatter for social media sharing
-  - [x] Template for creating new courses
-- [x] First course: LLM Memory Magic (30 min)
-  - [x] Explains why LLMs forget and how Prolog helps
-  - [x] Beginner-oriented introduction to NeSy
-  - [x] Runnable code examples
-- [x] Documentation Updates
-  - [x] README with learning path for newcomers
-  - [x] failure-explanations.md (comprehensive guide)
-  - [x] All demo scripts enhanced with explanations
-  - [x] Clear "Try this first" recommendations
+### Deterministic Logic Layer
 
-## ⚠️ In Progress / Planned
+- Pure Python Prolog engine in `src/engine/core.py`
+  - unification
+  - backward chaining
+  - backtracking
+  - built-ins
+- Constraint propagation engine in `src/engine/constraint_propagation.py`
+- Proof and explanation support in `src/explain/`
+- IR schema and compiler in `src/ir/` and `src/compiler/`
 
-## Quick Status Summary
+### Intake and Validation
 
-| Component | Tests | Status | Notes |
-|-----------|-------|--------|-------|
-| Core engine | ✅ 21 | Pass | Complete, well-tested |
-| Semantic validation | ✅ 17 | Pass | Prevents invalid queries |
-| Failure explanations | ✅ 16 | Pass | Human-friendly error messages |
-| Constraint propagation | ✅ 5 | Pass | Deterministic propagation and runner coverage |
-| MVP validation | ✅ 1 | Pass | Constraint-editor validation check |
-| MCP server | ✅ 8 | Pass | LM Studio-facing MCP behavior pinned down |
-| Integration | ✅ All | Pass | Full pipeline working end-to-end |
-| **TOTAL** | **68** | **Pass** | 100% success rate |
+- Semantic grounding in `src/parser/semantic.py`
+- Semantic validation in `src/validator/semantic_validator.py`
+- Failure explanation layer in `src/explain/failure_translator.py`
+- Deterministic statement classifier in `src/parser/statement_classifier.py`
+  - `query`
+  - `hard_fact`
+  - `tentative_fact`
+  - `correction`
+  - `preference`
+  - `session_context`
 
-## Project Health
+### Agent Integration
 
-✅ **Core**: Solid, well-tested, fully documented  
-✅ **Semantic Layer**: Prevents bad facts from reaching Prolog  
-✅ **User Experience**: Beginner-friendly error messages with actionable suggestions  
-✅ **Testing**: Comprehensive coverage (68 tests, all passing)  
-✅ **Documentation**: README, courses, failure explanations, architecture
+- MCP server in `src/mcp_server.py`
+- LM Studio integration guide in `docs/lm-studio-mcp-guide.md`
+- Hermes/OpenClaw install playbooks:
+  - `HERMES-AGENT-INSTALL.md`
+  - `OPENCLAW-AGENT-INSTALL.md`
 
-## Known Limitations
+## Test Status
 
-### Current
-- Iterative repair loops not implemented (next phase)
-- No typed predicate templates yet
-- Semantic parser not yet LLM-integrated
-- Limited to 500-depth recursion
-- No module system
-- Simplified term parser
+Current suite:
 
-### By Design
-- Pure Python (for clarity, not speed)
-- Doesn't fix LLM hallucination (prevents it in KB only)
-- Closed-world assumption (facts are true/false, not fuzzy)
-- No probabilistic reasoning or uncertainty quantification
+- Core engine tests
+- Semantic validation tests
+- Failure explanation tests
+- Constraint propagation tests
+- MVP validation test
+- MCP server tests
 
-## Testing Coverage
+**Current total:** `72 passed`
 
-| Component | Tests | Status |
-|-----------|-------|--------|
-| Term representation | ✅ 5 | Pass |
-| Unification | ✅ 6 | Pass |
-| Resolution (facts) | ✅ 2 | Pass |
-| Resolution (rules) | ✅ 1 | Pass |
-| Resolution (recursive) | ✅ 1 | Pass |
-| Built-ins | ✅ 3 | Pass |
-| Semantic validation | ✅ 17 | Pass |
-| Failure translator | ✅ 16 | Pass |
-| Constraint propagation | ✅ 5 | Pass |
-| MVP validation | ✅ 1 | Pass |
-| MCP server | ✅ 8 | Pass |
-| **Total** | **68** | **Pass** |
+The only recurring warning is the existing `.pytest_cache` permission warning on
+Windows.
 
----
+## What Is Still Simplified
 
-## Next Steps
+- `src/agent_skill.py` still uses stub KB loading
+- the default semantic grounding path still includes a mock LLM mode
+- there is no real durable write path yet
+- statement classification exists, but predicate mapping and canonical fact
+  shaping are still early
 
-For future priorities and development plans, see [roadmap.md](roadmap.md).
+That means the repo is already useful as:
 
-Ontology-context routing draft spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md).
+- a logic coprocessor for agents
+- a deterministic reasoning substrate
+- a local MCP-backed symbolic tool
 
-Memory ingestion and revision note: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md).
+It is not yet complete as:
+
+- a full memory ingestion and revision system
+- a durable symbolic memory layer with clean fact injection
+
+## Current Priorities
+
+### 1. Fact Intake Pipeline
+
+This is the main next step.
+
+The system needs a better path from language to assertable symbolic structure:
+
+- utterance classification
+- symbolic suitability filtering
+- predicate mapping
+- entity normalization
+- fact canonicalization
+- assertion policy
+
+### 2. Memory Curation and Revision
+
+The project needs explicit handling for:
+
+- tentative memory
+- correction cues
+- `assert` / `tentative` / `confirm` / `retract` / `supersede`
+- contradiction surfacing
+- provenance and revision journal semantics
+
+### 3. Agent-Callable Logic Utility
+
+The library should become easier to understand as a deterministic tool agents
+call for:
+
+- constraints
+- rule-derived tables
+- consistency checks
+- state propagation
+- permission and relationship logic
+
+## Secondary / Optional Directions
+
+These are still interesting, but they are not the project spine right now:
+
+- ontology context routing
+- pre-thinker control plane
+- graphics editor / constraint UI
+- richer visualizations
+
+## Recommended Reading Order
+
+If someone wants the current story in the right order:
+
+1. `README.md`
+2. `docs/write-path-spec.md`
+3. `docs/memory-ingestion-and-revision-notes.md`
+4. `docs/lmstudio-classifier-matrix.md`
+5. `roadmap.md`
+6. `sessions.md`
+
+## Summary
+
+The repo is strongest today when understood as:
+
+- a deterministic logic layer for agents
+- plus the beginnings of a classifier-driven fact intake pipeline
+
+The biggest research and engineering question is no longer whether symbolic
+reasoning works. It is whether the system can reliably turn soft language into
+clean, durable, symbolic structure without polluting the KB.

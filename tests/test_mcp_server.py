@@ -24,10 +24,31 @@ class DummyValidator:
         self.kb_entities = entities or {"john", "alice", "bob", "admin", "read", "write"}
 
 
+class DummyRawPrologSkill:
+    def __init__(self, response, add_fact_result=True, retract_fact_result=True):
+        self._response = response
+        self._add_fact_result = add_fact_result
+        self._retract_fact_result = retract_fact_result
+
+    def query(self, query):
+        return {**self._response, "query": query}
+
+    def add_fact(self, fact):
+        return self._add_fact_result
+
+    def retract_fact(self, fact):
+        return self._retract_fact_result
+
+
 class DummySkill:
-    def __init__(self, response, entities=None):
+    def __init__(self, response, entities=None, raw_response=None, add_fact_result=True, retract_fact_result=True):
         self._response = response
         self.validator = DummyValidator(entities)
+        self.prolog_skill = DummyRawPrologSkill(
+            raw_response if raw_response is not None else response,
+            add_fact_result=add_fact_result,
+            retract_fact_result=retract_fact_result,
+        )
 
     def query_nl(self, query):
         return {**self._response, "nl_query": query}
@@ -64,7 +85,7 @@ class TestMCPServer:
         assert response["result"]["capabilities"]["tools"]["listChanged"] is False
         assert response["result"]["serverInfo"]["name"] == "prolog-reasoning"
 
-    def test_tools_list_includes_classify_statement(self):
+    def test_tools_list_includes_classify_statement_and_write_tools(self):
         server = make_server()
 
         response = server.process_request(
@@ -78,6 +99,12 @@ class TestMCPServer:
 
         tool_names = [tool["name"] for tool in response["result"]["tools"]]
         assert "classify_statement" in tool_names
+        assert "query_prolog_raw" in tool_names
+        assert "query_prolog_rows_raw" in tool_names
+        assert "assert_fact_raw" in tool_names
+        assert "bulk_assert_facts_raw" in tool_names
+        assert "retract_fact_raw" in tool_names
+        assert "reset_runtime_kb" in tool_names
 
     def test_tools_call_wraps_result_and_makes_it_json_safe(self):
         server = make_server()
@@ -220,3 +247,89 @@ class TestMCPServer:
         assert result["result_type"] == "no_result"
         assert result["predicate"] == "ancestor"
         assert result["reasoning_basis"]["kind"] == "rule-derived"
+
+    def test_query_prolog_raw_shapes_success_response(self):
+        skill = DummySkill(
+            response={},
+            raw_response={
+                "success": True,
+                "explanation": "SUCCESS: Query 'allowed(alice, read)' succeeded with 1 solution(s).",
+                "proof_trace": [],
+                "bindings": {},
+                "num_solutions": 1,
+                "confidence": 1.0,
+            },
+        )
+        server = make_server(skill)
+
+        result = server.query_prolog_raw("allowed(alice, read).")
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "success"
+        assert result["predicate"] == "allowed"
+        assert result["reasoning_basis"]["kind"] == "rule-derived"
+        assert result["prolog_query"] == "allowed(alice, read)."
+
+    def test_query_prolog_rows_raw_returns_projected_rows(self):
+        server = PrologMCPServer(kb_path="prolog/core.pl")
+        server.reset_runtime_kb()
+        server.assert_fact_raw("task(foundation).")
+        server.assert_fact_raw("task(structural_frame).")
+        server.assert_fact_raw("depends_on(structural_frame, foundation).")
+
+        result = server.query_prolog_rows_raw("depends_on(Task, Prereq).")
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "table"
+        assert result["variables"] == ["Task", "Prereq"]
+        assert any(row == {"Task": "structural_frame", "Prereq": "foundation"} for row in result["rows"])
+
+    def test_query_prolog_rows_raw_normalizes_bullet_prefix(self):
+        server = PrologMCPServer(kb_path="prolog/core.pl")
+        server.reset_runtime_kb()
+        server.assert_fact_raw("task(site_prep).")
+
+        result = server.query_prolog_rows_raw("- task(Task).")
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "table"
+        assert result["prolog_query"] == "task(Task)."
+        assert any(row == {"Task": "site_prep"} for row in result["rows"])
+
+    def test_assert_fact_raw_updates_entities(self):
+        server = make_server(DummySkill({}, {"john"}))
+
+        result = server.assert_fact_raw("task(foundation).")
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "fact_asserted"
+        assert "foundation" in server.skill.validator.kb_entities
+
+    def test_bulk_assert_facts_raw_reports_counts(self):
+        server = make_server(DummySkill({}, {"john"}))
+
+        result = server.bulk_assert_facts_raw(["task(foundation).", "task(structural_frame)."])
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "bulk_fact_assertion"
+        assert result["requested_count"] == 2
+        assert result["asserted_count"] == 2
+        assert result["failed_count"] == 0
+
+    def test_retract_fact_raw_returns_no_result_when_missing(self):
+        server = make_server(DummySkill({}, {"john"}, retract_fact_result=False))
+
+        result = server.retract_fact_raw("task(unknown_task).")
+
+        assert result["status"] == "no_results"
+        assert result["result_type"] == "no_result"
+
+    def test_reset_runtime_kb_rebuilds_skill(self):
+        server = PrologMCPServer(kb_path="prolog/core.pl")
+        original_skill = server.skill
+
+        result = server.reset_runtime_kb()
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "runtime_reset"
+        assert server.skill is not original_skill

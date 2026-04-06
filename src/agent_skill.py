@@ -22,7 +22,7 @@ from typing import Dict, Any, Optional, List
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from engine.core import PrologEngine, Term
+from engine.core import Clause, PrologEngine, Term
 from explain.explanation import ExplanationGenerator
 
 
@@ -47,9 +47,8 @@ class PrologSkill:
         """Load knowledge base into engine."""
         # TODO: Implement proper .pl file parsing
         # For now, use stub facts for demonstration
-        
+
         # Family facts
-        from engine.core import Term, Clause
         self.engine.add_clause(Clause(Term("person", [Term("john")])))
         self.engine.add_clause(Clause(Term("person", [Term("alice")])))
         self.engine.add_clause(Clause(Term("person", [Term("bob")])))
@@ -97,6 +96,212 @@ class PrologSkill:
                     Term("role", [Term("User", is_variable=True), Term("Role", is_variable=True)]),
                     Term("permission", [Term("Role", is_variable=True), Term("Action", is_variable=True)])
                 ]
+            )
+        )
+
+        # Clinical triage facts
+        self.engine.add_clause(Clause(Term("patient", [Term("alice")])))
+        self.engine.add_clause(Clause(Term("patient", [Term("bob")])))
+
+        self.engine.add_clause(Clause(Term("takes_medication", [Term("alice"), Term("warfarin")])))
+        self.engine.add_clause(Clause(Term("takes_medication", [Term("alice"), Term("ibuprofen")])))
+        self.engine.add_clause(Clause(Term("takes_medication", [Term("bob"), Term("lisinopril")])))
+
+        self.engine.add_clause(Clause(Term("allergic_to", [Term("alice"), Term("penicillin")])))
+        self.engine.add_clause(Clause(Term("renal_risk", [Term("alice")])))
+
+        self.engine.add_clause(Clause(Term("candidate_drug", [Term("alice"), Term("acetaminophen")])))
+        self.engine.add_clause(Clause(Term("candidate_drug", [Term("alice"), Term("naproxen")])))
+        self.engine.add_clause(Clause(Term("candidate_drug", [Term("alice"), Term("amoxicillin")])))
+        self.engine.add_clause(Clause(Term("candidate_drug", [Term("alice"), Term("clopidogrel")])))
+
+        self.engine.add_clause(Clause(Term("interaction", [Term("warfarin"), Term("ibuprofen"), Term("major_bleed")])))
+        self.engine.add_clause(Clause(Term("interaction", [Term("warfarin"), Term("clopidogrel"), Term("major_bleed")])))
+        self.engine.add_clause(Clause(Term("interaction", [Term("lisinopril"), Term("ibuprofen"), Term("moderate_kidney_stress")])))
+
+        self.engine.add_clause(Clause(Term("drug_class", [Term("amoxicillin"), Term("penicillin_family")])))
+        self.engine.add_clause(Clause(Term("drug_class", [Term("ibuprofen"), Term("nsaid")])))
+        self.engine.add_clause(Clause(Term("drug_class", [Term("naproxen"), Term("nsaid")])))
+        self.engine.add_clause(Clause(Term("drug_class", [Term("acetaminophen"), Term("analgesic_non_nsaid")])))
+        self.engine.add_clause(Clause(Term("drug_class", [Term("clopidogrel"), Term("antiplatelet")])))
+
+        # Symmetric interaction helper
+        self.engine.add_clause(
+            Clause(
+                Term("interacts", [Term("DrugA", is_variable=True), Term("DrugB", is_variable=True), Term("Risk", is_variable=True)]),
+                [Term("interaction", [Term("DrugA", is_variable=True), Term("DrugB", is_variable=True), Term("Risk", is_variable=True)])]
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("interacts", [Term("DrugA", is_variable=True), Term("DrugB", is_variable=True), Term("Risk", is_variable=True)]),
+                [Term("interaction", [Term("DrugB", is_variable=True), Term("DrugA", is_variable=True), Term("Risk", is_variable=True)])]
+            )
+        )
+
+        # Triage status:
+        #   contraindicated first, then caution, else safe_candidate/2 succeeds.
+        self.engine.add_clause(
+            Clause(
+                Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("contraindicated"), Term("penicillin_allergy")]),
+                [
+                    Term("allergic_to", [Term("Patient", is_variable=True), Term("penicillin")]),
+                    Term("drug_class", [Term("Drug", is_variable=True), Term("penicillin_family")]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("contraindicated"), Term("major_interaction")]),
+                [
+                    Term("takes_medication", [Term("Patient", is_variable=True), Term("Existing", is_variable=True)]),
+                    Term("interacts", [Term("Drug", is_variable=True), Term("Existing", is_variable=True), Term("major_bleed")]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("caution"), Term("moderate_interaction")]),
+                [
+                    Term("\\+", [Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("contraindicated"), Term("Any", is_variable=True)])]),
+                    Term("takes_medication", [Term("Patient", is_variable=True), Term("Existing", is_variable=True)]),
+                    Term("interacts", [Term("Drug", is_variable=True), Term("Existing", is_variable=True), Term("moderate_kidney_stress")]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("caution"), Term("renal_risk_nsaid")]),
+                [
+                    Term("\\+", [Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("contraindicated"), Term("Any", is_variable=True)])]),
+                    Term("renal_risk", [Term("Patient", is_variable=True)]),
+                    Term("drug_class", [Term("Drug", is_variable=True), Term("nsaid")]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("safe_candidate", [Term("Patient", is_variable=True), Term("Drug", is_variable=True)]),
+                [
+                    Term("candidate_drug", [Term("Patient", is_variable=True), Term("Drug", is_variable=True)]),
+                    Term("\\+", [Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("contraindicated"), Term("AnyA", is_variable=True)])]),
+                    Term("\\+", [Term("triage", [Term("Patient", is_variable=True), Term("Drug", is_variable=True), Term("caution"), Term("AnyB", is_variable=True)])]),
+                ],
+            )
+        )
+
+        # Project dependency / CPM-like reasoning rules (facts are user-provided)
+        self.engine.add_clause(
+            Clause(
+                Term("downstream", [Term("Task", is_variable=True), Term("Dependent", is_variable=True)]),
+                [Term("depends_on", [Term("Dependent", is_variable=True), Term("Task", is_variable=True)])],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("downstream", [Term("Task", is_variable=True), Term("Final", is_variable=True)]),
+                [
+                    Term("depends_on", [Term("Intermediate", is_variable=True), Term("Task", is_variable=True)]),
+                    Term("downstream", [Term("Intermediate", is_variable=True), Term("Final", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("blocked_task", [Term("Task", is_variable=True), Term("Supplier", is_variable=True)]),
+                [
+                    Term("task_supplier", [Term("Task", is_variable=True), Term("Supplier", is_variable=True)]),
+                    Term("supplier_status", [Term("Supplier", is_variable=True), Term("delayed")]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("blocked_task", [Term("Task", is_variable=True), Term("Supplier", is_variable=True)]),
+                [
+                    Term("depends_on", [Term("Task", is_variable=True), Term("Prereq", is_variable=True)]),
+                    Term("blocked_task", [Term("Prereq", is_variable=True), Term("Supplier", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("unmet_prereq", [Term("Task", is_variable=True), Term("Prereq", is_variable=True)]),
+                [
+                    Term("depends_on", [Term("Task", is_variable=True), Term("Prereq", is_variable=True)]),
+                    Term("\\+", [Term("completed", [Term("Prereq", is_variable=True)])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("task_status", [Term("Task", is_variable=True), Term("blocked")]),
+                [
+                    Term("task", [Term("Task", is_variable=True)]),
+                    Term("blocked_task", [Term("Task", is_variable=True), Term("_", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("task_status", [Term("Task", is_variable=True), Term("ready")]),
+                [
+                    Term("task", [Term("Task", is_variable=True)]),
+                    Term("\\+", [Term("blocked_task", [Term("Task", is_variable=True), Term("_", is_variable=True)])]),
+                    Term("\\+", [Term("unmet_prereq", [Term("Task", is_variable=True), Term("_", is_variable=True)])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("task_status", [Term("Task", is_variable=True), Term("waiting")]),
+                [
+                    Term("task", [Term("Task", is_variable=True)]),
+                    Term("\\+", [Term("blocked_task", [Term("Task", is_variable=True), Term("_", is_variable=True)])]),
+                    Term("unmet_prereq", [Term("Task", is_variable=True), Term("_", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("safe_to_start", [Term("Task", is_variable=True)]),
+                [Term("task_status", [Term("Task", is_variable=True), Term("ready")])],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("waiting_on", [Term("Task", is_variable=True), Term("Prereq", is_variable=True)]),
+                [
+                    Term("task_status", [Term("Task", is_variable=True), Term("waiting")]),
+                    Term("unmet_prereq", [Term("Task", is_variable=True), Term("Prereq", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("impacts_milestone", [Term("Task", is_variable=True), Term("Milestone", is_variable=True)]),
+                [
+                    Term("milestone", [Term("Milestone", is_variable=True)]),
+                    Term("=", [Term("Task", is_variable=True), Term("Milestone", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("impacts_milestone", [Term("Task", is_variable=True), Term("Milestone", is_variable=True)]),
+                [
+                    Term("milestone", [Term("Milestone", is_variable=True)]),
+                    Term("downstream", [Term("Task", is_variable=True), Term("Milestone", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("delayed_milestone", [Term("Milestone", is_variable=True), Term("Supplier", is_variable=True)]),
+                [
+                    Term("blocked_task", [Term("Task", is_variable=True), Term("Supplier", is_variable=True)]),
+                    Term("impacts_milestone", [Term("Task", is_variable=True), Term("Milestone", is_variable=True)]),
+                ],
             )
         )
     
@@ -187,8 +392,41 @@ class PrologSkill:
     
     def add_fact(self, fact_str: str) -> bool:
         """Add a fact to the knowledge base."""
-        # TODO: Implement fact addition
-        return False
+        if ":-" in fact_str:
+            return False
+        try:
+            fact_term = self._parse_query(fact_str)
+            if self._contains_variable(fact_term):
+                return False
+            for clause in self.engine.clauses:
+                if clause.head == fact_term and not clause.body:
+                    return True
+            self.engine.add_clause(Clause(fact_term))
+            return True
+        except Exception:
+            return False
+
+    def retract_fact(self, fact_str: str) -> bool:
+        """Retract one matching fact from the runtime knowledge base."""
+        if ":-" in fact_str:
+            return False
+        try:
+            fact_term = self._parse_query(fact_str)
+            if self._contains_variable(fact_term):
+                return False
+            for index, clause in enumerate(self.engine.clauses):
+                if clause.head == fact_term and not clause.body:
+                    del self.engine.clauses[index]
+                    return True
+            return False
+        except Exception:
+            return False
+
+    def _contains_variable(self, term: Term) -> bool:
+        """Return True if a term tree contains any variable nodes."""
+        if term.is_variable:
+            return True
+        return any(self._contains_variable(arg) for arg in term.args)
     
     def explain_last_query(self) -> str:
         """Get detailed explanation of last query."""

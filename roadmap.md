@@ -1,324 +1,211 @@
-# Roadmap: Prolog Reasoning v2 (2026 & Beyond)
+# Roadmap: Prolog Reasoning v2
 
 **Last Updated**: April 5, 2026  
-**Input**: External critique from Gemini AI + team analysis  
-**Vision**: Develop prolog-reasoning as a research platform exploring how deterministic symbolic reasoning supports long-horizon LLM agent memory
+**Vision**: Develop Prolog Reasoning v2 as a lightweight deterministic logic layer for agents, then extend it into a curated symbolic memory pipeline.
 
 ---
 
-## Strategic Priorities
+## Strategic Shape
 
-### Tier 1: Core Foundations (Q2 2026)
+The project is best understood in three layers:
 
-#### 1.1 Temporal Logic Foundation
-**Why**: Most "long-horizon" agent memory involves time. "Who was the manager in 2023?" is unanswerable without it.
+1. **Deterministic Logic Layer**
+   Exact rule application, constraints, derived consequences, and explanations.
+
+2. **Fact Intake / Memory Curation Layer**
+   Classify utterances, identify predicates, canonicalize candidate facts, and
+   decide what deserves durable storage.
+
+3. **Agent Integration Layer**
+   MCP, local LLM workflows, and agent skill packaging.
+
+This roadmap favors the second layer next. Ontology work remains optional and
+secondary.
+
+---
+
+## Tier 1: Fact Intake and Memory Curation
+
+### 1.1 Fact Intake Pipeline
+**Why**: The hardest problem is no longer query execution. It is deciding what
+deserves symbolic treatment in the first place.
 
 **Scope**:
-- Add `valid_from/2`, `valid_to/2`, `snapshot_at/2` built-in predicates
-- Extend benchmark to include temporal queries (ancestor at a point in time)
-- Document best practices for time-aware fact storage
+- expand statement classification beyond routing hints
+- add symbolic suitability filtering
+- add predicate mapping and candidate ranking
+- add argument extraction and normalization
+- produce inspectable candidate fact records
 
 **Tasks**:
-- [ ] Add temporal built-ins to `src/engine/core.py`
-- [ ] Add tests in `tests/test_engine.py`
-- [ ] Example: `valid_from(parent(john, alice), 2020-01-01), valid_to(parent(john, alice), 2025-12-31).`
-- [ ] Training course: `training/08-temporal-reasoning.md`
+- [ ] Add `docs/fact-intake-pipeline.md`
+- [ ] Extend `classify_statement` output toward a richer candidate schema
+- [ ] Add predicate-candidate mapping layer
+- [ ] Add argument normalization / entity shaping rules
+- [ ] Add tests for utterance type vs symbolic suitability
 
-**Effort**: 1-2 days  
 **Release**: v2.1
 
 ---
 
-#### 1.2 Split Core & Optional Dependencies
-**Why**: Users wanting just the engine shouldn't bloat their environment with LLM/NLP frameworks.
+### 1.2 Memory Classes and Revision Journal
+**Why**: Not every statement should become a hard fact. The system needs typed
+memory plus reversible operations.
 
 **Scope**:
-- Separate `requirements.txt` into core basics
-- Add optional extras: `[llm]`, `[nlp]`, `[dev]`
-- Ensure core engine works without any LLM deps
+- hard fact
+- tentative fact
+- session context
+- preference / instruction
+- correction and revision operations
 
 **Tasks**:
-- [ ] Refactor `requirements.txt` → `setup.py` with extras_require
-- [ ] Verify core runs in minimal environment
-- [ ] Update README with installation variants
-- [ ] CI/CD test both minimal and full installs
+- [ ] Add journal schema for `assert`, `tentative`, `confirm`, `retract`, `supersede`
+- [ ] Implement tentative memory store
+- [ ] Add correction cue routing
+- [ ] Define promotion and rejection rules
+- [ ] Integrate with the write-path contract in `docs/write-path-spec.md`
 
-**Effort**: < 1 day  
 **Release**: v2.2
 
 ---
 
-#### 1.3 Multi-Session Isolation
-**Why**: Prevent "knowledge contamination" when serving multiple users/agents on the same instance.
+### 1.3 Contradiction and Overwrite Handling
+**Why**: A memory system without contradiction handling just becomes a better
+organized mess.
 
 **Scope**:
-- Extend `kb_manifest.json` to support session namespaces
-- Add session ID to all Prolog predicates as a "tag"
-- Lazy-load facts by session; unload on session end
+- detect competing facts
+- distinguish contradiction from correction
+- preserve history
+- surface conflicts cleanly to agents
 
 **Tasks**:
-- [ ] Extend `src/ir/schema.py` with `session_id` field
-- [ ] Update `src/engine/core.py` to accept session context
-- [ ] Modify benchmark to include multi-session test
-- [ ] Document session lifecycle patterns
+- [ ] Add contradiction auditor
+- [ ] Add structured conflict reports
+- [ ] Connect auditor to `supersede` / `retract`
+- [ ] Add tests for conflict vs revision behavior
 
-**Effort**: 2-3 days  
 **Release**: v2.3
 
 ---
 
-### Tier 2: Extended Capabilities (Q3 2026)
+## Tier 2: Agent-Callable Logic Utility
 
-Reference spec:
-- `docs/ontology-context-routing-spec.md`
-- `docs/memory-ingestion-and-revision-notes.md`
-- `docs/pre-thinker-control-plane.md`
-
-#### 2.1 Soft-Fail Buffer Zone
-**Why**: Real-world data is "fuzzy." Rigid IR validation causes loss of signal.
+### 2.1 Logic Coprocessor Positioning
+**Why**: The easiest way to understand the library is as a deterministic tool
+agents call when precision matters.
 
 **Scope**:
-- When IR validation fails, store fact as raw text + vector embedding
-- Periodic "audit" task attempts to restructure buffered facts later
-- Track success rate of deferred structuring (feedback loop)
+- document best use cases
+- clarify bad use cases
+- provide invocation patterns
 
 **Tasks**:
-- [ ] Add `UnstructuredFact` type to `src/ir/schema.py`
-- [ ] Implement buffer storage in KB manifest
-- [ ] Create `src/engine/audit.py` with deferred-fact resolver
-- [ ] Add tests: `tests/test_soft_fail.py`
-- [ ] Document "graceful degradation" pattern
+- [ ] Add `docs/uses-and-scenarios.md`
+- [ ] Add examples for:
+  - constraints
+  - rule-derived spreadsheets/tables
+  - policy and permission checks
+  - consistency checks
+  - relationship propagation
 
-**Effort**: 3-4 days  
 **Release**: v2.4
 
 ---
 
-#### 2.2 Fact Contradiction Auditor
-**Why**: Detects KB inconsistencies (e.g., "john's father is pete" AND "john's father is paul") and surfaces them for agent resolution.
+### 2.2 Output and Support Checking
+**Why**: Symbolic support is useful not only on input, but also when checking
+what a model is about to say.
 
 **Scope**:
-- Scan KB for competing facts with same head, different bindings
-- Flag contradictions with context (when/where they were asserted)
-- Provide LLM-friendly structured output for resolution dialogue
+- grounded vs inferred vs unsupported output tags
+- optional answer-time support checks
+- abstention / hedge policy when support is weak
 
 **Tasks**:
-- [ ] New module `src/engine/auditor.py`
-- [ ] Detection logic: find all facts, group by predicate, detect conflicts
-- [ ] Return structured report: `{conflict: ..., fact1: ..., fact2: ..., timestamp_delta: ...}`
-- [ ] Add tests: `tests/test_auditor.py`
-- [ ] Integration example in `scripts/audit_kb.py`
-- [ ] Add support for `retract` / `supersede` workflows described in `docs/memory-ingestion-and-revision-notes.md`
+- [ ] Design support-check record format
+- [ ] Add a first lightweight output-checking prototype
+- [ ] Benchmark unsupported-claim detection on local models
 
-**Effort**: 2-3 days  
 **Release**: v2.5
 
 ---
 
-#### 2.3 Improved NL → IR Latency
-**Why**: Gemini flagged semantic grounding latency as a blocker for real-time agents.
+## Tier 3: Smarter Control Plane
+
+### 3.1 Stateless Pre-Thinker
+**Why**: Rules alone will eventually hit limits on paraphrase, ambiguity, and
+predicate mapping. A small model may help as a control-plane analyst.
 
 **Scope**:
-- Option A: Cache common intents (fuzzy match recent queries)
-- Option B: Add tiny local classifier (BERT-based) for "intent type" detection
-- Option C: Hybrid: local classifier for binning, then LLM call only if needed
+- stateless only
+- proposes, does not commit
+- no independent memory
+- structured outputs only
 
 **Tasks**:
-- [ ] Profile current latency: `scripts/profile_nl_parsing.py`
-- [ ] Implement intent cache in `src/engine/semantic.py`
-- [ ] Measure latency improvement
-- [ ] If cache insufficient, evaluate Option B
+- [ ] Benchmark rule-based classifier vs small-model classifier
+- [ ] Define control-plane JSON schema
+- [ ] Use small model only for:
+  - utterance typing
+  - symbolic suitability
+  - predicate family suggestion
+  - ambiguity flags
+- [ ] Keep deterministic downstream policy as final authority
 
-**Effort**: 2-3 days (cache), 5-7 days (local classifier)  
-**Release**: v2.6 (cache) or v2.7 (classifier)
+**Release**: v2.6+
 
 ---
 
-#### 2.4 Ontology Context Routing
-**Why**: Conversations shift across domain contexts; retrieval and fact storage should follow the active context.
+### 3.2 Sidecar Memory Curation
+**Why**: A low-friction alternative to ingress governance is to let the main
+LLM converse normally and curate memory beside it.
 
 **Scope**:
-- Add ontology registry with prose profiles and taxonomy metadata
-- Route each turn to an active context with confidence
-- Apply scoped retrieval (strict/soft/recovery)
-- Tag asserted facts with context metadata and log transitions
+- post-process turns or summaries
+- extract candidate durable facts
+- reject transcript sludge
+- preserve corrections and provenance
 
 **Tasks**:
-- [ ] Add ontology registry model and storage format
-- [ ] Implement context router (lexical + continuity signals)
-- [ ] Implement scoped retrieval policy with fallback behavior
-- [ ] Add context metadata to assertion and response payloads
-- [ ] Add context-shift benchmark cases
-- [ ] Implement according to `docs/ontology-context-routing-spec.md`
+- [ ] Compare ingress vs sidecar curation architectures
+- [ ] Define memory-curation sidecar protocol
+- [ ] Evaluate which turns deserve symbolic promotion
 
-**Effort**: 4-6 days  
-**Release**: v2.9
+**Release**: exploratory
 
 ---
 
-#### 2.5 Memory Ingestion and Revision
-**Why**: Fact capture is not binary; the system needs tentative memory, correction handling, and lightweight backtracking semantics.
+## Tier 4: Secondary / Optional Research
 
-**Scope**:
-- Add tentative memory class for uncertain factual statements
-- Add reversible memory journal operations (`assert`, `tentative`, `confirm`, `retract`, `supersede`)
-- Detect user correction cues and route them as explicit memory operations
-- Keep deterministic hard-fact reasoning separate from uncertain capture
+These remain interesting, but they are not the project spine.
 
-**Tasks**:
-- [ ] Add statement classification layer for hard fact / tentative / session / preference / hypothesis
-- [ ] Add tentative memory store and promotion rules
-- [ ] Add correction cue detection and routing
-- [ ] Add event journal schema for reversible memory operations
-- [ ] Integrate with contradiction auditor and ontology routing
-- [ ] Implement according to `docs/memory-ingestion-and-revision-notes.md`
+### 4.1 Ontology Context Routing
+- useful for scoped retrieval later
+- not required for the core research claim
+- should follow, not precede, strong fact intake
 
-**Effort**: 5-7 days  
-**Release**: v2.10
+### 4.2 Temporal Logic
+- still valuable
+- especially once revision and memory classes harden
 
----
+### 4.3 Constraint and Visual Applications
+- graphics editor
+- visualizers
+- interactive demos
 
-
-### Tier 3: Advanced Features (Q4 2026 / 2027)
-
-#### 3.1 Constraint Graph Visualizer
-**Why**: Show users a live graph of what facts/rules exist and how they're related. Powerful for debugging and demo.
-
-**Scope**:
-- New web interface (React or similar) showing:
-  - Fact nodes (colored by predicate)
-  - Rule flow edges (implications)
-  - Session filters
-  - Temporal timeline
-- Real-time updates as KB changes
-- Export to GraphML/DOT for external tools
-
-**Tasks**:
-- [ ] Design schema for fact graph export: `src/engine/graph_export.py`
-- [ ] Web UI frontend (separate repo or mvp/graph/)
-- [ ] WebSocket stream updates
-- [ ] Docs: tutorial + best practices
-
-**Effort**: 1-2 weeks  
-**Release**: v3.0
+These are application surfaces for the deterministic layer, not the foundation.
 
 ---
 
-#### 3.2 Recursive Fact Refinement 
-**Why**: Higher-level version of the auditor—system proactively learns when contradictions arise.
+## Guiding Principle
 
-**Scope**:
-- When auditor flags a contradiction, trigger a structured dialogue:
-  1. LLM sees both facts + context
-  2. LLM proposes resolution (which one is stale, or merge them)
-  3. System validates proposed change & applies it
-  4. Audit log records the refinement
-- Accumulate "refinement patterns" to improve future conflict resolution
+The project should keep making one distinction sharper:
 
-**Tasks**:
-- [ ] Extend auditor with dialogue logic: `src/engine/auditor.py` + methods
-- [ ] LLM prompt templates: `src/prompts/fact_refinement.txt`
-- [ ] Audit trail storage: extension to `kb_manifest.json`
-- [ ] Tests: `tests/test_recursive_refinement.py`
-- [ ] Example: `scripts/demo_refinement.py`
+- language models interpret
+- symbolic systems validate, store, and reason
 
-**Effort**: 1 week  
-**Release**: v3.1
-
----
-
-#### 3.3 Typed Predicate Templates
-**Why**: Dramatically reduce LLM hallucinations by enforcing schema at parse time.
-
-**Scope**:
-- Extend IR to support type annotations: `path(A: location, B: location, Cost: int)`
-- Semantic parser validates arg types before adding to KB
-- Type violations are caught and reported (not silently ignored)
-- Show effectiveness on extended benchmark
-
-**Tasks**:
-- [ ] Extend `src/ir/schema.py` with `TypedPredicate`
-- [ ] Update validator to check types: `src/validator/semantic_validator.py`
-- [ ] Benchmark typed vs untyped (research shows 70% hallucination reduction)
-- [ ] Documentation + training course
-
-**Effort**: 3-4 days  
-**Release**: v2.8
-
----
-
-### 📚 Tier 4: Nice-to-Have (Future)
-
-#### 4.1 DCG (Definite Clause Grammar) Support
-- For parsing domain-specific languages (e.g., contract terms)
-- Lower priority unless a customer asks
-
-#### 4.2 Constraint Logic Programming (CLP)
-- For scheduling, planning problems
-- Leverage existing constraint propagation work
-
-#### 4.3 Module System
-- Namespace predicates, avoid collisions in large KBs
-- Good for multi-tenant scenarios
-
-#### 4.4 Forward-Chaining Rules
-- Complement backward-chaining for reactive systems
-- Useful for event-driven agents
-
----
-
-## Development & Community
-
-Practical actions to support adoption and community.
-
-- [ ] **Update README**: Focus on technical accomplishments over aspirational claims
-  - Emphasize **deterministic reasoning** and **integration patterns**
-
-- [ ] **Publish Integration Guide**
-  - Document realistic use cases and limitations
-  - Include integration examples with MCP, LM Studio
-
-- [ ] **MCP Server Stabilization**
-  - Ensure `src/mcp_server.py` is robust
-  - Add connection pooling / session management
-  - Document Claude Desktop integration
-
-- [ ] **Community Infrastructure** (if opening to contributions)
-
----
-
-## High-Level Timeline
-
-| Timeline | Major Deliverables | Version |
-|---|---|---|
-| **Now → May 2026** | Temporal logic, split deps, multi-session isolation | v2.1–2.3 |
-| **May → Aug 2026** | Soft-fail buffer, auditor, typed templates | v2.4–2.8 |
-| **Aug → Nov 2026** | NL latency improvements, ontology context routing | v2.6–2.9 |
-| **Q4 2026** | Fact graph visualizer, recursive refinement | v3.0–3.1 |
-| **2027+** | DCG, CLP, module system (if demand) | v4.0+ |
-
----
-
-## Metrics to Track
-
-- **Adoption**: GitHub stars, PyPI downloads, MCP Studio users
-- **Quality**: Benchmark accuracy (extended to 100+ test cases)
-- **Performance**: Query latency (ms per fact lookup), KB size limits
-- **Community**: GitHub issues/discussions, example projects, citations
-
----
-
-## Open Questions
-
-1. **Hybrid reasoning**: Should we explore Prolog + neuro-symbolic scoring (e.g., confidence weights)?
-2. **Temporal scale**: How fine-grained? Seconds? Days? Arbitrary precision?
-3. **Auditor frequency**: Real-time checks vs. batch audits? Trade-offs?
-4. **Graph UI**: Hosted vs. embedded? Public KB explorer vs. private?
-
----
-
-## Notes
-
-This roadmap is **input-based** (Gemini critique) and **team-validated**. Tiers 1 & 2 are the moat. Tier 3 is the showpiece. Tier 4 is optionality.
-
-The **core strength** (deterministic reasoning with explicit proof traces) is the primary focus. Additional features should be evaluated against this foundation.
+The next phase is about building the missing middle:
+the fact intake and memory curation pipeline that decides what the symbolic
+layer should trust.

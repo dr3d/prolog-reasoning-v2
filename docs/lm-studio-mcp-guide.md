@@ -115,13 +115,49 @@ Add this configuration to your `servers` list. Replace `<PYTHON_EXE>` with the P
 3. You should see **Prolog Reasoning** in the available tools list
 4. The tools should show:
    - ✅ query_prolog
+   - ✅ query_prolog_raw
+   - ✅ query_prolog_rows_raw
+   - ✅ classify_statement
    - ✅ list_known_facts
+   - ✅ assert_fact_raw
+   - ✅ bulk_assert_facts_raw
+   - ✅ retract_fact_raw
+   - ✅ reset_runtime_kb
    - ✅ explain_error
    - ✅ show_system_info
+
+### Step 2d: API Token Note (for Scripted MCP Demos)
+
+LM Studio can run in two API-auth modes:
+
+- auth disabled: no token needed
+- auth enabled: HTTP calls must include `Authorization: Bearer <token>`
+
+This matters for repo scripts like `scripts/demonstrate_*_agent_mcp.py`, which
+call LM Studio's `/api/v1/chat` endpoint while using MCP integrations.
+
+Set a token before running those scripts:
+
+```bash
+# PowerShell
+$env:LMSTUDIO_API_KEY = "<YOUR_LM_STUDIO_API_TOKEN>"
+python scripts/demonstrate_family_tree_agent_mcp.py
+```
+
+Or pass it explicitly:
+
+```bash
+python scripts/demonstrate_family_tree_agent_mcp.py --api-key "<YOUR_LM_STUDIO_API_TOKEN>"
+```
 
 ---
 
 ## 💬 Step 3: Use with Your LLM
+
+For chat-first copy/paste scenario scripts (including a CPM-like hospital
+dependency risk playbook), see:
+
+- `docs/mcp-chat-playbooks.md`
 
 ### Example 1: Simple Question
 
