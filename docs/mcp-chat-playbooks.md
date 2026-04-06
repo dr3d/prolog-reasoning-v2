@@ -244,7 +244,7 @@ A full captured run of this playbook is available:
 
 - JSON transcript: `docs/examples/hospital-cpm-playbook-session.json`
 - Markdown transcript: `docs/examples/hospital-cpm-playbook-session.md`
-- Styled chat transcript (canonical): `docs/examples/hospital-cpm-playbook-session.html`
+- Styled chat transcript (canonical): [docs/hospital-cpm-playbook-session.html](docs/hospital-cpm-playbook-session.html)
 
 ## Reusable Chat Transcript Template
 

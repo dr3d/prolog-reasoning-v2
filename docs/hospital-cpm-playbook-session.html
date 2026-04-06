@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hospital CPM Playbook Session</title>
+  <style>
+    :root {
+      --bg: #f7f2e6;
+      --panel: #fffdf8;
+      --ink: #1f1f1f;
+      --muted: #5a554c;
+      --user: #fbe1c8;
+      --assistant: #dfeef7;
+      --tool: #eef2e7;
+      --border: #d9d1c2;
+    }
+    html[data-theme="dark"] {
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --user: #3b2f23;
+      --assistant: #21394d;
+      --tool: #293229;
+      --border: #3b4652;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+    .theme-btn:hover {
+      filter: brightness(1.06);
+    }
+    .meta {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .step-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+    }
+    .bubble {
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    .bubble-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .bubble.user { background: var(--user); }
+    .bubble.assistant { background: var(--assistant); }
+    .copy-btn {
+      border: 1px solid #b7a990;
+      background: #fff4df;
+      border-radius: 8px;
+      color: #3e3a31;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 6px 8px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #f8ebd2;
+    }
+    .copy-btn.copied {
+      border-color: #7e9e73;
+      background: #e5f0dd;
+      color: #2f5130;
+    }
+    .toolbox {
+      background: var(--tool);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    .label {
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: "Courier New", monospace;
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Hospital CPM Playbook Session</h1>
+      <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+    </div>
+    <div class="meta">Captured: 2026-04-06T05:26:37.931131+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning</div>
+    <section class="step-card">
+  <h2>reset</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>reset_kb</code> <code>{}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Runtime KB successfully reset to baseline seed state.</pre></div>
+</section>
+<section class="step-card">
+  <h2>ingest</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use bulk_assert_facts with the full fact list below.
+Then run query_rows counts for:
+- task(Task).
+- depends_on(Task, Prereq).
+- task_supplier(Task, Supplier).
+- supplier_status(Supplier, Status).
+- completed(Task).
+- milestone(M).
+Return the raw counts and stop if any count mismatches.
+
+task(site_prep).
+task(foundation).
+task(structural_frame).
+task(mep_rough_in).
+task(fireproofing).
+task(enclosure_glazing).
+task(roofing).
+task(interior_buildout).
+task(hvac_commissioning).
+task(medical_gas_cert).
+task(or_fitout).
+task(imaging_suite_install).
+task(it_network_core).
+task(regulatory_inspection).
+task(occupancy_permit).
+task(go_live).
+depends_on(foundation, site_prep).
+depends_on(structural_frame, foundation).
+depends_on(mep_rough_in, structural_frame).
+depends_on(fireproofing, structural_frame).
+depends_on(enclosure_glazing, structural_frame).
+depends_on(roofing, structural_frame).
+depends_on(interior_buildout, mep_rough_in).
+depends_on(interior_buildout, fireproofing).
+depends_on(hvac_commissioning, interior_buildout).
+depends_on(medical_gas_cert, interior_buildout).
+depends_on(or_fitout, medical_gas_cert).
+depends_on(imaging_suite_install, interior_buildout).
+depends_on(it_network_core, interior_buildout).
+depends_on(regulatory_inspection, hvac_commissioning).
+depends_on(regulatory_inspection, medical_gas_cert).
+depends_on(regulatory_inspection, it_network_core).
+depends_on(occupancy_permit, regulatory_inspection).
+depends_on(go_live, occupancy_permit).
+depends_on(go_live, or_fitout).
+depends_on(go_live, imaging_suite_install).
+duration_days(site_prep, 12).
+duration_days(foundation, 21).
+duration_days(structural_frame, 35).
+duration_days(interior_buildout, 40).
+duration_days(regulatory_inspection, 14).
+duration_days(occupancy_permit, 7).
+duration_days(go_live, 2).
+task_supplier(enclosure_glazing, glass_vendor).
+task_supplier(medical_gas_cert, medgas_vendor).
+task_supplier(imaging_suite_install, imaging_vendor).
+supplier_status(glass_vendor, on_time).
+supplier_status(medgas_vendor, on_time).
+supplier_status(imaging_vendor, on_time).
+completed(site_prep).
+completed(foundation).
+completed(structural_frame).
+milestone(regulatory_inspection).
+milestone(occupancy_permit).
+milestone(go_live).
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use bulk_assert_facts with the full fact list below.
+Then run query_rows counts for:
+- task(Task).
+- depends_on(Task, Prereq).
+- task_supplier(Task, Supplier).
+- supplier_status(Supplier, Status).
+- completed(Task).
+- milestone(M).
+Return the raw counts and stop if any count mismatches.
+
+task(site_prep).
+task(foundation).
+task(structural_frame).
+task(mep_rough_in).
+task(fireproofing).
+task(enclosure_glazing).
+task(roofing).
+task(interior_buildout).
+task(hvac_commissioning).
+task(medical_gas_cert).
+task(or_fitout).
+task(imaging_suite_install).
+task(it_network_core).
+task(regulatory_inspection).
+task(occupancy_permit).
+task(go_live).
+depends_on(foundation, site_prep).
+depends_on(structural_frame, foundation).
+depends_on(mep_rough_in, structural_frame).
+depends_on(fireproofing, structural_frame).
+depends_on(enclosure_glazing, structural_frame).
+depends_on(roofing, structural_frame).
+depends_on(interior_buildout, mep_rough_in).
+depends_on(interior_buildout, fireproofing).
+depends_on(hvac_commissioning, interior_buildout).
+depends_on(medical_gas_cert, interior_buildout).
+depends_on(or_fitout, medical_gas_cert).
+depends_on(imaging_suite_install, interior_buildout).
+depends_on(it_network_core, interior_buildout).
+depends_on(regulatory_inspection, hvac_commissioning).
+depends_on(regulatory_inspection, medical_gas_cert).
+depends_on(regulatory_inspection, it_network_core).
+depends_on(occupancy_permit, regulatory_inspection).
+depends_on(go_live, occupancy_permit).
+depends_on(go_live, or_fitout).
+depends_on(go_live, imaging_suite_install).
+duration_days(site_prep, 12).
+duration_days(foundation, 21).
+duration_days(structural_frame, 35).
+duration_days(interior_buildout, 40).
+duration_days(regulatory_inspection, 14).
+duration_days(occupancy_permit, 7).
+duration_days(go_live, 2).
+task_supplier(enclosure_glazing, glass_vendor).
+task_supplier(medical_gas_cert, medgas_vendor).
+task_supplier(imaging_suite_install, imaging_vendor).
+supplier_status(glass_vendor, on_time).
+supplier_status(medgas_vendor, on_time).
+supplier_status(imaging_vendor, on_time).
+completed(site_prep).
+completed(foundation).
+completed(structural_frame).
+milestone(regulatory_inspection).
+milestone(occupancy_permit).
+milestone(go_live).
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>bulk_assert_facts</code> <code>{&quot;facts&quot;: [&quot;task(site_prep).&quot;, &quot;task(foundation).&quot;, &quot;task(structural_frame).&quot;, &quot;task(mep_rough_in).&quot;, &quot;task(fireproofing).&quot;, &quot;task(enclosure_glazing).&quot;, &quot;task(roofing).&quot;, &quot;task(interior_buildout).&quot;, &quot;task(hvac_commissioning).&quot;, &quot;task(medical_gas_cert).&quot;, &quot;task(or_fitout).&quot;, &quot;task(imaging_suite_install).&quot;, &quot;task(it_network_core).&quot;, &quot;task(regulatory_inspection).&quot;, &quot;task(occupancy_permit).&quot;, &quot;task(go_live).&quot;, &quot;depends_on(foundation, site_prep).&quot;, &quot;depends_on(structural_frame, foundation).&quot;, &quot;depends_on(mep_rough_in, structural_frame).&quot;, &quot;depends_on(fireproofing, structural_frame).&quot;, &quot;depends_on(enclosure_glazing, structural_frame).&quot;, &quot;depends_on(roofing, structural_frame).&quot;, &quot;depends_on(interior_buildout, mep_rough_in).&quot;, &quot;depends_on(interior_buildout, fireproofing).&quot;, &quot;depends_on(hvac_commissioning, interior_buildout).&quot;, &quot;depends_on(medical_gas_cert, interior_buildout).&quot;, &quot;depends_on(or_fitout, medical_gas_cert).&quot;, &quot;depends_on(imaging_suite_install, interior_buildout).&quot;, &quot;depends_on(it_network_core, interior_buildout).&quot;, &quot;depends_on(regulatory_inspection, hvac_commissioning).&quot;, &quot;depends_on(regulatory_inspection, medical_gas_cert).&quot;, &quot;depends_on(regulatory_inspection, it_network_core).&quot;, &quot;depends_on(occupancy_permit, regulatory_inspection).&quot;, &quot;depends_on(go_live, occupancy_permit).&quot;, &quot;depends_on(go_live, or_fitout).&quot;, &quot;depends_on(go_live, imaging_suite_install).&quot;, &quot;duration_days(site_prep, 12).&quot;, &quot;duration_days(foundation, 21).&quot;, &quot;duration_days(structural_frame, 35).&quot;, &quot;duration_days(interior_buildout, 40).&quot;, &quot;duration_days(regulatory_inspection, 14).&quot;, &quot;duration_days(occupancy_permit, 7).&quot;, &quot;duration_days(go_live, 2).&quot;, &quot;task_supplier(enclosure_glazing, glass_vendor).&quot;, &quot;task_supplier(medical_gas_cert, medgas_vendor).&quot;, &quot;task_supplier(imaging_suite_install, imaging_vendor).&quot;, &quot;supplier_status(glass_vendor, on_time).&quot;, &quot;supplier_status(medgas_vendor, on_time).&quot;, &quot;supplier_status(imaging_vendor, on_time).&quot;, &quot;completed(site_prep).&quot;, &quot;completed(foundation).&quot;, &quot;completed(structural_frame).&quot;, &quot;milestone(regulatory_inspection).&quot;, &quot;milestone(occupancy_permit).&quot;, &quot;milestone(go_live).&quot;]}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;depends_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_supplier(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;supplier_status(Supplier, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;completed(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;milestone(M).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Bulk Assertion Results
+
+✅ **55 facts asserted successfully** (0 failures)
+
+---
+
+## Query Counts
+
+| Predicate | Count | Expected | Status |
+|-----------|-------|----------|--------|
+| `task(Task)` | 16 | 16 | ✅ Match |
+| `depends_on(Task, Prereq)` | 20 | 20 | ✅ Match |
+| `task_supplier(Task, Supplier)` | 3 | 3 | ✅ Match |
+| `supplier_status(Supplier, Status)` | 3 | 3 | ✅ Match |
+| `completed(Task)` | 3 | 3 | ✅ Match |
+| `milestone(M)` | 3 | 3 | ✅ Match |
+
+---
+
+## Summary
+
+All counts match the expected values from the bulk assertion. No mismatches detected. The knowledge base is consistent with the provided fact list.</pre></div>
+</section>
+<section class="step-card">
+  <h2>baseline</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use ONLY query_rows for these exact queries and return markdown tables plus row counts:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+Do not call query_prolog.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use ONLY query_rows for these exact queries and return markdown tables plus row counts:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+Do not call query_prolog.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Query Results
+
+### 1. safe_to_start(Task)
+| Task |
+|------|
+| site_prep |
+| foundation |
+| structural_frame |
+| mep_rough_in |
+| fireproofing |
+| enclosure_glazing |
+| roofing |
+
+**Row Count: 7**
+
+---
+
+### 2. waiting_on(Task, Prereq)
+| Task | Prereq |
+|------|--------|
+| interior_buildout | mep_rough_in |
+| interior_buildout | fireproofing |
+| hvac_commissioning | interior_buildout |
+| medical_gas_cert | interior_buildout |
+| or_fitout | medical_gas_cert |
+| imaging_suite_install | interior_buildout |
+| it_network_core | interior_buildout |
+| regulatory_inspection | hvac_commissioning |
+| regulatory_inspection | medical_gas_cert |
+| regulatory_inspection | it_network_core |
+| occupancy_permit | regulatory_inspection |
+| go_live | occupancy_permit |
+| go_live | or_fitout |
+| go_live | imaging_suite_install |
+
+**Row Count: 14**
+
+---
+
+### 3. task_status(Task, Status)
+| Task | Status |
+|------|--------|
+| site_prep | ready |
+| foundation | ready |
+| structural_frame | ready |
+| mep_rough_in | ready |
+| fireproofing | ready |
+| enclosure_glazing | ready |
+| roofing | ready |
+| interior_buildout | waiting |
+| hvac_commissioning | waiting |
+| medical_gas_cert | waiting |
+| or_fitout | waiting |
+| imaging_suite_install | waiting |
+| it_network_core | waiting |
+| regulatory_inspection | waiting |
+| occupancy_permit | waiting |
+| go_live | waiting |
+
+**Row Count: 16**
+
+---
+
+### 4. delayed_milestone(Milestone, Supplier)
+*(No results found)*
+
+**Row Count: 0**</pre></div>
+</section>
+<section class="step-card">
+  <h2>shock_glass</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use only these tools in order:
+1) retract_fact supplier_status(glass_vendor, on_time).
+2) assert_fact supplier_status(glass_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows task_status(Task, Status).
+Return three tables and one short propagation narrative.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use only these tools in order:
+1) retract_fact supplier_status(glass_vendor, on_time).
+2) assert_fact supplier_status(glass_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows task_status(Task, Status).
+Return three tables and one short propagation narrative.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Three Tables
+
+### Table 1: Blocked Tasks
+| Task | Supplier |
+|------|----------|
+| enclosure_glazing | glass_vendor |
+
+### Table 2: Delayed Milestones
+| Milestone | Supplier |
+|-----------|----------|
+| *(no results)* | *(no results)* |
+
+### Table 3: Task Statuses
+| Task | Status |
+|------|--------|
+| enclosure_glazing | blocked |
+| site_prep | ready |
+| foundation | ready |
+| structural_frame | ready |
+| mep_rough_in | ready |
+| fireproofing | ready |
+| roofing | ready |
+| interior_buildout | waiting |
+| hvac_commissioning | waiting |
+| medical_gas_cert | waiting |
+| or_fitout | waiting |
+| imaging_suite_install | waiting |
+| it_network_core | waiting |
+| regulatory_inspection | waiting |
+| occupancy_permit | waiting |
+| go_live | waiting |
+
+---
+
+## Propagation Narrative
+
+The supplier_status fact for glass_vendor was retracted from &quot;on_time&quot; and asserted as &quot;delayed&quot;. This change triggered rule-based propagation: the blocked_task predicate derived that enclosure_glazing is now blocked due to the glass_vendor delay. The task_status table confirms this impact—enclosure_glazing shows &quot;blocked&quot; status while all other tasks remain in their original states (ready or waiting). Notably, no delayed_milestone entries were generated, indicating the delay has propagated to task-level blocking but not yet to milestone-level tracking in this knowledge base configuration.</pre></div>
+</section>
+<section class="step-card">
+  <h2>shock_medgas</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use only these tools in order:
+1) retract_fact supplier_status(medgas_vendor, on_time).
+2) assert_fact supplier_status(medgas_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows waiting_on(Task, Prereq).
+Then provide top 3 interventions to protect go_live.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use only these tools in order:
+1) retract_fact supplier_status(medgas_vendor, on_time).
+2) assert_fact supplier_status(medgas_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows waiting_on(Task, Prereq).
+Then provide top 3 interventions to protect go_live.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Analysis Results
+
+Based on the tool execution sequence, here&#x27;s what we discovered:
+
+### Current State:
+- **medgas_vendor status**: Changed from `on_time` → `delayed`
+- **Blocked tasks by medgas_vendor** (6): medical_gas_cert, or_fitout, regulatory_inspection, occupancy_permit, go_live
+- **Delayed milestones** (3): regulatory_inspection, occupancy_permit, go_live
+- **Waiting task dependencies**: interior_buildout blocked by mep_rough_in &amp; fireproofing; hvac_commissioning, imaging_suite_install, it_network_core all waiting on interior_buildout
+
+### Critical Risk:
+**go_live is directly blocked by medgas_vendor**, which is now delayed. This creates a critical path threat to the go-live milestone.
+
+---
+
+## Top 3 Interventions to Protect Go-Live
+
+### 1. **Immediate Vendor Escalation &amp; Expedited Delivery Plan**
+- **Action**: Escalate to medgas_vendor management with SLA breach notification and demand expedited delivery timeline
+- **Rationale**: Since go_live itself is blocked by this delayed vendor, immediate intervention is required to compress remaining work or secure alternative delivery windows
+- **Impact**: Directly addresses the root cause blocking go_live
+
+### 2. **Parallel Regulatory &amp; Permit Workstream Activation**
+- **Action**: Activate parallel workstreams for regulatory_inspection and occupancy_permit with alternative suppliers or pre-approved pathways
+- **Rationale**: Both milestones are blocked by medgas_vendor but are critical path items; parallel execution can mitigate delay impact
+- **Impact**: Reduces dependency on single vendor for multiple critical milestones
+
+### 3. **Interior Buildout Prerequisite Acceleration**
+- **Action**: Expedite mep_rough_in and fireproofing completion to unblock interior_buildout, which cascades to hvac_commissioning, imaging_suite_install, and it_network_core
+- **Rationale**: Interior_buildout is a major dependency bottleneck; accelerating its prerequisites prevents downstream task delays from compounding go_live risk
+- **Impact**: Unblocks 4 dependent tasks and reduces overall critical path duration
+
+---
+
+**Priority Order**: #1 &gt; #2 &gt; #3 (direct vendor intervention first, then parallel workstreams, then dependency acceleration)</pre></div>
+</section>
+<section class="step-card">
+  <h2>recovery</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use only these tools in order:
+1) retract_fact supplier_status(glass_vendor, delayed).
+2) assert_fact supplier_status(glass_vendor, on_time).
+3) assert_fact completed(enclosure_glazing).
+4) assert_fact completed(mep_rough_in).
+5) assert_fact completed(fireproofing).
+6) query_rows safe_to_start(Task).
+7) query_rows waiting_on(Task, Prereq).
+8) query_rows delayed_milestone(Milestone, Supplier).
+Return sections: Ready now, Still waiting, Remaining milestone risks.
+" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>Use only these tools in order:
+1) retract_fact supplier_status(glass_vendor, delayed).
+2) assert_fact supplier_status(glass_vendor, on_time).
+3) assert_fact completed(enclosure_glazing).
+4) assert_fact completed(mep_rough_in).
+5) assert_fact completed(fireproofing).
+6) query_rows safe_to_start(Task).
+7) query_rows waiting_on(Task, Prereq).
+8) query_rows delayed_milestone(Milestone, Supplier).
+Return sections: Ready now, Still waiting, Remaining milestone risks.
+</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Based on the executed operations and queries, here are the results organized into the requested sections:
+
+## Ready now
+The following tasks are safe to start:
+- site_prep
+- foundation
+- structural_frame
+- mep_rough_in
+- fireproofing
+- enclosure_glazing
+- roofing
+- interior_buildout
+
+## Still waiting
+The following tasks are waiting on prerequisites:
+- hvac_commissioning (waiting on: interior_buildout)
+- imaging_suite_install (waiting on: interior_buildout)
+- it_network_core (waiting on: interior_buildout)
+
+## Remaining milestone risks
+The following milestones have delays associated with suppliers:
+- regulatory_inspection (Supplier: medgas_vendor)
+- occupancy_permit (Supplier: medgas_vendor)
+- go_live (Supplier: medgas_vendor)</pre></div>
+</section>
+    <section class="step-card">
+      <h2>Daily Ops Chat Snippets (Illustrative)</h2>
+      <div class="bubble assistant">
+        <div class="label">Note</div>
+        <pre>This section is intentionally conversational. It shows believable day-to-day prompts and reports, not test harness steps.</pre>
+      </div>
+    </section>
+    <section class="step-card">
+  <h2>Morning Standup</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="What can safely start this morning, and what is still waiting?" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>What can safely start this morning, and what is still waiting?</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>Ready now includes enclosure_glazing, roofing, and other tasks with satisfied prerequisites. Most downstream work is still waiting on interior_buildout and then regulatory_inspection.</pre></div>
+</section>
+<section class="step-card">
+  <h2>Supplier Delay Update</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="If the glass vendor is delayed today, what milestones are impacted first?" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>If the glass vendor is delayed today, what milestones are impacted first?</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>The first direct blocker is enclosure_glazing, and that propagates to regulatory_inspection, occupancy_permit, and go_live through the critical dependency chain.</pre></div>
+</section>
+<section class="step-card">
+  <h2>End-of-Day Recovery</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="We recovered glazing and completed rough-in items. What changed for tomorrow&#x27;s plan?" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>We recovered glazing and completed rough-in items. What changed for tomorrow&#x27;s plan?</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>The ready set expands and several previously waiting tasks move into executable status. Milestone risk decreases because no supplier remains in delayed state.</pre></div>
+</section>
+  </div>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('theme-toggle');
+      const storageKey = 'cpm_playbook_theme';
+
+      const setTheme = (theme) => {
+        root.setAttribute('data-theme', theme);
+        if (themeToggle) {
+          themeToggle.textContent = theme === 'dark' ? 'theme: dark' : 'theme: light';
+        }
+      };
+
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === 'dark' || stored === 'light') {
+        setTheme(stored);
+      } else {
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(prefersDark ? 'dark' : 'light');
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          setTheme(next);
+          window.localStorage.setItem(storageKey, next);
+        });
+      }
+
+      const buttons = document.querySelectorAll('.copy-btn');
+      for (const button of buttons) {
+        button.addEventListener('click', async () => {
+          const text = button.getAttribute('data-copy') || '';
+          const before = '[copy]';
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = '[copied]';
+            button.classList.add('copied');
+          } catch (error) {
+            button.textContent = '[copy-failed]';
+          }
+          window.setTimeout(() => {
+            button.textContent = before;
+            button.classList.remove('copied');
+          }, 1200);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
