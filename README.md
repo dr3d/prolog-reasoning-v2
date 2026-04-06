@@ -6,7 +6,7 @@ Prolog Reasoning v2 is a local-first deterministic logic layer for LLM agents. I
 
 Here, `local-first` means the core reasoning loop can run on your own machine with local files, local models, and local tooling first, rather than depending on a cloud service as the source of truth.
 
-[![Tests](https://img.shields.io/badge/tests-84%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-92%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -51,7 +51,7 @@ These parts are implemented and working:
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `84 passed`
+- Test suite currently passing: `92 passed`
 
 What is still simplified or partly mocked:
 
@@ -114,6 +114,7 @@ python data/evaluate.py
 - Unified intake/memory/write spec: [docs/fact-intake-pipeline.md](docs/fact-intake-pipeline.md)
 - Split-note compatibility stubs: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md), [docs/write-path-spec.md](docs/write-path-spec.md)
 - LM Studio classifier evaluation: [docs/research/lmstudio-classifier-matrix.md](docs/research/lmstudio-classifier-matrix.md)
+- Pre-thinker LoRA playbook: [docs/research/prethinker-lora-playbook.md](docs/research/prethinker-lora-playbook.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)
 - Ontology routing spec (secondary track): [docs/secondary/ontology-context-routing-spec.md](docs/secondary/ontology-context-routing-spec.md)
 

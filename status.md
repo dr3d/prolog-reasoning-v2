@@ -47,6 +47,8 @@ not the current center of the project.
   - `correction`
   - `preference`
   - `session_context`
+  - `instruction`
+  - `unknown`
 
 ### Agent Integration
 
@@ -67,7 +69,7 @@ Current suite:
 - MVP validation test
 - MCP server tests
 
-**Current total:** `84 passed`
+**Current total:** `92 passed`
 
 The only recurring warning is the existing `.pytest_cache` permission warning on
 Windows.

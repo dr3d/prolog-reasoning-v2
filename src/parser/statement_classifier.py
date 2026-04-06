@@ -71,6 +71,15 @@ QUESTION_PREFIXES = (
     "should",
 )
 
+INSTRUCTION_QUERY_PREFIX_EXCLUSIONS = (
+    "do not ",
+    "don't ",
+    "never ",
+    "remember to ",
+    "always ",
+    "use ",
+)
+
 CORRECTION_CUES = (
     "actually",
     "i meant",
@@ -223,6 +232,8 @@ class StatementClassifier:
 
     def _looks_like_query(self, text: str) -> bool:
         stripped = text.strip().lower()
+        if stripped.startswith(INSTRUCTION_QUERY_PREFIX_EXCLUSIONS):
+            return False
         return stripped.endswith("?") or stripped.startswith(QUESTION_PREFIXES)
 
     def _looks_like_declarative_fact(self, lower: str) -> bool:
