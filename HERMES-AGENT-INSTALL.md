@@ -1,12 +1,18 @@
-# Agent Install Instructions
+# Hermes Agent Install Instructions
 
-Read this file fully before making changes. The goal is to make `prolog-reasoning-v2` discoverable as a Hermes skill and add the smallest useful Hermes prefill so the agent is more likely to actually use it.
+This is an agent-execution playbook, not a general user tutorial.
+
+Read this file fully before taking action. It is written for an agent with filesystem and shell tools that must configure `prolog-reasoning-v2` for Hermes.
+
+The goal is to make `prolog-reasoning-v2` discoverable as a Hermes skill and add the smallest useful Hermes prefill so the agent is more likely to actually use it.
 
 This file is intentionally practical:
 - install the skill,
 - verify it is in the right place,
 - add a minimal Hermes prefill,
 - and smoke-test the integration.
+
+If you are a human reading this, treat it as a precise checklist an agent can execute end to end.
 
 ## What This Installs
 

@@ -91,7 +91,8 @@ python data/evaluate.py
 - Ask natural-language questions through `SemanticPrologSkill`
 - Run the MCP server for local LLM tools via [src/mcp_server.py](src/mcp_server.py)
 - Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
-- Configure Hermes/OpenClaw-style skill usage with [AGENT-INSTALL.md](AGENT-INSTALL.md)
+- Configure Hermes agent skill usage with [HERMES-AGENT-INSTALL.md](HERMES-AGENT-INSTALL.md)
+- Configure OpenClaw agent skill usage with [OPENCLAW-AGENT-INSTALL.md](OPENCLAW-AGENT-INSTALL.md)
 
 ### Understand It
 
@@ -107,6 +108,7 @@ python data/evaluate.py
 - Planned work: [roadmap.md](roadmap.md)
 - Ontology routing spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md)
 - Memory ingestion notes: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md)
+- Write-path contract: [docs/write-path-spec.md](docs/write-path-spec.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)
 
 ## Architecture Snapshot
