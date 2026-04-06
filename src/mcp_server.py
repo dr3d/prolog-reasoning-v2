@@ -986,7 +986,10 @@ class PrologMCPServer:
     def _format_tool_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Wrap tool output in MCP CallToolResult shape."""
         sanitized = self._json_safe(result)
-        is_error = sanitized.get("status") in {"error", "validation_error", "no_results"}
+        # `no_results` is a valid deterministic outcome for many queries
+        # (for example, no delayed milestones in a healthy baseline).
+        # Keep MCP `isError` for genuine execution/validation failures only.
+        is_error = sanitized.get("status") in {"error", "validation_error"}
         pretty = json.dumps(sanitized, indent=2)
         return {
             "content": [

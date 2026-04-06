@@ -7,8 +7,8 @@ This file is a compact public summary of recent project state.
 - Last major track completed: Simulation-oriented MCP demos with visible internals, plus pre-thinker LoRA bootstrap scaffolding
 - Current product direction: Core symbolic reliability first, with MVP editor treated as experimental
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13 (improved from 6/13)
-- Latest actions: Added a practical pre-thinker training lane with `scripts/generate_prethinker_dataset.py` (weak-label bootstrap data in flat/chat JSONL shapes), `scripts/evaluate_prethinker_classifier.py` (baseline metrics + confusion matrix), transcript bootstrap tooling via `scripts/bootstrap_prethinker_from_transcripts.py`, seed samples in `data/prethinker/`, and a new LoRA sequencing guide in `docs/research/prethinker-lora-playbook.md`; added focused classifier unit tests in `tests/test_statement_classifier.py`; added a collaboration-first invitation doc (`docs/research/collaboration-map.md`) plus a new README "Help It Grow" section to solicit outside contributors and idea proposals.
-- Next priority: Collect reviewed real-turn classification labels from live LM Studio sessions, then compare rule baseline vs small-model vs first LoRA run on the same held-out slices before touching write-path authority.
+- Latest actions: Hardened MCP tool-result semantics so deterministic `no_results` are no longer flagged as MCP errors (`src/mcp_server.py`), added a regression test (`tests/test_mcp_server.py`), and validated live Hermes/LM Studio behavior after `/reload-mcp`; removed the unused minimal-bundle artifacts (`MCP-MINIMAL.md`, `scripts/build_mcp_minimal_bundle.py`); retained fast Hermes MCP wiring guidance in `HERMES-AGENT-INSTALL.md` backed by `scripts/install_hermes_mcp.py`.
+- Next priority: Continue pre-thinker data collection from reviewed live sessions while stabilizing chat-playbook reliability (especially prompt discipline after multi-tool query batches) before expanding write-path authority.
 
 ## Usage Notes
 

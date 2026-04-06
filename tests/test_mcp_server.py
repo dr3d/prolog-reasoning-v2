@@ -126,6 +126,21 @@ class TestMCPServer:
         assert wrapped["structuredContent"]["payload"]["value"] == "alice"
         assert "\"value\": \"alice\"" in wrapped["content"][0]["text"]
 
+    def test_tools_call_no_results_is_not_marked_error(self):
+        server = make_server()
+
+        wrapped = server._format_tool_result(
+            {
+                "status": "no_results",
+                "result_type": "no_result",
+                "rows": [],
+                "num_rows": 0,
+            }
+        )
+
+        assert wrapped["isError"] is False
+        assert wrapped["structuredContent"]["status"] == "no_results"
+
     def test_list_known_facts_returns_entities_and_supported_predicates(self):
         server = make_server(DummySkill({}, {"john", "alice"}))
 

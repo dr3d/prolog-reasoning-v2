@@ -107,6 +107,30 @@ Expected result:
 
 If this fails, stop and fix the repo installation before editing Hermes config.
 
+## Step 4.5: Fast MCP Wiring (Recommended)
+
+If the repo is already cloned and dependencies are installed, use the installer
+script instead of editing `~/.hermes/config.yaml` by hand:
+
+```bash
+cd ~/.hermes/skills/prolog-reasoning-v2
+python3 scripts/install_hermes_mcp.py
+```
+
+What it does:
+- adds/updates `mcp_servers.prolog_reasoning` in `~/.hermes/config.yaml`
+- points Hermes at this repo's `src/mcp_server.py`
+- sets `--kb-path` to this repo's `prolog/core.pl`
+- creates a timestamped config backup before writes
+
+Optional dry run:
+
+```bash
+python3 scripts/install_hermes_mcp.py --dry-run
+```
+
+You can still follow the manual config steps below if you prefer.
+
 ## Step 5: Create The Minimal Prefill File
 
 Create:
