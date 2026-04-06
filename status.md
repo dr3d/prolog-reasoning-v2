@@ -83,7 +83,17 @@
   - [x] "Did you mean?" suggestions
   - [x] Format variations (human/LLM)
   - [x] Integration scenarios
-- [x] **Total: 54 tests passing** (100% success rate)
+- [x] Constraint propagation tests (**5 tests** across `tests/test_constraint_propagation.py` and `tests/test_runner_propagation.py`)
+  - [x] Fixed-point propagation scenarios
+  - [x] Domain narrowing and contradiction checks
+  - [x] Runner propagation mode coverage
+- [x] MVP validation tests (**1 test** in `tests/test_mvp_validation.py`)
+  - [x] Constraint-editor validation script coverage
+- [x] MCP server tests (**8 tests** in `tests/test_mcp_server.py`)
+  - [x] Handshake and protocol negotiation
+  - [x] Tool result wrapping and JSON-safe serialization
+  - [x] Query/list/error response shaping
+- [x] **Total: 68 tests passing** (100% success rate)
   - [x] Structured responses for agent consumption
   - [x] Parsing metadata and confidence tracking
   - [x] Failure handling and recovery suggestions
@@ -119,15 +129,18 @@
 | Core engine | ✅ 21 | Pass | Complete, well-tested |
 | Semantic validation | ✅ 17 | Pass | Prevents invalid queries |
 | Failure explanations | ✅ 16 | Pass | Human-friendly error messages |
+| Constraint propagation | ✅ 5 | Pass | Deterministic propagation and runner coverage |
+| MVP validation | ✅ 1 | Pass | Constraint-editor validation check |
+| MCP server | ✅ 8 | Pass | LM Studio-facing MCP behavior pinned down |
 | Integration | ✅ All | Pass | Full pipeline working end-to-end |
-| **TOTAL** | **54** | **Pass** | 100% success rate |
+| **TOTAL** | **68** | **Pass** | 100% success rate |
 
 ## Project Health
 
 ✅ **Core**: Solid, well-tested, fully documented  
 ✅ **Semantic Layer**: Prevents bad facts from reaching Prolog  
 ✅ **User Experience**: Beginner-friendly error messages with actionable suggestions  
-✅ **Testing**: Comprehensive coverage (54 tests, all passing)  
+✅ **Testing**: Comprehensive coverage (68 tests, all passing)  
 ✅ **Documentation**: README, courses, failure explanations, architecture
 
 ## Known Limitations
@@ -158,7 +171,10 @@
 | Built-ins | ✅ 3 | Pass |
 | Semantic validation | ✅ 17 | Pass |
 | Failure translator | ✅ 16 | Pass |
-| **Total** | **54** | **Pass** |
+| Constraint propagation | ✅ 5 | Pass |
+| MVP validation | ✅ 1 | Pass |
+| MCP server | ✅ 8 | Pass |
+| **Total** | **68** | **Pass** |
 
 ---
 

@@ -4,7 +4,7 @@
 
 Prolog Reasoning v2 is a local-first neuro-symbolic reliability layer for LLM agents. It combines deterministic symbolic reasoning, structured validation, and human-readable explanations, then exposes that through practical integration paths like MCP.
 
-[![Tests](https://img.shields.io/badge/tests-60%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-68%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -51,7 +51,7 @@ These parts are implemented and working:
 - Failure explanation layer in [src/explain/failure_translator.py](src/explain/failure_translator.py)
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `60 passed`
+- Test suite currently passing: `68 passed`
 
 What is still simplified or partly mocked:
 

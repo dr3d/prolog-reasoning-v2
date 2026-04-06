@@ -21,6 +21,7 @@ For LM Studio, configure in settings.json:
 import json
 import sys
 import argparse
+import re
 from typing import Any, Dict, Optional
 from pathlib import Path
 
@@ -38,6 +39,28 @@ class PrologMCPServer:
         "2025-06-18",
         "2025-03-26",
         "2024-11-05",
+    ]
+    RULE_DERIVED_PREDICATES = {
+        "ancestor",
+        "sibling",
+        "allowed",
+        "can_access",
+        "child",
+    }
+    SUPPORTED_PREDICATES = [
+        "parent",
+        "sibling",
+        "ancestor",
+        "child",
+        "allergic_to",
+        "takes_medication",
+        "user",
+        "role",
+        "permission",
+        "access_level",
+        "can_access",
+        "granted_permission",
+        "allowed",
     ]
     
     def __init__(self, kb_path: str = "prolog/core.pl"):
@@ -103,78 +126,202 @@ class PrologMCPServer:
                 }
             }
         ]
-    
+
+    def _extract_predicate_name(self, result: Dict[str, Any]) -> Optional[str]:
+        """Best-effort extraction of the predicate being queried."""
+        parsed_ir = result.get("parsed_ir")
+        if isinstance(parsed_ir, str):
+            try:
+                parsed_ir = json.loads(parsed_ir)
+            except json.JSONDecodeError:
+                parsed_ir = None
+
+        if isinstance(parsed_ir, dict):
+            predicate = parsed_ir.get("predicate")
+            if predicate:
+                return predicate
+
+        nl_query = result.get("nl_query", "")
+        match = re.search(r"\b(parent|sibling|ancestor|child|allergic_to|takes_medication|user|role|permission|access_level|can_access|granted_permission|allowed)\b", nl_query)
+        if match:
+            return match.group(1)
+
+        return None
+
+    def _infer_reasoning_basis(self, predicate: Optional[str]) -> Dict[str, str]:
+        """Describe whether the answer is likely fact-based or rule-derived."""
+        if not predicate:
+            return {
+                "kind": "unknown",
+                "note": "Could not reliably infer the predicate family for this result."
+            }
+
+        if predicate in self.RULE_DERIVED_PREDICATES:
+            return {
+                "kind": "rule-derived",
+                "note": f"The `{predicate}` predicate is typically computed through rules rather than stored as a single explicit fact."
+            }
+
+        return {
+            "kind": "fact-backed",
+            "note": f"The `{predicate}` predicate is typically answered from stored facts, though rules may still participate."
+        }
+
+    def _build_answer_short(self, result: Dict[str, Any]) -> str:
+        """Short answer suitable for tool-using models."""
+        explanation = result.get("explanation", "").strip()
+        if explanation:
+            first_line = explanation.splitlines()[0].strip()
+            if first_line:
+                return first_line
+        return "Query succeeded."
+
     def query_prolog(self, query: str) -> Dict[str, Any]:
         """Execute a natural language query against the Prolog KB."""
         result = self.skill.query_nl(query)
+        predicate = self._extract_predicate_name(result)
+        reasoning_basis = self._infer_reasoning_basis(predicate)
         
         # Format the response for better readability
         if result.get("success"):
             return {
                 "status": "success",
-                "answer": result.get("explanation", "Query succeeded"),
+                "result_type": "success",
+                "predicate": predicate,
+                "answer_short": self._build_answer_short(result),
+                "answer_detailed": result.get("explanation", "Query succeeded"),
                 "confidence": result.get("validation_confidence", 0.0),
                 "parsing_confidence": result.get("parsing_confidence", 0.0),
                 "domain": result.get("domain", "general"),
                 "nl_query": query,
+                "reasoning_basis": reasoning_basis,
                 "metadata": {
                     "parsed_ir": result.get("parsed_ir"),
-                    "proof_trace": result.get("explanation", "")
+                    "proof_trace": result.get("proof_trace", result.get("explanation", "")),
+                    "bindings": result.get("bindings"),
+                    "num_solutions": result.get("num_solutions")
                 }
             }
         else:
             # Return validation or query failure
             if result.get("validation_errors"):
+                error_types = [error.get("type") for error in result.get("validation_errors", [])]
                 return {
                     "status": "validation_error",
+                    "result_type": "validation_error",
+                    "predicate": predicate,
+                    "error_types": error_types,
                     "errors": result.get("validation_errors", []),
                     "validation_confidence": result.get("validation_confidence", 0.0),
                     "parsing_confidence": result.get("parsing_confidence", 0.0),
                     "nl_query": query,
-                    "message": "The system found issues with your query. See errors for details and suggestions."
+                    "message": "The system found validation issues before query execution. See the structured errors for suggestions."
                 }
             else:
                 return {
                     "status": "no_results",
+                    "result_type": "no_result",
+                    "predicate": predicate,
                     "message": result.get("why_it_failed", "No results found for this query"),
                     "suggestion": result.get("what_to_try", "Try rephrasing your question or adding more facts"),
                     "failure_explanation": result.get("failure_explanation"),
-                    "nl_query": query
+                    "nl_query": query,
+                    "reasoning_basis": reasoning_basis
                 }
     
     def list_known_facts(self) -> Dict[str, Any]:
-        """List all known entities and relationships."""
+        """List known entities plus the supported predicate vocabulary."""
         kb_entities = self.skill.validator.kb_entities if hasattr(self.skill, 'validator') else set()
         
         return {
             "status": "success",
             "known_entities": sorted(list(kb_entities)),
-            "known_relationships": [
-                "parent", "sibling", "ancestor", "child",
-                "allergic_to", "takes_medication",
-                "user", "role", "permission", "access_level",
-                "can_access", "granted_permission"
-            ],
+            "supported_predicates": self.SUPPORTED_PREDICATES,
+            "predicate_notes": {
+                "fact_backed_examples": ["parent", "role", "permission", "allergic_to"],
+                "typically_rule_derived": sorted(self.RULE_DERIVED_PREDICATES),
+            },
             "note": (
-                "This is a summary view of known entities plus supported relationship names. "
-                "It is not a full dump of every stored fact."
+                "This is a summary view of currently known entities plus the predicate vocabulary "
+                "the skill knows how to talk about. It is not a full dump of every stored fact, "
+                "and a supported predicate does not imply facts exist for every entity."
             ),
             "knowledge_base_path": str(self.kb_path)
         }
     
     def explain_error(self, error_message: str) -> Dict[str, Any]:
         """Provide explanation for an error message."""
+        message = (error_message or "").strip()
+        lower = message.lower()
+
+        error_type = "generic_error"
+        explanation = (
+            "The query could not be resolved cleanly. Common causes are unknown entities, "
+            "unknown predicates, ambiguous phrasing, or a valid query that simply has no results."
+        )
+        suggestions = [
+            "Check spelling of entity names",
+            "Verify the relationship type exists",
+            "Use 'list_known_facts' to inspect known entities and supported predicates",
+            "Run 'query_prolog' with a simpler question first"
+        ]
+
+        entity_match = re.search(r"entity ['\"]?([^'\" ]+)['\"]?", lower)
+        predicate_match = re.search(r"(predicate|relationship) ['\"]?([^'\" ]+)['\"]?", lower)
+
+        if "undefined entity" in lower or "not in kb" in lower:
+            error_type = "undefined_entity"
+            entity = entity_match.group(1) if entity_match else None
+            explanation = (
+                f"The query refers to an entity that is not currently known to the knowledge base"
+                + (f": `{entity}`." if entity else ".")
+            )
+            suggestions = [
+                "Check the spelling of the entity name",
+                "Ask about a known entity such as john, alice, bob, admin, read, or write",
+                "Use 'list_known_facts' to inspect which entities are currently known",
+                "If the entity should exist, add facts for it before querying"
+            ]
+        elif "unknown predicate" in lower or "ungrounded predicate" in lower or predicate_match:
+            error_type = "unknown_predicate"
+            predicate = predicate_match.group(2) if predicate_match else None
+            explanation = (
+                f"The query appears to use a predicate or relationship the skill does not currently recognize"
+                + (f": `{predicate}`." if predicate else ".")
+            )
+            suggestions = [
+                "Use 'list_known_facts' to inspect the supported predicate vocabulary",
+                "Rephrase the question using relationships like parent, ancestor, sibling, role, or permission",
+                "If this relationship is important, extend the knowledge base and parser schema together"
+            ]
+        elif "no results" in lower or "no solution" in lower or "no solutions" in lower:
+            error_type = "no_result"
+            explanation = (
+                "The query looks structurally valid, but the current knowledge base does not contain facts "
+                "that make it succeed."
+            )
+            suggestions = [
+                "Ask a narrower question about a known entity",
+                "Check whether the needed supporting facts exist in the KB",
+                "Try 'list_known_facts' to see what the system currently knows"
+            ]
+        elif "ambig" in lower or "unclear" in lower or "could not parse" in lower:
+            error_type = "ambiguous_query"
+            explanation = (
+                "The query is ambiguous or too unclear for the natural-language grounding layer to map cleanly into logic."
+            )
+            suggestions = [
+                "Use a simpler sentence with one relationship",
+                "Mention the entity and relationship explicitly",
+                "Example: 'Who is John's parent?' or 'Is Alice an ancestor of Bob?'"
+            ]
+
         return {
             "status": "success",
-            "error_input": error_message,
-            "explanation": f"Common issues: undefined entities (name not in KB), ungrounded predicates (unknown relationships), or no results (facts don't exist).",
-            "suggestions": [
-                "Check spelling of entity names",
-                "Verify the relationship type exists",
-                "Try asking about entities you know exist",
-                "Use 'list_known_facts' to see available entities",
-                "Run 'query_prolog' with a simpler question first"
-            ],
+            "error_input": message,
+            "error_type": error_type,
+            "explanation": explanation,
+            "suggestions": suggestions,
             "learn_more": "See the training materials at training/03-learning-from-failures.md"
         }
     
@@ -251,8 +398,9 @@ class PrologMCPServer:
 
     def _format_tool_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Wrap tool output in MCP CallToolResult shape."""
-        is_error = result.get("status") in {"error", "validation_error", "no_results"}
-        pretty = json.dumps(result, indent=2)
+        sanitized = self._json_safe(result)
+        is_error = sanitized.get("status") in {"error", "validation_error", "no_results"}
+        pretty = json.dumps(sanitized, indent=2)
         return {
             "content": [
                 {
@@ -260,9 +408,19 @@ class PrologMCPServer:
                     "text": pretty
                 }
             ],
-            "structuredContent": result,
+            "structuredContent": sanitized,
             "isError": is_error
         }
+
+    def _json_safe(self, value: Any) -> Any:
+        """Convert nested values into JSON-safe structures."""
+        if value is None or isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, dict):
+            return {str(key): self._json_safe(item) for key, item in value.items()}
+        if isinstance(value, (list, tuple, set)):
+            return [self._json_safe(item) for item in value]
+        return str(value)
 
     def process_request(self, request: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """Process an MCP request (simplified for stdio protocol)."""
