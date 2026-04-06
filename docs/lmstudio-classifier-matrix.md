@@ -3,7 +3,7 @@
 Date: 2026-04-05
 
 This note captures a small local-model evaluation of the new `classify_statement`
-MCP tool in [mcp_server.py](/D:/_PROJECTS/prolog-reasoning-v2/src/mcp_server.py).
+MCP tool in [mcp_server.py](../src/mcp_server.py).
 The goal was simple: see whether attached local models would use the tool
 reliably and whether the classifier helped them separate query routing from
 candidate memory handling.
