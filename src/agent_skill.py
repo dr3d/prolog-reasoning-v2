@@ -304,6 +304,121 @@ class PrologSkill:
                 ],
             )
         )
+
+        # Simulation / world-state rules (multi-character locality + conditions)
+        self.engine.add_clause(
+            Clause(
+                Term("asleep", [Term("C", is_variable=True)]),
+                [
+                    Term("character", [Term("C", is_variable=True)]),
+                    Term("time_of_day", [Term("night")]),
+                    Term("\\+", [Term("insomnia", [Term("C", is_variable=True)])]),
+                    Term("\\+", [Term("status", [Term("C", is_variable=True), Term("guard_duty")])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("awake", [Term("C", is_variable=True)]),
+                [
+                    Term("character", [Term("C", is_variable=True)]),
+                    Term("\\+", [Term("asleep", [Term("C", is_variable=True)])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("co_located", [Term("A", is_variable=True), Term("B", is_variable=True), Term("L", is_variable=True)]),
+                [
+                    Term("at", [Term("A", is_variable=True), Term("L", is_variable=True)]),
+                    Term("at", [Term("B", is_variable=True), Term("L", is_variable=True)]),
+                    Term("\\=", [Term("A", is_variable=True), Term("B", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("can_move", [Term("C", is_variable=True), Term("To", is_variable=True)]),
+                [
+                    Term("awake", [Term("C", is_variable=True)]),
+                    Term("at", [Term("C", is_variable=True), Term("From", is_variable=True)]),
+                    Term("connected", [Term("From", is_variable=True), Term("To", is_variable=True)]),
+                    Term("\\+", [Term("status", [Term("C", is_variable=True), Term("rooted")])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("exposed", [Term("C", is_variable=True)]),
+                [
+                    Term("weather", [Term("storm")]),
+                    Term("at", [Term("C", is_variable=True), Term("docks")]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("needs_rest", [Term("C", is_variable=True)]),
+                [
+                    Term("hp", [Term("C", is_variable=True), Term("HP", is_variable=True)]),
+                    Term("<", [Term("HP", is_variable=True), Term("8", is_number=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("vulnerable", [Term("C", is_variable=True)]),
+                [
+                    Term("exposed", [Term("C", is_variable=True)]),
+                    Term("needs_rest", [Term("C", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("threatened", [Term("C", is_variable=True)]),
+                [
+                    Term("co_located", [Term("C", is_variable=True), Term("Other", is_variable=True), Term("_L", is_variable=True)]),
+                    Term("faction", [Term("C", is_variable=True), Term("F1", is_variable=True)]),
+                    Term("faction", [Term("Other", is_variable=True), Term("F2", is_variable=True)]),
+                    Term("\\=", [Term("F1", is_variable=True), Term("F2", is_variable=True)]),
+                    Term("\\+", [Term("charmed", [Term("Other", is_variable=True), Term("C", is_variable=True)])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("high_risk", [Term("C", is_variable=True)]),
+                [
+                    Term("vulnerable", [Term("C", is_variable=True)]),
+                    Term("threatened", [Term("C", is_variable=True)]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("can_trade", [Term("A", is_variable=True), Term("B", is_variable=True), Term("L", is_variable=True)]),
+                [
+                    Term("co_located", [Term("A", is_variable=True), Term("B", is_variable=True), Term("L", is_variable=True)]),
+                    Term("awake", [Term("A", is_variable=True)]),
+                    Term("awake", [Term("B", is_variable=True)]),
+                    Term("\\+", [Term("threatened", [Term("A", is_variable=True)])]),
+                    Term("\\+", [Term("threatened", [Term("B", is_variable=True)])]),
+                ],
+            )
+        )
+        self.engine.add_clause(
+            Clause(
+                Term("can_cast_charm", [Term("Caster", is_variable=True), Term("Target", is_variable=True), Term("L", is_variable=True)]),
+                [
+                    Term("has_item", [Term("Caster", is_variable=True), Term("charm_scroll")]),
+                    Term("co_located", [Term("Caster", is_variable=True), Term("Target", is_variable=True), Term("L", is_variable=True)]),
+                    Term("awake", [Term("Caster", is_variable=True)]),
+                    Term("awake", [Term("Target", is_variable=True)]),
+                    Term("\\+", [Term("charmed", [Term("Target", is_variable=True), Term("_By", is_variable=True)])]),
+                ],
+            )
+        )
     
     def query(self, query_str: str) -> Dict[str, Any]:
         """

@@ -1,0 +1,587 @@
+{
+  "captured_at": "2026-04-06T06:38:26.514686+00:00",
+  "model": "qwen/qwen3.5-9b",
+  "integration": "mcp/prolog-reasoning",
+  "steps": [
+    {
+      "step": "reset",
+      "prompt": "Use ONLY reset_kb. Confirm success in one sentence.",
+      "tool_calls": [
+        {
+          "tool": "reset_kb",
+          "arguments": {},
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"runtime_reset\\\",\\n  \\\"message\\\": \\\"Runtime KB reset to baseline seed state.\\\",\\n  \\\"knowledge_base_path\\\": \\\"D:\\\\\\\\_PROJECTS\\\\\\\\prolog-reasoning-v2\\\\\\\\prolog\\\\\\\\core.pl\\\"\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [],
+        "removed": []
+      },
+      "assistant_message": "\n\nThe reset_kb operation completed successfully, resetting the runtime knowledge base to its baseline seed state."
+    },
+    {
+      "step": "ingest",
+      "prompt": "Use bulk_assert_facts with the full fact list below.\nThen verify counts with query_rows for:\n- character(C).\n- location(L).\n- at(C, L).\n- has_item(C, I).\n- connected(A, B).\n- status(C, S).\nReturn row counts and stop if anything mismatches.\n\ncharacter(aria).\ncharacter(borin).\ncharacter(mara).\ncharacter(silas).\nlocation(tower).\nlocation(market).\nlocation(docks).\nlocation(ruins).\nlocation(forest).\nconnected(tower, market).\nconnected(market, tower).\nconnected(market, docks).\nconnected(docks, market).\nconnected(market, forest).\nconnected(forest, market).\nconnected(forest, ruins).\nconnected(ruins, forest).\nat(aria, docks).\nat(borin, market).\nat(mara, ruins).\nat(silas, market).\nfaction(aria, guild).\nfaction(borin, guild).\nfaction(mara, legion).\nfaction(silas, rogue).\nhas_item(aria, map_fragment).\nhas_item(aria, copper_key).\nhas_item(borin, ore_crate).\nhas_item(borin, shield).\nhas_item(mara, charm_scroll).\nhas_item(silas, healing_herb).\nhp(aria, 8).\nhp(borin, 12).\nhp(mara, 10).\nhp(silas, 7).\nstatus(aria, normal).\nstatus(borin, normal).\nstatus(mara, normal).\nstatus(silas, normal).\nweather(clear).\ntime_of_day(day).\ninsomnia(silas).\nquest_active(relic_hunt).\n",
+      "tool_calls": [
+        {
+          "tool": "bulk_assert_facts",
+          "arguments": {
+            "facts": [
+              "character(aria).",
+              "character(borin).",
+              "character(mara).",
+              "character(silas).",
+              "location(tower).",
+              "location(market).",
+              "location(docks).",
+              "location(ruins).",
+              "location(forest).",
+              "connected(tower, market).",
+              "connected(market, tower).",
+              "connected(market, docks).",
+              "connected(docks, market).",
+              "connected(market, forest).",
+              "connected(forest, market).",
+              "connected(forest, ruins).",
+              "connected(ruins, forest).",
+              "at(aria, docks).",
+              "at(borin, market).",
+              "at(mara, ruins).",
+              "at(silas, market).",
+              "faction(aria, guild).",
+              "faction(borin, guild).",
+              "faction(mara, legion).",
+              "faction(silas, rogue).",
+              "has_item(aria, map_fragment).",
+              "has_item(aria, copper_key).",
+              "has_item(borin, ore_crate).",
+              "has_item(borin, shield).",
+              "has_item(mara, charm_scroll).",
+              "has_item(silas, healing_herb).",
+              "hp(aria, 8).",
+              "hp(borin, 12).",
+              "hp(mara, 10).",
+              "hp(silas, 7).",
+              "status(aria, normal).",
+              "status(borin, normal).",
+              "status(mara, normal).",
+              "status(silas, normal).",
+              "weather(clear).",
+              "time_of_day(day).",
+              "insomnia(silas).",
+              "quest_active(relic_hunt)."
+            ]
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"bulk_fact_assertion\\\",\\n  \\\"requested_count\\\": 43,\\n  \\\"asserted_count\\\": 43,\\n  \\\"failed_count\\\": 0,\\n  \\\"asserted_facts\\\": [\\n    \\\"character(aria).\\\",\\n    \\\"character(borin).\\\",\\n    \\\"character(mara).\\\",\\n    \\\"character(silas).\\\",\\n    \\\"location(tower).\\\",\\n    \\\"location(market).\\\",\\n    \\\"location(docks).\\\",\\n    \\\"location(ruins).\\\",\\n    \\\"location(forest).\\\",\\n    \\\"connected(tower, market).\\\",\\n    \\\"connected(market, tower).\\\",\\n    \\\"connected(market, docks).\\\",\\n    \\\"connected(docks, market).\\\",\\n    \\\"connected(market, forest).\\\",\\n    \\\"connected(forest, market).\\\",\\n    \\\"connected(forest, ruins).\\\",\\n    \\\"connected(ruins, forest).\\\",\\n    \\\"at(aria, docks).\\\",\\n    \\\"at(borin, market).\\\",\\n    \\\"at(mara, ruins).\\\",\\n    \\\"at(silas, market).\\\",\\n    \\\"faction(aria, guild).\\\",\\n    \\\"faction(borin, guild).\\\",\\n    \\\"faction(mara, legion).\\\",\\n    \\\"faction(silas, rogue).\\\",\\n    \\\"has_item(aria, map_fragment).\\\",\\n    \\\"has_item(aria, copper_key).\\\",\\n    \\\"has_item(borin, ore_crate).\\\",\\n    \\\"has_item(borin, shield).\\\",\\n    \\\"has_item(mara, charm_scroll).\\\",\\n    \\\"has_item(silas, healing_herb).\\\",\\n    \\\"hp(aria, 8).\\\",\\n    \\\"hp(borin, 12).\\\",\\n    \\\"hp(mara, 10).\\\",\\n    \\\"hp(silas, 7).\\\",\\n    \\\"status(aria, normal).\\\",\\n    \\\"status(borin, normal).\\\",\\n    \\\"status(mara, normal).\\\",\\n    \\\"status(silas, normal).\\\",\\n    \\\"weather(clear).\\\",\\n    \\\"time_of_day(day).\\\",\\n    \\\"insomnia(silas).\\\",\\n    \\\"quest_active(relic_hunt).\\\"\\n  ],\\n  \\\"failed_facts\\\": [],\\n  \\\"message\\\": \\\"Bulk assertion complete.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "character(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"character\\\",\\n  \\\"prolog_query\\\": \\\"character(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `character` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "location(L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"location\\\",\\n  \\\"prolog_query\\\": \\\"location(L).\\\",\\n  \\\"variables\\\": [\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"L\\\": \\\"tower\\\"\\n    },\\n    {\\n      \\\"L\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"L\\\": \\\"docks\\\"\\n    },\\n    {\\n      \\\"L\\\": \\\"ruins\\\"\\n    },\\n    {\\n      \\\"L\\\": \\\"forest\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 5,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `location` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "at(C, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"at\\\",\\n  \\\"prolog_query\\\": \\\"at(C, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"L\\\": \\\"docks\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"L\\\": \\\"ruins\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `at` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "has_item(C, I)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"has_item\\\",\\n  \\\"prolog_query\\\": \\\"has_item(C, I).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"I\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"map_fragment\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"copper_key\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"I\\\": \\\"ore_crate\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"I\\\": \\\"shield\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"I\\\": \\\"charm_scroll\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"I\\\": \\\"healing_herb\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 6,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `has_item` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "connected(A, B)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"connected\\\",\\n  \\\"prolog_query\\\": \\\"connected(A, B).\\\",\\n  \\\"variables\\\": [\\n    \\\"A\\\",\\n    \\\"B\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"A\\\": \\\"tower\\\",\\n      \\\"B\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"market\\\",\\n      \\\"B\\\": \\\"tower\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"market\\\",\\n      \\\"B\\\": \\\"docks\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"docks\\\",\\n      \\\"B\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"market\\\",\\n      \\\"B\\\": \\\"forest\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"forest\\\",\\n      \\\"B\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"forest\\\",\\n      \\\"B\\\": \\\"ruins\\\"\\n    },\\n    {\\n      \\\"A\\\": \\\"ruins\\\",\\n      \\\"B\\\": \\\"forest\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 8,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `connected` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "status(C, S)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"status\\\",\\n  \\\"prolog_query\\\": \\\"status(C, S).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"S\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"S\\\": \\\"normal\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"S\\\": \\\"normal\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"S\\\": \\\"normal\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"S\\\": \\\"normal\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `status` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [
+          "character(aria).",
+          "character(borin).",
+          "character(mara).",
+          "character(silas).",
+          "location(tower).",
+          "location(market).",
+          "location(docks).",
+          "location(ruins).",
+          "location(forest).",
+          "connected(tower, market).",
+          "connected(market, tower).",
+          "connected(market, docks).",
+          "connected(docks, market).",
+          "connected(market, forest).",
+          "connected(forest, market).",
+          "connected(forest, ruins).",
+          "connected(ruins, forest).",
+          "at(aria, docks).",
+          "at(borin, market).",
+          "at(mara, ruins).",
+          "at(silas, market).",
+          "faction(aria, guild).",
+          "faction(borin, guild).",
+          "faction(mara, legion).",
+          "faction(silas, rogue).",
+          "has_item(aria, map_fragment).",
+          "has_item(aria, copper_key).",
+          "has_item(borin, ore_crate).",
+          "has_item(borin, shield).",
+          "has_item(mara, charm_scroll).",
+          "has_item(silas, healing_herb).",
+          "hp(aria, 8).",
+          "hp(borin, 12).",
+          "hp(mara, 10).",
+          "hp(silas, 7).",
+          "status(aria, normal).",
+          "status(borin, normal).",
+          "status(mara, normal).",
+          "status(silas, normal).",
+          "weather(clear).",
+          "time_of_day(day).",
+          "insomnia(silas).",
+          "quest_active(relic_hunt)."
+        ],
+        "removed": []
+      },
+      "assistant_message": "\n\n## Verification Complete \u2705\n\nAll row counts match the expected values:\n\n| Predicate | Query | Expected Count | Actual Count | Status |\n|-----------|-------|----------------|--------------|--------|\n| character(C) | `character(C).` | 4 | 4 | \u2713 Match |\n| location(L) | `location(L).` | 5 | 5 | \u2713 Match |\n| at(C, L) | `at(C, L).` | 4 | 4 | \u2713 Match |\n| has_item(C, I) | `has_item(C, I).` | 6 | 6 | \u2713 Match |\n| connected(A, B) | `connected(A, B).` | 8 | 8 | \u2713 Match |\n| status(C, S) | `status(C, S).` | 4 | 4 | \u2713 Match |\n\n**Summary:**\n- All 43 facts were successfully asserted (0 failures)\n- All 6 query predicates returned expected row counts\n- No mismatches detected - verification passed \u2705"
+    },
+    {
+      "step": "snapshot",
+      "prompt": "Control-room baseline. Use query_rows only, then summarize in 5 bullets.\nQueries:\n1) at(C, L).\n2) has_item(C, I).\n3) awake(C).\n4) can_move(C, To).\n5) can_trade(A, B, L).\n6) high_risk(C).\n7) can_cast_charm(Caster, Target, L).\nLabel each table.",
+      "tool_calls": [
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "at(C, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"at\\\",\\n  \\\"prolog_query\\\": \\\"at(C, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"L\\\": \\\"docks\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"L\\\": \\\"ruins\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `at` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "has_item(C, I)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"has_item\\\",\\n  \\\"prolog_query\\\": \\\"has_item(C, I).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"I\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"map_fragment\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"copper_key\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"I\\\": \\\"ore_crate\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"I\\\": \\\"shield\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"I\\\": \\\"charm_scroll\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"I\\\": \\\"healing_herb\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 6,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `has_item` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "awake(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"awake\\\",\\n  \\\"prolog_query\\\": \\\"awake(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `awake` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "can_move(C, To)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"can_move\\\",\\n  \\\"prolog_query\\\": \\\"can_move(C, To).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"To\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"To\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"To\\\": \\\"tower\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"To\\\": \\\"docks\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"To\\\": \\\"forest\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"To\\\": \\\"forest\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"To\\\": \\\"tower\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"To\\\": \\\"docks\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"To\\\": \\\"forest\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 8,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_move` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "can_trade(A, B, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"can_trade\\\",\\n  \\\"prolog_query\\\": \\\"can_trade(A, B, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"A\\\",\\n    \\\"B\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_trade` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "high_risk(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"high_risk\\\",\\n  \\\"prolog_query\\\": \\\"high_risk(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `high_risk` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "can_cast_charm(Caster, Target, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"can_cast_charm\\\",\\n  \\\"prolog_query\\\": \\\"can_cast_charm(Caster, Target, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"Caster\\\",\\n    \\\"Target\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_cast_charm` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [],
+        "removed": []
+      },
+      "assistant_message": "\n\n## Control-Room Baseline Summary\n\n**Table Labels:**\n- **at(C, L)**: Character Location Table\n- **has_item(C, I)**: Character Inventory Table  \n- **awake(C)**: Character Status Table\n- **can_move(C, To)**: Movement Capability Table\n- **can_trade(A, B, L)**: Trading Relationship Table (empty)\n- **high_risk(C)**: High Risk Character Table (empty)\n- **can_cast_charm(Caster, Target, L)**: Charm Casting Table (empty)\n\n**5-Bullet Summary:**\n\n1. **Character Locations**: 4 characters tracked across 3 locations\u2014Aria at docks, Borin and Silas at market, Mara at ruins.\n\n2. **Inventory Distribution**: 6 items held by characters\u2014Aria has map_fragment & copper_key, Borin has ore_crate & shield, Mara has charm_scroll, Silas has healing_herb.\n\n3. **Awake Status**: All 4 characters (aria, borin, mara, silas) are currently awake and active.\n\n4. **Movement Capabilities**: 8 movement routes available\u2014Aria can move to market; Borin can access tower, docks, and forest; Mara can reach forest; Silas can go to tower, docks, and forest.\n\n5. **No Active Rules Triggered**: Three rule-derived predicates (can_trade, high_risk, can_cast_charm) returned no results, indicating these conditions are not currently satisfied in the knowledge base."
+    },
+    {
+      "step": "storm_turn",
+      "prompt": "Run this event turn in order:\n1) retract_fact time_of_day(day).\n2) assert_fact time_of_day(night).\n3) retract_fact weather(clear).\n4) assert_fact weather(storm).\n5) assert_fact status(aria, soaked).\n6) assert_fact status(silas, soaked).\n7) query_rows asleep(C).\n8) query_rows awake(C).\n9) query_rows exposed(C).\n10) query_rows high_risk(C).\nThen provide a short ops update and one immediate recommendation.",
+      "tool_calls": [
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "time_of_day(day)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"time_of_day(day).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "time_of_day(night)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"time_of_day(night).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "weather(clear)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"weather(clear).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "weather(storm)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"weather(storm).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "status(aria, soaked)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"status(aria, soaked).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "status(silas, soaked)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"status(silas, soaked).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "asleep(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"asleep\\\",\\n  \\\"prolog_query\\\": \\\"asleep(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `asleep` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "awake(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"awake\\\",\\n  \\\"prolog_query\\\": \\\"awake(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"silas\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 1,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `awake` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "exposed(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"exposed\\\",\\n  \\\"prolog_query\\\": \\\"exposed(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 1,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `exposed` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "high_risk(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"high_risk\\\",\\n  \\\"prolog_query\\\": \\\"high_risk(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `high_risk` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [
+          "time_of_day(night).",
+          "weather(storm).",
+          "status(aria, soaked).",
+          "status(silas, soaked)."
+        ],
+        "removed": [
+          "time_of_day(day).",
+          "weather(clear)."
+        ]
+      },
+      "assistant_message": "\n\n## Ops Update\n\n**Current Situation:**\n- **Time of Day:** Night\n- **Weather:** Storm conditions active\n- **Personnel Status:** \n  - Asleep: aria, borin, mara (3 personnel)\n  - Awake: silas (1 personnel)\n- **Critical Condition:** Aria is both soaked and exposed while asleep\n- **Risk Assessment:** No current high_risk flags in system\n\n**Key Concerns:**\n1. Storm conditions at night with two personnel (aria, silas) marked as soaked\n2. **CRITICAL:** Aria is simultaneously asleep AND exposed - this creates a significant hypothermia/health risk during storm conditions\n3. Only 1 of 4 tracked personnel is awake and potentially able to respond to emergencies\n\n---\n\n## Immediate Recommendation\n\n**Wake up Aria immediately.** She is in the highest-risk position: soaked from storm exposure, currently asleep (unable to self-protect), and exposed to environmental hazards. This combination during night-time storm conditions requires urgent intervention to prevent hypothermia or other health complications. Assign Silas (the only awake personnel) to locate and move Aria to sheltered, dry quarters immediately."
+    },
+    {
+      "step": "market_turn",
+      "prompt": "Run this turn in order:\n1) retract_fact at(aria, docks).\n2) assert_fact at(aria, market).\n3) retract_fact has_item(silas, healing_herb).\n4) assert_fact has_item(aria, healing_herb).\n5) query_rows at(C, L).\n6) query_rows has_item(C, I).\n7) query_rows can_trade(A, B, L).\n8) query_rows high_risk(C).\nReport what changed in locality and inventory.",
+      "tool_calls": [
+        {
+          "tool": "retract_fact",
+          "arguments": {
+            "fact": "at(aria, docks)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"at(aria, docks).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact",
+          "arguments": {
+            "fact": "at(aria, market)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"at(aria, market).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact",
+          "arguments": {
+            "fact": "has_item(silas, healing_herb)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"has_item(silas, healing_herb).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact",
+          "arguments": {
+            "fact": "has_item(aria, healing_herb)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"has_item(aria, healing_herb).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "at(C, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"at\\\",\\n  \\\"prolog_query\\\": \\\"at(C, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"L\\\": \\\"ruins\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `at` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "has_item(C, I)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"has_item\\\",\\n  \\\"prolog_query\\\": \\\"has_item(C, I).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\",\\n    \\\"I\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"map_fragment\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"copper_key\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"I\\\": \\\"ore_crate\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\",\\n      \\\"I\\\": \\\"shield\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\",\\n      \\\"I\\\": \\\"charm_scroll\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"aria\\\",\\n      \\\"I\\\": \\\"healing_herb\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 6,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `has_item` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "can_trade(A, B, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"can_trade\\\",\\n  \\\"prolog_query\\\": \\\"can_trade(A, B, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"A\\\",\\n    \\\"B\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_trade` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "high_risk(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"high_risk\\\",\\n  \\\"prolog_query\\\": \\\"high_risk(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `high_risk` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [
+          "at(aria, market).",
+          "has_item(aria, healing_herb)."
+        ],
+        "removed": [
+          "at(aria, docks).",
+          "has_item(silas, healing_herb)."
+        ]
+      },
+      "assistant_message": "\n\n## Report: Changes in Locality and Inventory\n\n### **Locality Changes (at/2 predicate)**\n\n**Before operations:**\n- aria was at `docks`\n\n**After operations:**\n- borin is at `market`\n- mara is at `ruins`\n- silas is at `market`\n- aria is at `market` \u2728 **NEW**\n\n**Summary:** Aria moved from **docks** to **market**. This was accomplished by retracting `at(aria, docks)` and asserting `at(aria, market)`.\n\n---\n\n### **Inventory Changes (has_item/2 predicate)**\n\n**Before operations:**\n- silas had `healing_herb`\n\n**After operations:**\n- aria has `map_fragment`\n- aria has `copper_key`\n- borin has `ore_crate`\n- borin has `shield`\n- mara has `charm_scroll`\n- aria has `healing_herb` \u2728 **NEW**\n\n**Summary:** \n- Silas no longer has the healing herb (retracted)\n- Aria now possesses the healing herb (asserted)\n\n---\n\n### **Other Queries**\n\n**Trading relationships (can_trade/3):** No trading relationships found in the knowledge base.\n\n**High-risk entities (high_risk/1):** No high-risk entities identified.\n\n---\n\n### **Key Takeaway**\nThe operations successfully transferred both **location** and **inventory**: Aria moved from docks to market and acquired the healing herb that was previously held by Silas."
+    },
+    {
+      "step": "charm_turn",
+      "prompt": "Pause and patch the world, then resume:\n1) query_rows can_cast_charm(Caster, Target, L).\n2) assert_fact insomnia(aria).\n3) assert_fact status(mara, guard_duty).\n4) retract_fact at(mara, ruins).\n5) assert_fact at(mara, market).\n6) query_rows can_cast_charm(Caster, Target, L).\n7) assert_fact charmed(aria, mara).\n8) query_rows charmed(Target, By).\n9) query_rows threatened(C).\nExplain which edit unlocked the charm interaction and why.",
+      "tool_calls": [
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "can_cast_charm(Caster, Target, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"can_cast_charm\\\",\\n  \\\"prolog_query\\\": \\\"can_cast_charm(Caster, Target, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"Caster\\\",\\n    \\\"Target\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_cast_charm` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact",
+          "arguments": {
+            "fact": "insomnia(aria)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"insomnia(aria).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact",
+          "arguments": {
+            "fact": "status(mara, guard_duty)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"status(mara, guard_duty).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact",
+          "arguments": {
+            "fact": "at(mara, ruins)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"at(mara, ruins).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact",
+          "arguments": {
+            "fact": "at(mara, market)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"at(mara, market).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "can_cast_charm(Caster, Target, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"can_cast_charm\\\",\\n  \\\"prolog_query\\\": \\\"can_cast_charm(Caster, Target, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"Caster\\\",\\n    \\\"Target\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Caster\\\": \\\"mara\\\",\\n      \\\"Target\\\": \\\"silas\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    },\\n    {\\n      \\\"Caster\\\": \\\"mara\\\",\\n      \\\"Target\\\": \\\"aria\\\",\\n      \\\"L\\\": \\\"market\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 2,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_cast_charm` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact",
+          "arguments": {
+            "fact": "charmed(aria, mara)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"charmed(aria, mara).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "charmed(Target, By)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"charmed\\\",\\n  \\\"prolog_query\\\": \\\"charmed(Target, By).\\\",\\n  \\\"variables\\\": [\\n    \\\"Target\\\",\\n    \\\"By\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Target\\\": \\\"aria\\\",\\n      \\\"By\\\": \\\"mara\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 1,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `charmed` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_rows",
+          "arguments": {
+            "query": "threatened(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"threatened\\\",\\n  \\\"prolog_query\\\": \\\"threatened(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"borin\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"aria\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `threatened` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [
+          "insomnia(aria).",
+          "status(mara, guard_duty).",
+          "at(mara, market).",
+          "charmed(aria, mara)."
+        ],
+        "removed": [
+          "at(mara, ruins)."
+        ]
+      },
+      "assistant_message": "\n\nNow let me analyze which edit unlocked the charm interaction:\n\n## Analysis of the Charm Interaction Unlock\n\n**The critical edit was steps 4-5: retracting `at(mara, ruins)` and asserting `at(mara, market)`.**\n\n### Why this unlocked the charm interaction:\n\n1. **Initial State (Step 1)**: The query returned **no results** for `can_cast_charm(Caster, Target, L)`, indicating no rules could derive valid charm casting relationships.\n\n2. **After Location Change (Step 6)**: The same query returned **2 results**:\n   - `mara` can cast charm on `silas` at `market`\n   - `mara` can cast charm on `aria` at `market`\n\n### The Rule Logic Behind This:\n\nThe `can_cast_charm` predicate is **rule-derived** (not a stored fact), meaning it depends on other predicates in the knowledge base. Based on the results, the rule likely requires:\n\n- **Location matching**: Both caster and target must be at the same location (`at(Caster, L)` and `at(Target, L)`)\n- **Status condition**: The caster needs appropriate status (`status(mara, guard_duty)`)\n- **Target vulnerability**: The target may need to have certain conditions (like `insomnia(aria)`)\n\n### Why the Location Edit Was Decisive:\n\nBefore steps 4-5, mara was at `ruins` (from a baseline fact). After retracting that and asserting `at(mara, market)`, the location predicate now matched the rule's requirements. The other edits supported but didn't unlock:\n- `insomnia(aria)` - likely made aria vulnerable to charm\n- `status(mara, guard_duty)` - likely enabled mara's casting ability\n\n**The location change was the key because it satisfied the primary spatial constraint of the charm-casting rule**, allowing the rule to fire and produce results."
+    },
+    {
+      "step": "recovery_turn",
+      "prompt": "Run recovery turn:\n1) retract_fact charmed(aria, mara).\n2) retract_fact status(mara, guard_duty).\n3) assert_fact status(mara, normal).\n4) retract_fact status(aria, soaked).\n5) assert_fact status(aria, normal).\n6) retract_fact status(silas, soaked).\n7) assert_fact status(silas, normal).\n8) retract_fact time_of_day(night).\n9) assert_fact time_of_day(day).\n10) query_rows awake(C).\n11) query_rows can_trade(A, B, L).\n12) query_rows high_risk(C).\n13) query_rows charmed(Target, By).\nProvide end-of-turn report: stable state, unresolved risks, next move.",
+      "tool_calls": [
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "charmed(aria, mara)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"charmed(aria, mara).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "status(mara, guard_duty)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"status(mara, guard_duty).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "status(mara, normal)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"status(mara, normal).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "status(aria, soaked)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"status(aria, soaked).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "status(aria, normal)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"status(aria, normal).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "status(silas, soaked)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"status(silas, soaked).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "status(silas, normal)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"status(silas, normal).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "retract_fact_raw",
+          "arguments": {
+            "fact": "time_of_day(night)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_retracted\\\",\\n  \\\"fact\\\": \\\"time_of_day(night).\\\",\\n  \\\"message\\\": \\\"Fact retracted from runtime KB.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "assert_fact_raw",
+          "arguments": {
+            "fact": "time_of_day(day)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"time_of_day(day).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "awake(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"awake\\\",\\n  \\\"prolog_query\\\": \\\"awake(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"C\\\": \\\"aria\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"borin\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"mara\\\"\\n    },\\n    {\\n      \\\"C\\\": \\\"silas\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 4,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `awake` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "can_trade(A, B, L)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"can_trade\\\",\\n  \\\"prolog_query\\\": \\\"can_trade(A, B, L).\\\",\\n  \\\"variables\\\": [\\n    \\\"A\\\",\\n    \\\"B\\\",\\n    \\\"L\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `can_trade` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "high_risk(C)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"high_risk\\\",\\n  \\\"prolog_query\\\": \\\"high_risk(C).\\\",\\n  \\\"variables\\\": [\\n    \\\"C\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `high_risk` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "charmed(Target, By)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"charmed\\\",\\n  \\\"prolog_query\\\": \\\"charmed(Target, By).\\\",\\n  \\\"variables\\\": [\\n    \\\"Target\\\",\\n    \\\"By\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `charmed` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
+        }
+      ],
+      "delta": {
+        "added": [
+          "status(mara, normal).",
+          "status(aria, normal).",
+          "status(silas, normal).",
+          "time_of_day(day)."
+        ],
+        "removed": [
+          "charmed(aria, mara).",
+          "status(mara, guard_duty).",
+          "status(aria, soaked).",
+          "status(silas, soaked).",
+          "time_of_day(night)."
+        ]
+      },
+      "assistant_message": "\n\n## End-of-Turn Report\n\n### Stable State \u2705\n- **Character Status**: All three main characters recovered:\n  - `aria`: status=normal (was soaked)\n  - `mara`: status=normal (was guard_duty)\n  - `silas`: status=normal (was soaked)\n- **Time of Day**: day (was night)\n- **Awake Characters**: aria, borin, mara, silas (all 4 characters awake)\n- **Charmed Relationships**: None (charmed(aria, mara) successfully retracted)\n- **High-Risk Characters**: None identified\n- **Trading Relationships**: None active\n\n### Unresolved Risks \u26a0\ufe0f\n**None currently identified.** All recovery operations completed successfully:\n- No charmed relationships remain\n- No high-risk characters detected\n- All characters in normal status and awake\n- Time of day reset to day (favorable conditions)\n\n### Next Move \ud83c\udfaf\n**Resume Normal Operations.** The system is now in a stable, healthy state with no immediate threats or complications. Recommended actions:\n1. Continue with mission objectives\n2. Monitor character interactions for new developments\n3. Consider initiating trading relationships if beneficial\n4. Maintain vigilance for any emerging risks\n\n---\n*Recovery turn completed successfully. All systems nominal.*"
+    }
+  ]
+}

@@ -244,7 +244,7 @@ A full captured run of this playbook is available:
 
 - JSON transcript: `docs/examples/hospital-cpm-playbook-session.json`
 - Markdown transcript: `docs/examples/hospital-cpm-playbook-session.md`
-- Styled chat transcript (canonical): [docs/hospital-cpm-playbook-session.html](docs/hospital-cpm-playbook-session.html)
+- Styled chat transcript (canonical): [hospital-cpm-playbook-session.html](hospital-cpm-playbook-session.html)
 
 ## Reusable Chat Transcript Template
 
@@ -263,4 +263,12 @@ Render existing transcript artifacts without re-running the API session:
 ```bash
 python scripts/capture_hospital_playbook_session.py --input-json docs/examples/hospital-cpm-playbook-session.json --out-dir docs/examples
 ```
+
+## Playbook B: Fantasy Overlord Simulation
+
+For a multi-character simulation with pause/resume edits, locality/inventory state,
+and a visible "Prolog Console" side panel in the rendered HTML transcript, use:
+
+- Walkthrough: [fantasy-overlord-mcp-walkthrough.md](fantasy-overlord-mcp-walkthrough.md)
+- Captured transcript (HTML): [fantasy-overlord-session.html](fantasy-overlord-session.html)
 
