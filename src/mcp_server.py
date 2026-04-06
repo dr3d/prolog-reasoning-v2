@@ -169,7 +169,7 @@ class PrologMCPServer:
             },
             {
                 "name": "query_logic",
-                "description": "Query the Prolog engine with a literal Prolog query string. Preferred alias for query_prolog_raw.",
+                "description": "Query the Prolog engine with a literal Prolog query string.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -183,7 +183,7 @@ class PrologMCPServer:
             },
             {
                 "name": "query_rows",
-                "description": "Query the Prolog engine and return all solution rows projected to query variables. Preferred alias for query_prolog_rows_raw.",
+                "description": "Query the Prolog engine and return all solution rows projected to query variables.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -197,7 +197,7 @@ class PrologMCPServer:
             },
             {
                 "name": "assert_fact",
-                "description": "Assert a ground Prolog fact into the runtime KB for this MCP server process. Preferred alias for assert_fact_raw.",
+                "description": "Assert a ground Prolog fact into the runtime KB for this MCP server process.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -211,7 +211,7 @@ class PrologMCPServer:
             },
             {
                 "name": "bulk_assert_facts",
-                "description": "Assert multiple ground Prolog facts into the runtime KB in one call. Preferred alias for bulk_assert_facts_raw.",
+                "description": "Assert multiple ground Prolog facts into the runtime KB in one call.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -226,7 +226,7 @@ class PrologMCPServer:
             },
             {
                 "name": "retract_fact",
-                "description": "Retract one matching ground Prolog fact from the runtime KB for this MCP server process. Preferred alias for retract_fact_raw.",
+                "description": "Retract one matching ground Prolog fact from the runtime KB for this MCP server process.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -240,7 +240,7 @@ class PrologMCPServer:
             },
             {
                 "name": "reset_kb",
-                "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance. Preferred alias for reset_runtime_kb.",
+                "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {}
@@ -248,7 +248,7 @@ class PrologMCPServer:
             },
             {
                 "name": "query_prolog_raw",
-                "description": "Query the Prolog engine with a literal Prolog query string (for deterministic predicate-level checks). Example: allowed(alice, read).",
+                "description": "Legacy alias of query_logic (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -262,7 +262,7 @@ class PrologMCPServer:
             },
             {
                 "name": "query_prolog_rows_raw",
-                "description": "Query the Prolog engine and return all solution rows projected to the query variables. Best for deterministic table/report building.",
+                "description": "Legacy alias of query_rows (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -276,7 +276,7 @@ class PrologMCPServer:
             },
             {
                 "name": "assert_fact_raw",
-                "description": "Assert a ground Prolog fact into the runtime KB for this MCP server process. Example: task(foundation).",
+                "description": "Legacy alias of assert_fact (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -290,7 +290,7 @@ class PrologMCPServer:
             },
             {
                 "name": "bulk_assert_facts_raw",
-                "description": "Assert multiple ground Prolog facts into the runtime KB in one call. Returns per-fact successes/failures.",
+                "description": "Legacy alias of bulk_assert_facts (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -305,7 +305,7 @@ class PrologMCPServer:
             },
             {
                 "name": "retract_fact_raw",
-                "description": "Retract one matching ground Prolog fact from the runtime KB for this MCP server process.",
+                "description": "Legacy alias of retract_fact (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -319,7 +319,7 @@ class PrologMCPServer:
             },
             {
                 "name": "reset_runtime_kb",
-                "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance.",
+                "description": "Legacy alias of reset_kb (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {}
@@ -417,7 +417,7 @@ class PrologMCPServer:
             return match.group(1).lower()
         return None
 
-    def _normalize_raw_query(self, query: str) -> str:
+    def _normalize_logic_query(self, query: str) -> str:
         """
         Normalize chat-produced query strings.
 
@@ -512,9 +512,9 @@ class PrologMCPServer:
                     "reasoning_basis": reasoning_basis
                 }
 
-    def query_prolog_raw(self, query: str) -> Dict[str, Any]:
-        """Execute a raw Prolog query string against the deterministic engine."""
-        normalized_query = self._normalize_raw_query(query)
+    def query_logic(self, query: str) -> Dict[str, Any]:
+        """Execute a literal Prolog query string against the deterministic engine."""
+        normalized_query = self._normalize_logic_query(query)
         predicate = self._extract_predicate_from_prolog_query(normalized_query)
         reasoning_basis = self._infer_reasoning_basis(predicate)
         result = self.skill.prolog_skill.query(normalized_query)
@@ -563,6 +563,11 @@ class PrologMCPServer:
             },
         }
 
+    # Legacy compatibility shims (`*_raw`) for older prompts/clients.
+    def query_prolog_raw(self, query: str) -> Dict[str, Any]:
+        """Legacy alias for query_logic."""
+        return self.query_logic(query)
+
     def _collect_query_variables(self, term: Any) -> List[str]:
         """Collect original variable names from a parsed query term."""
         names: List[str] = []
@@ -578,11 +583,11 @@ class PrologMCPServer:
         walk(term)
         return names
 
-    def query_prolog_rows_raw(self, query: str) -> Dict[str, Any]:
+    def query_rows(self, query: str) -> Dict[str, Any]:
         """
-        Execute a raw Prolog query and return all rows projected to query vars.
+        Execute a Prolog query and return all rows projected to query vars.
         """
-        normalized_query = self._normalize_raw_query(query)
+        normalized_query = self._normalize_logic_query(query)
         predicate = self._extract_predicate_from_prolog_query(normalized_query)
         reasoning_basis = self._infer_reasoning_basis(predicate)
 
@@ -639,21 +644,9 @@ class PrologMCPServer:
             "reasoning_basis": reasoning_basis,
         }
 
-    # Friendly aliases (preferred names)
-    def query_logic(self, query: str) -> Dict[str, Any]:
-        return self.query_prolog_raw(query)
-
-    def query_rows(self, query: str) -> Dict[str, Any]:
-        return self.query_prolog_rows_raw(query)
-
-    def assert_fact(self, fact: str) -> Dict[str, Any]:
-        return self.assert_fact_raw(fact)
-
-    def bulk_assert_facts(self, facts: List[str]) -> Dict[str, Any]:
-        return self.bulk_assert_facts_raw(facts)
-
-    def retract_fact(self, fact: str) -> Dict[str, Any]:
-        return self.retract_fact_raw(fact)
+    def query_prolog_rows_raw(self, query: str) -> Dict[str, Any]:
+        """Legacy alias for query_rows."""
+        return self.query_rows(query)
 
     def reset_kb(self) -> Dict[str, Any]:
         return self.reset_runtime_kb()
@@ -689,7 +682,7 @@ class PrologMCPServer:
             entities.add(token)
         return entities
 
-    def assert_fact_raw(self, fact: str) -> Dict[str, Any]:
+    def assert_fact(self, fact: str) -> Dict[str, Any]:
         """Assert one runtime fact into the current in-memory KB."""
         normalized = (fact or "").strip()
         if not normalized:
@@ -717,10 +710,14 @@ class PrologMCPServer:
             "result_type": "fact_asserted",
             "fact": normalized,
             "message": "Fact asserted into runtime KB for this server process.",
-            "note": "Use reset_runtime_kb to clear runtime changes.",
+            "note": "Use reset_kb to clear runtime changes.",
         }
 
-    def bulk_assert_facts_raw(self, facts: List[str]) -> Dict[str, Any]:
+    def assert_fact_raw(self, fact: str) -> Dict[str, Any]:
+        """Legacy alias for assert_fact."""
+        return self.assert_fact(fact)
+
+    def bulk_assert_facts(self, facts: List[str]) -> Dict[str, Any]:
         """Assert multiple facts in one call."""
         if not isinstance(facts, list) or not facts:
             return {
@@ -732,7 +729,7 @@ class PrologMCPServer:
         successes: List[str] = []
         failures: List[Dict[str, str]] = []
         for raw_fact in facts:
-            result = self.assert_fact_raw(str(raw_fact))
+            result = self.assert_fact(str(raw_fact))
             if result.get("status") == "success":
                 successes.append(result["fact"])
             else:
@@ -756,7 +753,11 @@ class PrologMCPServer:
             "message": "Bulk assertion complete.",
         }
 
-    def retract_fact_raw(self, fact: str) -> Dict[str, Any]:
+    def bulk_assert_facts_raw(self, facts: List[str]) -> Dict[str, Any]:
+        """Legacy alias for bulk_assert_facts."""
+        return self.bulk_assert_facts(facts)
+
+    def retract_fact(self, fact: str) -> Dict[str, Any]:
         """Retract one runtime fact from the current in-memory KB."""
         normalized = (fact or "").strip()
         if not normalized:
@@ -783,6 +784,10 @@ class PrologMCPServer:
             "fact": normalized,
             "message": "Fact retracted from runtime KB.",
         }
+
+    def retract_fact_raw(self, fact: str) -> Dict[str, Any]:
+        """Legacy alias for retract_fact."""
+        return self.retract_fact(fact)
 
     def reset_runtime_kb(self) -> Dict[str, Any]:
         """Reset in-memory runtime assertions by recreating the semantic skill."""
