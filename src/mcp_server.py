@@ -29,6 +29,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from parser.semantic import SemanticPrologSkill
+from parser.statement_classifier import StatementClassifier
 
 
 class PrologMCPServer:
@@ -67,6 +68,7 @@ class PrologMCPServer:
         """Initialize the MCP server with a knowledge base."""
         self.kb_path = self._resolve_kb_path(kb_path)
         self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
+        self.statement_classifier = StatementClassifier()
         self._request_id = 0
 
     def _resolve_kb_path(self, kb_path: str) -> Path:
@@ -93,6 +95,20 @@ class PrologMCPServer:
                         }
                     },
                     "required": ["query"]
+                }
+            },
+            {
+                "name": "classify_statement",
+                "description": "Classify a user utterance before querying. Return classification only; do not act on the statement. Useful for distinguishing questions from candidate facts, corrections, preferences, or session context.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": "The raw user utterance to classify."
+                        }
+                    },
+                    "required": ["text"]
                 }
             },
             {
@@ -126,6 +142,23 @@ class PrologMCPServer:
                 }
             }
         ]
+
+    def classify_statement(self, text: str) -> Dict[str, Any]:
+        """Classify a user utterance for query-vs-ingestion routing."""
+        classification = self.statement_classifier.classify(text)
+        result = classification.to_dict()
+        result.update(
+            {
+                "status": "success",
+                "text": text,
+                "message": (
+                    "Return classification only. Do not act on the statement. "
+                    "This is a routing hint, not a write. The current MCP surface can classify "
+                    "candidate facts, but it does not yet persist them."
+                ),
+            }
+        )
+        return result
 
     def _extract_predicate_name(self, result: Dict[str, Any]) -> Optional[str]:
         """Best-effort extraction of the predicate being queried."""
@@ -339,6 +372,7 @@ class PrologMCPServer:
             "core_idea": "Memories are timestamped. Facts are not.",
             "capabilities": [
                 "Natural language query processing",
+                "Statement classification before query or ingestion decisions",
                 "Deterministic knowledge-base reasoning",
                 "Semantic validation before query execution",
                 "Friendly failure explanations with suggestions",
@@ -368,6 +402,7 @@ class PrologMCPServer:
         """Route tool calls to appropriate handler."""
         handlers = {
             "query_prolog": lambda: self.query_prolog(tool_input.get("query", "")),
+            "classify_statement": lambda: self.classify_statement(tool_input.get("text", "")),
             "list_known_facts": lambda: self.list_known_facts(),
             "explain_error": lambda: self.explain_error(tool_input.get("error_message", "")),
             "show_system_info": lambda: self.show_system_info()

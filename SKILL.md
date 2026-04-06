@@ -1,9 +1,9 @@
 ---
-name: prolog-reasoning-control-plane
-description: Use this repository as a deterministic symbolic memory and reasoning layer for agent workflows. Trigger when an external agent such as OpenClaw or Hermes needs to decide whether to query known facts, explain a symbolic failure, or classify a user statement for memory ingestion and revision.
+name: prolog-reasoning
+description: Use this repository as a deterministic symbolic memory and reasoning skill for agent workflows. Trigger when an external agent such as OpenClaw or Hermes needs to query known facts, explain a symbolic failure, or classify a user statement for memory ingestion and revision.
 ---
 
-# Prolog Reasoning Control Plane
+# Prolog Reasoning Skill
 
 ## Critical Rule
 
@@ -54,6 +54,7 @@ Core claim:
 
 The current MCP server is good at:
 - `query_prolog`
+- `classify_statement`
 - `list_known_facts`
 - `explain_error`
 - `show_system_info`

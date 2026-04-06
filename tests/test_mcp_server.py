@@ -16,6 +16,7 @@ sys.path.insert(0, "src")
 
 from engine.core import Term
 from mcp_server import PrologMCPServer
+from parser.statement_classifier import StatementClassifier
 
 
 class DummyValidator:
@@ -36,6 +37,7 @@ def make_server(skill=None):
     server = PrologMCPServer.__new__(PrologMCPServer)
     server.kb_path = Path("D:/repo/prolog/core.pl")
     server.skill = skill or DummySkill({})
+    server.statement_classifier = StatementClassifier()
     server._request_id = 0
     return server
 
@@ -62,6 +64,21 @@ class TestMCPServer:
         assert response["result"]["capabilities"]["tools"]["listChanged"] is False
         assert response["result"]["serverInfo"]["name"] == "prolog-reasoning"
 
+    def test_tools_list_includes_classify_statement(self):
+        server = make_server()
+
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "tools/list",
+                "params": {},
+            }
+        )
+
+        tool_names = [tool["name"] for tool in response["result"]["tools"]]
+        assert "classify_statement" in tool_names
+
     def test_tools_call_wraps_result_and_makes_it_json_safe(self):
         server = make_server()
 
@@ -86,6 +103,34 @@ class TestMCPServer:
         assert "supported_predicates" in result
         assert "known_relationships" not in result
         assert "supported predicate" in result["note"]
+
+    def test_classify_statement_detects_query(self):
+        server = make_server()
+
+        result = server.classify_statement("Who is John's parent?")
+
+        assert result["status"] == "success"
+        assert result["kind"] == "query"
+        assert result["can_query_now"] is True
+        assert result["suggested_operation"] == "query"
+
+    def test_classify_statement_detects_first_person_candidate_fact(self):
+        server = make_server()
+
+        result = server.classify_statement("My mother was Ann.")
+
+        assert result["kind"] == "hard_fact"
+        assert result["needs_speaker_resolution"] is True
+        assert result["can_persist_now"] is False
+        assert result["suggested_operation"] == "store_fact"
+
+    def test_classify_statement_detects_correction(self):
+        server = make_server()
+
+        result = server.classify_statement("Actually, I meant Alice.")
+
+        assert result["kind"] == "correction"
+        assert result["suggested_operation"] == "revise_memory"
 
     def test_explain_error_classifies_undefined_entity(self):
         server = make_server()
@@ -175,4 +220,3 @@ class TestMCPServer:
         assert result["result_type"] == "no_result"
         assert result["predicate"] == "ancestor"
         assert result["reasoning_basis"]["kind"] == "rule-derived"
-
