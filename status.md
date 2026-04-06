@@ -141,9 +141,8 @@ These are still interesting, but they are not the project spine right now:
 If someone wants the current story in the right order:
 
 1. `README.md`
-2. `docs/write-path-spec.md`
-3. `docs/memory-ingestion-and-revision-notes.md`
-4. `docs/lmstudio-classifier-matrix.md`
+2. `docs/fact-intake-pipeline.md`
+3. `docs/research/lmstudio-classifier-matrix.md`
 5. `roadmap.md`
 6. `sessions.md`
 

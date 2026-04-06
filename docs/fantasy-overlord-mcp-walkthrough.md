@@ -1,51 +1,37 @@
-# Fantasy Overlord MCP Walkthrough
+# Fantasy Overlord MCP Walkthrough (Level 7)
 
-This is a chat-first simulation pattern for world state, locality, inventory,
-conditions, and multi-hop inference.
+Status: Active  
+Date: 2026-04-06
 
-Core idea:
-- the LLM narrates and orchestrates
-- deterministic predicates hold state
-- you pause/resume by asserting or retracting facts
-- multi-hop rules derive consequences
+Canonical ladder:
 
-## Prerequisites
+- [walkthrough-ladder.md](walkthrough-ladder.md)
 
-1. LM Studio running on `http://127.0.0.1:1234`
-2. `mcp/prolog-reasoning` integration enabled
-3. A local model loaded (for example `qwen/qwen3.5-9b`)
+## Goal
 
-## Fast Capture (One Command)
+Demonstrate pause/edit/resume world-state control with multi-hop deterministic consequences.
 
-Run:
+## Fast Capture
 
 ```bash
 python scripts/capture_fantasy_overlord_session.py --model qwen/qwen3.5-9b --out-dir docs/examples
 ```
 
 Outputs:
+
 - `docs/examples/fantasy-overlord-session.json`
 - `docs/examples/fantasy-overlord-session.md`
 - `docs/examples/fantasy-overlord-session.html`
 
-## What This Demonstrates
+## What to Look For
 
-1. **Night chain**: `time_of_day(night)` implies `asleep(C)` unless
-   `insomnia(C)` or `status(C, guard_duty)`.
-2. **Mobility chain**: `awake(C)` and `connected(From,To)` implies
-   `can_move(C, To)`.
-3. **Risk chain**: storm + docks exposure + low HP can lead to `high_risk(C)`
-   when threat is present.
-4. **Charm chain**: charm casting becomes valid only when locality and awake
-   conditions are satisfied.
+- turn-by-turn fact deltas from assert/retract operations
+- rule chains for sleep, mobility, threat, and charm gating
+- side-panel Prolog console view in HTML transcript
 
-## Interactive Play Mode (Manual)
+## Manual Play Loop
 
-In chat, you can run a loop:
-
-1. Query state (`query_rows awake(C).`, `query_rows high_risk(C).`)
-2. Pause and edit facts (`assert_fact ...`, `retract_fact ...`)
-3. Query again and compare
-4. Continue turns
-
-This gives you a "Sims-like" control loop with deterministic state transitions.
+1. query state (`query_rows awake(C).`, `query_rows high_risk(C).`)
+2. edit state (`assert_fact ...`, `retract_fact ...`)
+3. query again and compare
+4. continue turns

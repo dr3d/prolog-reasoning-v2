@@ -93,7 +93,7 @@ def run_demo(base_url: str, model: str, integration: str, api_key: str | None) -
     rows: list[dict[str, str]] = []
     for drug in CANDIDATE_DRUGS:
         prompt = (
-            "Call query_prolog_raw exactly once with this query: "
+            "Call query_logic exactly once with this query: "
             f"triage({PATIENT}, {drug}, Status, Reason). "
             "If no result exists, mark SAFE. "
             "Return one line in this format: STATUS=<value>; REASON=<short reason>."
@@ -138,7 +138,7 @@ def run_demo(base_url: str, model: str, integration: str, api_key: str | None) -
     print("-" * 60)
 
     summary_prompt = (
-        f"Use query_prolog_raw with safe_candidate({PATIENT}, Drug). "
+        f"Use query_logic with safe_candidate({PATIENT}, Drug). "
         "Then answer in two sentences: which option is safest and why."
     )
     print("Summary prompt:")

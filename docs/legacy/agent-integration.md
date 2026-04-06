@@ -1,5 +1,8 @@
 # Agent Integration Guide
 
+Status: Legacy reference (pre-v2 framing).  
+Canonical entry points now: `docs/lm-studio-mcp-guide.md`, `docs/mcp-chat-playbooks.md`, and `docs/fact-intake-pipeline.md`.
+
 ## How LLM Agents Use Prolog Reasoning as a Skill
 
 **Key insight**: The KB is *external memory* — not dumped into LLM context. The agent queries it when needed.

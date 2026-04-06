@@ -1,61 +1,58 @@
-# Fact Intake Pipeline
+# Fact Intake, Memory, and Write Path Spec
 
 Status: Draft  
 Owner: Core symbolic layer  
-Date: 2026-04-05
+Date: 2026-04-06
+
+This is the canonical spec for:
+
+- fact intake
+- memory class routing
+- revision operations
+- safe write-path policy
+
+It replaces the previous split narrative across:
+
+- `docs/memory-ingestion-and-revision-notes.md`
+- `docs/write-path-spec.md`
+
+Those files are now compatibility stubs that point here.
 
 ## 1. Why This Exists
 
-Fact intake is the missing middle between natural language and deterministic
-symbolic reasoning.
+The hardest problem is no longer query execution. The hardest problem is deciding what language should become symbolic state.
 
-The project already has:
+Without a disciplined intake/write path:
 
-- a deterministic logic layer,
-- a semantic grounding path,
-- validation,
-- explanation,
-- and agent-facing integrations.
-
-What it does not yet have as a finished subsystem is a disciplined path for
-deciding what language deserves durable symbolic treatment.
-
-That is the fact intake problem.
-
-The hard question is not only:
-
-- "Can the system reason over facts?"
-
-It is also:
-
-- "Which utterances contain a symbolic claim?"
-- "Which predicate should that claim map to?"
-- "How should the arguments be normalized?"
-- "Should the result become a hard fact, a tentative memory, a session note, or nothing at all?"
-
-Without a strong intake pipeline, even a good reasoning engine will eventually
-operate over noisy or muddy symbolic state.
+- good reasoning runs on muddy facts
+- memory silently drifts
+- corrections become ambiguous
+- agents claim persistence that never happened
 
 ## 2. Design Principle
 
-LLMs may propose candidate structure. Deterministic policy decides what becomes
-durable symbolic truth.
+Soft interpretation may propose structure. Deterministic policy decides what is stored and reasoned over.
 
-That means:
+Role split:
 
-- language models or classifiers may interpret
-- policy layers may rank or abstain
-- symbolic validation and write policy remain authoritative
+- language model or classifier: interpret, rank, abstain
+- deterministic policy: validate, route, write, journal
+- symbolic engine: reason over resolved hard facts
 
-The intake pipeline exists to keep those roles separate.
+## 3. End-to-End Pipeline
 
-## 3. Pipeline Stages
+1. Utterance classification
+2. Symbolic suitability filtering
+3. Predicate mapping and candidate ranking
+4. Argument extraction and normalization
+5. Candidate record emission
+6. Memory operation decision
+7. Validation gates
+8. Backup + mutation + journal append
 
 ### 3.1 Utterance Classification
 
-First decide what kind of thing the user just said.
-
-Current categories include:
+Current classes:
 
 - `query`
 - `hard_fact`
@@ -64,82 +61,26 @@ Current categories include:
 - `preference`
 - `session_context`
 
-This is the first gate against garbage ingestion.
+### 3.2 Symbolic Suitability
 
-If the system gets this wrong, everything after it becomes unstable.
-
-### 3.2 Symbolic Suitability Filter
-
-Not every statement that sounds factual belongs in the symbolic layer.
-
-The system should ask:
-
-- is this explicit enough?
-- is it durable enough?
-- is it too subjective?
-- is it too contextual?
-- is it too ambiguous?
-- is it a plan or hypothesis rather than a fact?
-
-Example:
-
-- `My manager is Dana.` may be symbolically suitable
-- `This feels wrong somehow.` is probably not
+A factual-sounding statement is not automatically fit for symbolic storage. Suitability checks should reject vague, subjective, or underspecified claims.
 
 ### 3.3 Predicate Mapping
 
-Once the system decides a statement is symbolically relevant, it needs to map
-surface language to a canonical predicate family.
+Map language into a controlled predicate vocabulary with ranked candidates and abstention on low confidence.
 
-This should prefer:
+### 3.4 Argument Normalization
 
-- controlled predicate vocabularies
-- ranked candidate mappings
-- abstention when confidence is too low
+Normalize:
 
-The goal is to avoid both:
+- entity identity
+- argument order
+- negation
+- uncertainty
+- speaker references
+- temporal hints as metadata
 
-- predicate explosion
-- over-generic sludge predicates
-
-Example:
-
-- `Dana manages me`
-- `Dana is my manager`
-- `I report to Dana`
-
-may all map toward the same canonical relation family.
-
-### 3.4 Argument Extraction and Normalization
-
-After predicate mapping, the system needs normalized arguments.
-
-This stage should decide:
-
-- what the entities are
-- what order they belong in
-- whether there is negation
-- whether there is uncertainty
-- whether a first-person reference needs grounding
-- whether time or modality should become metadata
-
-Example:
-
-`My mother was Ann.`
-
-may become:
-
-- predicate candidate: `parent`
-- arguments: `["ann", "<speaker>"]`
-- needs speaker resolution: `true`
-- temporal note: `past_or_unspecified`
-
-### 3.5 Canonical Fact Shaping
-
-The intake pipeline should produce a candidate symbolic record, not just a loose
-string.
-
-Suggested shape:
+### 3.5 Candidate Record Contract
 
 ```json
 {
@@ -147,171 +88,183 @@ Suggested shape:
   "symbolically_suitable": true,
   "assertion_kind": "stable_fact",
   "predicate_candidate": "parent",
+  "predicate_candidates_ranked": ["parent", "guardian_of"],
   "arguments": ["ann", "<speaker>"],
   "needs_speaker_resolution": true,
   "negated": false,
   "temporal_scope": "past_or_unspecified",
   "confidence": 0.81,
-  "action": "stage_for_resolution"
+  "recommended_action": "stage_for_resolution",
+  "reasons": ["first_person_reference_unresolved"]
 }
 ```
 
-This record is the handoff point between soft interpretation and hard policy.
+## 4. Memory Classes
 
-### 3.6 Assertion Policy
+Use typed memory, not one flat store.
 
-Even a clean candidate record should not automatically become a hard fact.
+### 4.1 Hard Fact
 
-The policy layer decides whether to:
+For explicit, durable, validated claims that should drive deterministic inference.
+
+### 4.2 Tentative Fact
+
+For potentially useful claims not ready for truth promotion.
+
+### 4.3 Session Context
+
+For temporary working assumptions and task-local state.
+
+### 4.4 Preference / Instruction
+
+For behavioral guidance, not world-state truth.
+
+### 4.5 Reject / No Store
+
+For unsuitable statements (too vague, purely hypothetical, unsupported).
+
+## 5. First-Class Memory Operations
+
+Supported operations:
 
 - `assert`
 - `tentative`
 - `confirm`
 - `retract`
 - `supersede`
-- `stage`
-- `reject`
 
-That decision should incorporate:
+Operation semantics:
 
-- confidence
-- ambiguity
-- contradiction risk
-- memory class
-- context
-- provenance
+- `assert`: add to resolved hard-fact view + journal
+- `tentative`: store in tentative layer only + journal
+- `confirm`: promote tentative fact to hard-fact view + journal link
+- `retract`: remove from resolved view + journal history retained
+- `supersede`: replace old fact with new fact + linked journal record
 
-## 4. Memory Classes
+## 6. Write Request Envelope (Required)
 
-The intake pipeline should feed typed memory, not a single undifferentiated KB.
+```json
+{
+  "memory_operation": "assert",
+  "statement_type": "hard_fact",
+  "context_id": "global",
+  "source": "user",
+  "session_id": "sess_123",
+  "confidence": 0.94,
+  "fact_payload": {
+    "format": "prolog",
+    "value": "parent(ann, scott)."
+  }
+}
+```
 
-### 4.1 Hard Fact
+`context_id` is required. Writes without context should be rejected.
 
-Use when the claim is:
+## 7. Storage Surfaces
 
-- explicit
-- durable
-- grounded enough
-- safe to participate in deterministic reasoning
+Maintain three distinct stores:
 
-### 4.2 Tentative Fact
+1. hard-fact resolved view (query surface)
+2. tentative store (staging surface)
+3. append-only event journal (audit surface)
 
-Use when the claim matters but should not yet be promoted to truth.
+## 8. Backup and Journal Policy
 
-### 4.3 Session Context
+### 8.1 Backups
 
-Use for temporary working assumptions or current-task state.
+Backup before durable mutations:
 
-### 4.4 Preference / Instruction
+- `assert`
+- `confirm`
+- `retract`
+- `supersede`
 
-Use for behavioral guidance rather than world-state truth.
+### 8.2 Journal Event Minimum
 
-### 4.5 Reject / Do Not Store
-
-Use when the statement is:
-
-- too vague
-- too subjective
-- unsupported
-- purely hypothetical
-- better left in conversation only
-
-## 5. Candidate Record Contract
-
-The intake pipeline should eventually emit a structured record with fields like:
-
-- `utterance_type`
-- `symbolically_suitable`
-- `assertion_kind`
-- `predicate_candidate`
-- `predicate_candidates_ranked`
-- `arguments`
-- `needs_speaker_resolution`
-- `negated`
-- `temporal_scope`
+- `event_id`
+- `event_type`
+- `fact_id`
+- `related_fact_id` optional
+- `context_id`
+- `session_id`
+- `source`
+- `timestamp`
 - `confidence`
-- `recommended_action`
-- `reasons`
+- `payload`
+- `result`
 
-This keeps the intake layer inspectable and benchmarkable.
+Rejected writes may be journaled as rejected attempts; resolved hard facts must remain unchanged on rejection.
 
-## 6. Relationship to Current Components
+## 9. Validation Gates
 
-### Current Baseline
+Before mutation:
 
-- `src/parser/statement_classifier.py`
-  - first deterministic routing layer
-- `src/parser/semantic.py`
-  - grounding layer
-- `src/validator/semantic_validator.py`
-  - validation layer
-- `src/mcp_server.py`
-  - exposes `classify_statement` to local models
+1. parse and normalize payload
+2. validate statement type vs operation
+3. validate entity grounding
+4. validate predicate compatibility
+5. validate context compatibility
+6. run contradiction checks (for `assert` and `supersede`)
+7. take backup
+8. apply mutation
+9. append journal event
 
-### Related Specs
+## 10. Contradiction and Revision Rules
 
-- `docs/memory-ingestion-and-revision-notes.md`
-  - memory classes and revision behavior
-- `docs/write-path-spec.md`
-  - safe mutation envelope and journal semantics
-- `docs/pre-thinker-control-plane.md`
-  - future small-model control plane
-- `docs/lmstudio-classifier-matrix.md`
-  - evidence that structured classification helps local models
+Treat these separately:
 
-## 7. Implementation Sequence
+- contradiction (new claim conflicts with stored fact)
+- misunderstanding (prior parse was wrong)
+- user correction/undo (explicit revision cue)
 
-The next practical order should be:
+First increment policy:
 
-1. strengthen statement classification
-2. add symbolic suitability decisions
-3. add predicate candidate mapping
-4. add normalized argument extraction
-5. emit inspectable candidate fact records
-6. connect to write-path policy
+- prefer `supersede` for single-valued relationships
+- prefer `tentative` when certainty is weak
+- do not silently append mutually incompatible hard facts
 
-Do not jump straight from classifier output to free-form KB writes.
+## 11. API Boundary
 
-## 8. Future Small-Model Role
+First write path should be structured, not free-form natural language.
 
-The future pre-thinker should not own memory.
+Suggested module:
 
-Its role should be:
+- `src/write_path/`
 
-- stateless interpretation
-- ranked candidate structure
-- ambiguity flags
-- abstention when uncertain
+Suggested functions:
 
-It may help with intake, but deterministic policy remains final authority.
+- `prepare_write(request)`
+- `backup_stores(context_id)`
+- `apply_write(request)`
+- `append_journal_event(event)`
+- `rebuild_resolved_view(context_id)`
 
-The principle is:
+## 12. Relation to Pre-Thinker
 
-- soft logic finds candidate hard logic
-- deterministic systems decide what is trusted
+The pre-thinker, if used, is stateless and advisory:
 
-## 9. What This Pipeline Is Not
+- suggests candidate structure
+- flags ambiguity
+- proposes routing
 
-It is not:
+Deterministic validation and write policy remain final authority.
 
-- a full ontology system
-- a free-form predicate invention engine
-- a replacement for symbolic reasoning
-- a replacement for write-path policy
+## 13. Incremental Rollout
 
-It is the bridge between human language and symbolic commitment.
+1. strengthen statement classification and suitability checks
+2. emit candidate records with ranked predicates
+3. implement tentative store and journal
+4. implement `retract` and `supersede`
+5. add contradiction audit integration
+6. add promotion rules for tentative facts
 
-## 10. Summary
+## 14. Out of Scope (First Increment)
 
-The fact intake pipeline is the next serious subsystem because it answers the
-question the rest of the project depends on:
+- full truth-maintenance system
+- free-form NL writes straight into hard facts
+- automatic ontology creation
+- probabilistic belief merging
 
-How do we turn soft language into clean, durable, symbolic structure without
-polluting the knowledge base?
+## 15. Summary
 
-That is the missing middle between:
-
-- LLM interpretation
-- deterministic symbolic reasoning
-
-and it is the place where memory curation becomes real.
+The system already reasons deterministically. This spec defines how information earns the right to be reasoned over.

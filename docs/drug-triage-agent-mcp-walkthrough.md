@@ -1,30 +1,17 @@
 # Drug Triage Agent Walkthrough (Level 6)
 
-Status: Draft  
+Status: Active  
 Date: 2026-04-06
 
-This walkthrough shows an LLM orchestrating deterministic clinical triage via
-MCP tool calls.
+Canonical ladder:
 
-The agent:
+- [walkthrough-ladder.md](walkthrough-ladder.md)
 
-1. calls `query_prolog_raw` for each candidate drug
-2. classifies each row as `contraindicated`, `caution`, or `safe`
-3. asks for the final safe candidate set
-4. returns a short human summary
+## Goal
 
-## Prerequisites
+Show an LLM orchestrating deterministic clinical triage through MCP tools.
 
-1. LM Studio local server is running
-2. `mcp/prolog-reasoning` integration is enabled
-3. API token available if auth is enabled
-
-Use either:
-
-- env var: `LMSTUDIO_API_KEY`
-- or `--api-key` argument
-
-## Run It
+## Run
 
 ```bash
 python scripts/demonstrate_drug_triage_agent_mcp.py
@@ -36,11 +23,12 @@ Optional model override:
 python scripts/demonstrate_drug_triage_agent_mcp.py --model qwen3.5-27b@q4_k_m
 ```
 
-## Why It Matters
+## What to Look For
 
-This is the split you wanted:
+- tool-backed candidate evaluation via `query_logic`
+- deterministic status per drug candidate
+- final summary still grounded in symbolic outputs
 
-- LLM for orchestration and explanation
-- symbolic engine for hard clinical rule consequences
+## Next
 
-That gives us answers that are both readable and reproducible.
+- Level 7: [fantasy-overlord-mcp-walkthrough.md](fantasy-overlord-mcp-walkthrough.md)

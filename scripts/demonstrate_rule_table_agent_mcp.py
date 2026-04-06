@@ -101,7 +101,7 @@ def run_demo(base_url: str, model: str, integration: str, api_key: str | None) -
         for action in ACTIONS:
             raw_query = f"allowed({user}, {action})."
             prompt = (
-                "Call query_prolog_raw exactly once with this query: "
+                "Call query_logic exactly once with this query: "
                 f"{raw_query} "
                 "Then answer with YES or NO on the first line and one short evidence sentence."
             )

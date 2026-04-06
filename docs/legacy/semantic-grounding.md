@@ -1,5 +1,8 @@
 # Semantic Grounding Layer
 
+Status: Legacy reference (broad narrative).  
+Canonical implementation and current architecture are tracked in `README.md`, `architecture.md`, and `src/parser/semantic.py`.
+
 ## Overview
 
 The Semantic Grounding Layer converts natural language queries into structured Intermediate Representation (IR) that can be processed by the Prolog reasoning engine. This enables agents to query the knowledge base using everyday language instead of Prolog syntax.

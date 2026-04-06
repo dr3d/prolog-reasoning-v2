@@ -80,8 +80,8 @@ This record is consumed by:
 ## 6. Interaction With Existing Specs
 
 This design complements two existing notes:
-- ontology routing policy in `docs/ontology-context-routing-spec.md`
-- memory ingestion and revision policy in `docs/memory-ingestion-and-revision-notes.md`
+- ontology routing policy in `docs/secondary/ontology-context-routing-spec.md`
+- memory ingestion and revision policy in `docs/fact-intake-pipeline.md`
 
 The pre-thinker should be viewed as the decision front-end that feeds those systems.
 

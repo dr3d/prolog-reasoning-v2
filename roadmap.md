@@ -64,7 +64,7 @@ memory plus reversible operations.
 - [ ] Implement tentative memory store
 - [ ] Add correction cue routing
 - [ ] Define promotion and rejection rules
-- [ ] Integrate with the write-path contract in `docs/write-path-spec.md`
+- [ ] Integrate with the unified intake/write contract in `docs/fact-intake-pipeline.md`
 
 **Release**: v2.2
 

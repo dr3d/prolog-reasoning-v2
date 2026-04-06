@@ -426,6 +426,33 @@ def _render_html(transcript: dict[str, Any]) -> str:
       justify-content: space-between;
       gap: 12px;
     }}
+    .topbar-right {{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }}
+    .nav-links {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }}
+    .nav-link {{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      text-decoration: none;
+      white-space: nowrap;
+    }}
+    .nav-link:hover {{
+      filter: brightness(1.06);
+    }}
     h1 {{
       margin: 0 0 8px 0;
       font-size: 34px;
@@ -578,6 +605,16 @@ def _render_html(transcript: dict[str, Any]) -> str:
         position: static;
         max-height: none;
       }}
+      .topbar {{
+        flex-direction: column;
+      }}
+      .topbar-right {{
+        width: 100%;
+        align-items: flex-start;
+      }}
+      .nav-links {{
+        justify-content: flex-start;
+      }}
     }}
   </style>
 </head>
@@ -585,7 +622,13 @@ def _render_html(transcript: dict[str, Any]) -> str:
   <div class="wrap">
     <div class="topbar">
       <h1>Fantasy Overlord Simulation Session</h1>
-      <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+      <div class="topbar-right">
+        <div class="nav-links">
+          <a class="nav-link" href="./docs-hub.html">Back to Docs Hub</a>
+          <a class="nav-link" href="https://github.com/dr3d/prolog-reasoning-v2">View Repo</a>
+        </div>
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+      </div>
     </div>
     <div class="meta">Captured: {html.escape(transcript["captured_at"])} | Model: {html.escape(transcript["model"])} | Integration: {html.escape(transcript["integration"])}</div>
     <div class="legend">Overlord view: every step captures user instruction, tool calls, and a deterministic fact delta extracted from assert/retract operations.</div>

@@ -1,41 +1,28 @@
 # Drug Interaction Triage Walkthrough (Level 5)
 
-Status: Draft  
+Status: Active  
 Date: 2026-04-06
 
-This walkthrough shows a hard-logic safety task that is easy to understand:
-deterministic medication triage.
+Canonical ladder:
 
-The script uses explicit facts plus rules to classify candidate drugs as:
+- [walkthrough-ladder.md](walkthrough-ladder.md)
 
-- `contraindicated`
-- `caution`
-- `safe`
+## Goal
 
-## Run It
+Show deterministic safety classification over medication candidates.
 
-From the repo root:
+## Run
 
 ```bash
 python scripts/demonstrate_drug_triage_tool.py
 ```
 
-## What It Demonstrates
+## What to Look For
 
-- allergy constraints (`penicillin_allergy`)
-- current-medication interaction checks (`major_interaction`)
-- risk-profile checks (`renal_risk_nsaid`)
-- deterministic status rollup per candidate drug
+- explicit `contraindicated` / `caution` / `safe` outcomes
+- multi-hop constraints (allergy + interactions + risk profile)
+- explainable deterministic reasoning instead of plausibility prose
 
-## Why This Is A Good "Wow" Demo
+## Next
 
-- the domain is intuitive
-- the consequences are multi-step
-- output is table-shaped and explainable
-- a plain LLM should present this, not invent it
-
-## Expected Pattern
-
-You should see a markdown triage table and a short connect-the-dots summary.
-For the seeded data, `acetaminophen` should emerge as the safe option for
-`alice`, while other options are flagged via explicit reasons.
+- Level 6: [drug-triage-agent-mcp-walkthrough.md](drug-triage-agent-mcp-walkthrough.md)

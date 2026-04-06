@@ -101,7 +101,7 @@ python data/evaluate.py
 
 - Docs map: [docs/README.md](docs/README.md)
 - Architecture: [architecture.md](architecture.md)
-- Semantic grounding: [docs/semantic-grounding.md](docs/semantic-grounding.md)
+- Semantic grounding (legacy reference): [docs/legacy/semantic-grounding.md](docs/legacy/semantic-grounding.md)
 - Failure explanations: [docs/failure-explanations.md](docs/failure-explanations.md)
 - LM Studio + MCP guide: [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - MCP chat playbooks (copy/paste): [docs/mcp-chat-playbooks.md](docs/mcp-chat-playbooks.md)
@@ -111,12 +111,11 @@ python data/evaluate.py
 
 - Current implementation status: [status.md](status.md)
 - Planned work: [roadmap.md](roadmap.md)
-- Fact intake pipeline: [docs/fact-intake-pipeline.md](docs/fact-intake-pipeline.md)
-- Fact intake and revision notes: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md)
-- Write-path contract: [docs/write-path-spec.md](docs/write-path-spec.md)
-- LM Studio classifier evaluation: [docs/lmstudio-classifier-matrix.md](docs/lmstudio-classifier-matrix.md)
+- Unified intake/memory/write spec: [docs/fact-intake-pipeline.md](docs/fact-intake-pipeline.md)
+- Split-note compatibility stubs: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md), [docs/write-path-spec.md](docs/write-path-spec.md)
+- LM Studio classifier evaluation: [docs/research/lmstudio-classifier-matrix.md](docs/research/lmstudio-classifier-matrix.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)
-- Ontology routing spec: [docs/ontology-context-routing-spec.md](docs/ontology-context-routing-spec.md)
+- Ontology routing spec (secondary track): [docs/secondary/ontology-context-routing-spec.md](docs/secondary/ontology-context-routing-spec.md)
 
 ## Architecture Snapshot
 
@@ -232,7 +231,7 @@ There is an exploratory constraint-based graphics editor in [mvp](mvp/). It is n
 
 Related doc:
 
-- [docs/constraint-editor-mvp-playbook.md](docs/constraint-editor-mvp-playbook.md)
+- [docs/prototypes/constraint-editor-mvp-playbook.md](docs/prototypes/constraint-editor-mvp-playbook.md)
 
 ## Current Status
 

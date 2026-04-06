@@ -56,7 +56,8 @@ The general agent pattern is:
 Current practical surfaces:
 
 - `query_prolog`
-- `query_prolog_raw`
+- `query_logic`
+- `query_rows`
 - `list_known_facts`
 - `classify_statement`
 - `explain_error`
@@ -404,7 +405,7 @@ That gives the repo two compatible utilities:
 
 For harder moonshot-style domains, see:
 
-- `docs/stretch-logic-scenarios.md`
+- `docs/research/stretch-logic-scenarios.md`
 
 ## 12. Scenario 7: Drug Interaction Triage
 
