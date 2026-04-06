@@ -91,6 +91,7 @@ python data/evaluate.py
 - Ask natural-language questions through `SemanticPrologSkill`
 - Run the MCP server for local LLM tools via [src/mcp_server.py](src/mcp_server.py)
 - Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
+- Configure Hermes/OpenClaw-style skill usage with [AGENT-INSTALL.md](AGENT-INSTALL.md)
 
 ### Understand It
 
