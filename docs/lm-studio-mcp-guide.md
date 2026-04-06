@@ -305,8 +305,9 @@ python src/mcp_server.py --test
 
 **Fix:**
 ```bash
-# Use full path to Python
-C:\Users\<YourUsername>\AppData\Local\Programs\Python\Python312\python.exe src/mcp_server.py --stdio
+# Use the full path to the Python interpreter for the environment where you
+# installed this repo's dependencies
+<PYTHON_EXE> src/mcp_server.py --stdio
 
 # Or use the Python executable from the environment where you installed
 # this repo's dependencies.
