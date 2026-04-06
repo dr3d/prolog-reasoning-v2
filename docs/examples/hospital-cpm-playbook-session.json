@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-04-06T04:52:35.696966+00:00",
+  "captured_at": "2026-04-06T05:26:37.931131+00:00",
   "model": "qwen/qwen3.5-9b",
   "integration": "mcp/prolog-reasoning",
   "steps": [
@@ -17,399 +17,119 @@
     },
     {
       "step": "ingest",
-      "prompt": "Use ONLY assert_fact_raw calls. Do not use query_prolog or query_prolog_raw.\nAssert each fact once and then give the final count.\n\ntask(site_prep).\ntask(foundation).\ntask(structural_frame).\ntask(mep_rough_in).\ntask(fireproofing).\ntask(enclosure_glazing).\ntask(roofing).\ntask(interior_buildout).\ntask(hvac_commissioning).\ntask(medical_gas_cert).\ntask(or_fitout).\ntask(imaging_suite_install).\ntask(it_network_core).\ntask(regulatory_inspection).\ntask(occupancy_permit).\ntask(go_live).\ndepends_on(foundation, site_prep).\ndepends_on(structural_frame, foundation).\ndepends_on(mep_rough_in, structural_frame).\ndepends_on(fireproofing, structural_frame).\ndepends_on(enclosure_glazing, structural_frame).\ndepends_on(roofing, structural_frame).\ndepends_on(interior_buildout, mep_rough_in).\ndepends_on(interior_buildout, fireproofing).\ndepends_on(hvac_commissioning, interior_buildout).\ndepends_on(medical_gas_cert, interior_buildout).\ndepends_on(or_fitout, medical_gas_cert).\ndepends_on(imaging_suite_install, interior_buildout).\ndepends_on(it_network_core, interior_buildout).\ndepends_on(regulatory_inspection, hvac_commissioning).\ndepends_on(regulatory_inspection, medical_gas_cert).\ndepends_on(regulatory_inspection, it_network_core).\ndepends_on(occupancy_permit, regulatory_inspection).\ndepends_on(go_live, occupancy_permit).\ndepends_on(go_live, or_fitout).\ndepends_on(go_live, imaging_suite_install).\nduration_days(site_prep, 12).\nduration_days(foundation, 21).\nduration_days(structural_frame, 35).\nduration_days(interior_buildout, 40).\nduration_days(regulatory_inspection, 14).\nduration_days(occupancy_permit, 7).\nduration_days(go_live, 2).\ntask_supplier(enclosure_glazing, glass_vendor).\ntask_supplier(medical_gas_cert, medgas_vendor).\ntask_supplier(imaging_suite_install, imaging_vendor).\nsupplier_status(glass_vendor, on_time).\nsupplier_status(medgas_vendor, on_time).\nsupplier_status(imaging_vendor, on_time).\ncompleted(site_prep).\ncompleted(foundation).\ncompleted(structural_frame).\nmilestone(regulatory_inspection).\nmilestone(occupancy_permit).\nmilestone(go_live).\n",
+      "prompt": "Use bulk_assert_facts_raw with the full fact list below.\nThen run query_prolog_rows_raw counts for:\n- task(Task).\n- depends_on(Task, Prereq).\n- task_supplier(Task, Supplier).\n- supplier_status(Supplier, Status).\n- completed(Task).\n- milestone(M).\nReturn the raw counts and stop if any count mismatches.\n\ntask(site_prep).\ntask(foundation).\ntask(structural_frame).\ntask(mep_rough_in).\ntask(fireproofing).\ntask(enclosure_glazing).\ntask(roofing).\ntask(interior_buildout).\ntask(hvac_commissioning).\ntask(medical_gas_cert).\ntask(or_fitout).\ntask(imaging_suite_install).\ntask(it_network_core).\ntask(regulatory_inspection).\ntask(occupancy_permit).\ntask(go_live).\ndepends_on(foundation, site_prep).\ndepends_on(structural_frame, foundation).\ndepends_on(mep_rough_in, structural_frame).\ndepends_on(fireproofing, structural_frame).\ndepends_on(enclosure_glazing, structural_frame).\ndepends_on(roofing, structural_frame).\ndepends_on(interior_buildout, mep_rough_in).\ndepends_on(interior_buildout, fireproofing).\ndepends_on(hvac_commissioning, interior_buildout).\ndepends_on(medical_gas_cert, interior_buildout).\ndepends_on(or_fitout, medical_gas_cert).\ndepends_on(imaging_suite_install, interior_buildout).\ndepends_on(it_network_core, interior_buildout).\ndepends_on(regulatory_inspection, hvac_commissioning).\ndepends_on(regulatory_inspection, medical_gas_cert).\ndepends_on(regulatory_inspection, it_network_core).\ndepends_on(occupancy_permit, regulatory_inspection).\ndepends_on(go_live, occupancy_permit).\ndepends_on(go_live, or_fitout).\ndepends_on(go_live, imaging_suite_install).\nduration_days(site_prep, 12).\nduration_days(foundation, 21).\nduration_days(structural_frame, 35).\nduration_days(interior_buildout, 40).\nduration_days(regulatory_inspection, 14).\nduration_days(occupancy_permit, 7).\nduration_days(go_live, 2).\ntask_supplier(enclosure_glazing, glass_vendor).\ntask_supplier(medical_gas_cert, medgas_vendor).\ntask_supplier(imaging_suite_install, imaging_vendor).\nsupplier_status(glass_vendor, on_time).\nsupplier_status(medgas_vendor, on_time).\nsupplier_status(imaging_vendor, on_time).\ncompleted(site_prep).\ncompleted(foundation).\ncompleted(structural_frame).\nmilestone(regulatory_inspection).\nmilestone(occupancy_permit).\nmilestone(go_live).\n",
       "tool_calls": [
         {
-          "tool": "assert_fact_raw",
+          "tool": "bulk_assert_facts_raw",
           "arguments": {
-            "fact": "task(site_prep)."
+            "facts": [
+              "task(site_prep).",
+              "task(foundation).",
+              "task(structural_frame).",
+              "task(mep_rough_in).",
+              "task(fireproofing).",
+              "task(enclosure_glazing).",
+              "task(roofing).",
+              "task(interior_buildout).",
+              "task(hvac_commissioning).",
+              "task(medical_gas_cert).",
+              "task(or_fitout).",
+              "task(imaging_suite_install).",
+              "task(it_network_core).",
+              "task(regulatory_inspection).",
+              "task(occupancy_permit).",
+              "task(go_live).",
+              "depends_on(foundation, site_prep).",
+              "depends_on(structural_frame, foundation).",
+              "depends_on(mep_rough_in, structural_frame).",
+              "depends_on(fireproofing, structural_frame).",
+              "depends_on(enclosure_glazing, structural_frame).",
+              "depends_on(roofing, structural_frame).",
+              "depends_on(interior_buildout, mep_rough_in).",
+              "depends_on(interior_buildout, fireproofing).",
+              "depends_on(hvac_commissioning, interior_buildout).",
+              "depends_on(medical_gas_cert, interior_buildout).",
+              "depends_on(or_fitout, medical_gas_cert).",
+              "depends_on(imaging_suite_install, interior_buildout).",
+              "depends_on(it_network_core, interior_buildout).",
+              "depends_on(regulatory_inspection, hvac_commissioning).",
+              "depends_on(regulatory_inspection, medical_gas_cert).",
+              "depends_on(regulatory_inspection, it_network_core).",
+              "depends_on(occupancy_permit, regulatory_inspection).",
+              "depends_on(go_live, occupancy_permit).",
+              "depends_on(go_live, or_fitout).",
+              "depends_on(go_live, imaging_suite_install).",
+              "duration_days(site_prep, 12).",
+              "duration_days(foundation, 21).",
+              "duration_days(structural_frame, 35).",
+              "duration_days(interior_buildout, 40).",
+              "duration_days(regulatory_inspection, 14).",
+              "duration_days(occupancy_permit, 7).",
+              "duration_days(go_live, 2).",
+              "task_supplier(enclosure_glazing, glass_vendor).",
+              "task_supplier(medical_gas_cert, medgas_vendor).",
+              "task_supplier(imaging_suite_install, imaging_vendor).",
+              "supplier_status(glass_vendor, on_time).",
+              "supplier_status(medgas_vendor, on_time).",
+              "supplier_status(imaging_vendor, on_time).",
+              "completed(site_prep).",
+              "completed(foundation).",
+              "completed(structural_frame).",
+              "milestone(regulatory_inspection).",
+              "milestone(occupancy_permit).",
+              "milestone(go_live)."
+            ]
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(site_prep).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"bulk_fact_assertion\\\",\\n  \\\"requested_count\\\": 55,\\n  \\\"asserted_count\\\": 55,\\n  \\\"failed_count\\\": 0,\\n  \\\"asserted_facts\\\": [\\n    \\\"task(site_prep).\\\",\\n    \\\"task(foundation).\\\",\\n    \\\"task(structural_frame).\\\",\\n    \\\"task(mep_rough_in).\\\",\\n    \\\"task(fireproofing).\\\",\\n    \\\"task(enclosure_glazing).\\\",\\n    \\\"task(roofing).\\\",\\n    \\\"task(interior_buildout).\\\",\\n    \\\"task(hvac_commissioning).\\\",\\n    \\\"task(medical_gas_cert).\\\",\\n    \\\"task(or_fitout).\\\",\\n    \\\"task(imaging_suite_install).\\\",\\n    \\\"task(it_network_core).\\\",\\n    \\\"task(regulatory_inspection).\\\",\\n    \\\"task(occupancy_permit).\\\",\\n    \\\"task(go_live).\\\",\\n    \\\"depends_on(foundation, site_prep).\\\",\\n    \\\"depends_on(structural_frame, foundation).\\\",\\n    \\\"depends_on(mep_rough_in, structural_frame).\\\",\\n    \\\"depends_on(fireproofing, structural_frame).\\\",\\n    \\\"depends_on(enclosure_glazing, structural_frame).\\\",\\n    \\\"depends_on(roofing, structural_frame).\\\",\\n    \\\"depends_on(interior_buildout, mep_rough_in).\\\",\\n    \\\"depends_on(interior_buildout, fireproofing).\\\",\\n    \\\"depends_on(hvac_commissioning, interior_buildout).\\\",\\n    \\\"depends_on(medical_gas_cert, interior_buildout).\\\",\\n    \\\"depends_on(or_fitout, medical_gas_cert).\\\",\\n    \\\"depends_on(imaging_suite_install, interior_buildout).\\\",\\n    \\\"depends_on(it_network_core, interior_buildout).\\\",\\n    \\\"depends_on(regulatory_inspection, hvac_commissioning).\\\",\\n    \\\"depends_on(regulatory_inspection, medical_gas_cert).\\\",\\n    \\\"depends_on(regulatory_inspection, it_network_core).\\\",\\n    \\\"depends_on(occupancy_permit, regulatory_inspection).\\\",\\n    \\\"depends_on(go_live, occupancy_permit).\\\",\\n    \\\"depends_on(go_live, or_fitout).\\\",\\n    \\\"depends_on(go_live, imaging_suite_install).\\\",\\n    \\\"duration_days(site_prep, 12).\\\",\\n    \\\"duration_days(foundation, 21).\\\",\\n    \\\"duration_days(structural_frame, 35).\\\",\\n    \\\"duration_days(interior_buildout, 40).\\\",\\n    \\\"duration_days(regulatory_inspection, 14).\\\",\\n    \\\"duration_days(occupancy_permit, 7).\\\",\\n    \\\"duration_days(go_live, 2).\\\",\\n    \\\"task_supplier(enclosure_glazing, glass_vendor).\\\",\\n    \\\"task_supplier(medical_gas_cert, medgas_vendor).\\\",\\n    \\\"task_supplier(imaging_suite_install, imaging_vendor).\\\",\\n    \\\"supplier_status(glass_vendor, on_time).\\\",\\n    \\\"supplier_status(medgas_vendor, on_time).\\\",\\n    \\\"supplier_status(imaging_vendor, on_time).\\\",\\n    \\\"completed(site_prep).\\\",\\n    \\\"completed(foundation).\\\",\\n    \\\"completed(structural_frame).\\\",\\n    \\\"milestone(regulatory_inspection).\\\",\\n    \\\"milestone(occupancy_permit).\\\",\\n    \\\"milestone(go_live).\\\"\\n  ],\\n  \\\"failed_facts\\\": [],\\n  \\\"message\\\": \\\"Bulk assertion complete.\\\"\\n}\"}]"
         },
         {
-          "tool": "assert_fact_raw",
+          "tool": "query_prolog_rows_raw",
           "arguments": {
-            "fact": "task(foundation)."
+            "query": "task(Task)."
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(foundation).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"task\\\",\\n  \\\"prolog_query\\\": \\\"task(Task).\\\",\\n  \\\"variables\\\": [\\n    \\\"Task\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Task\\\": \\\"site_prep\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"foundation\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"structural_frame\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"mep_rough_in\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"fireproofing\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"enclosure_glazing\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"roofing\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"hvac_commissioning\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"medical_gas_cert\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"or_fitout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"imaging_suite_install\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"it_network_core\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"regulatory_inspection\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"occupancy_permit\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"go_live\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 16,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `task` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
         },
         {
-          "tool": "assert_fact_raw",
+          "tool": "query_prolog_rows_raw",
           "arguments": {
-            "fact": "task(structural_frame)."
+            "query": "depends_on(Task, Prereq)."
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(structural_frame).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"depends_on\\\",\\n  \\\"prolog_query\\\": \\\"depends_on(Task, Prereq).\\\",\\n  \\\"variables\\\": [\\n    \\\"Task\\\",\\n    \\\"Prereq\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Task\\\": \\\"foundation\\\",\\n      \\\"Prereq\\\": \\\"site_prep\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"structural_frame\\\",\\n      \\\"Prereq\\\": \\\"foundation\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"mep_rough_in\\\",\\n      \\\"Prereq\\\": \\\"structural_frame\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"fireproofing\\\",\\n      \\\"Prereq\\\": \\\"structural_frame\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"enclosure_glazing\\\",\\n      \\\"Prereq\\\": \\\"structural_frame\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"roofing\\\",\\n      \\\"Prereq\\\": \\\"structural_frame\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"interior_buildout\\\",\\n      \\\"Prereq\\\": \\\"mep_rough_in\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"interior_buildout\\\",\\n      \\\"Prereq\\\": \\\"fireproofing\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"hvac_commissioning\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"medical_gas_cert\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"or_fitout\\\",\\n      \\\"Prereq\\\": \\\"medical_gas_cert\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"imaging_suite_install\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"it_network_core\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"regulatory_inspection\\\",\\n      \\\"Prereq\\\": \\\"hvac_commissioning\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"regulatory_inspection\\\",\\n      \\\"Prereq\\\": \\\"medical_gas_cert\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"regulatory_inspection\\\",\\n      \\\"Prereq\\\": \\\"it_network_core\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"occupancy_permit\\\",\\n      \\\"Prereq\\\": \\\"regulatory_inspection\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"go_live\\\",\\n      \\\"Prereq\\\": \\\"occupancy_permit\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"go_live\\\",\\n      \\\"Prereq\\\": \\\"or_fitout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"go_live\\\",\\n      \\\"Prereq\\\": \\\"imaging_suite_install\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 20,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `depends_on` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
         },
         {
-          "tool": "assert_fact_raw",
+          "tool": "query_prolog_rows_raw",
           "arguments": {
-            "fact": "task(mep_rough_in)."
+            "query": "task_supplier(Task, Supplier)."
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(mep_rough_in).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"task_supplier\\\",\\n  \\\"prolog_query\\\": \\\"task_supplier(Task, Supplier).\\\",\\n  \\\"variables\\\": [\\n    \\\"Task\\\",\\n    \\\"Supplier\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Task\\\": \\\"enclosure_glazing\\\",\\n      \\\"Supplier\\\": \\\"glass_vendor\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"medical_gas_cert\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"imaging_suite_install\\\",\\n      \\\"Supplier\\\": \\\"imaging_vendor\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `task_supplier` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
         },
         {
-          "tool": "assert_fact_raw",
+          "tool": "query_prolog_rows_raw",
           "arguments": {
-            "fact": "task(fireproofing)."
+            "query": "supplier_status(Supplier, Status)."
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(fireproofing).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"supplier_status\\\",\\n  \\\"prolog_query\\\": \\\"supplier_status(Supplier, Status).\\\",\\n  \\\"variables\\\": [\\n    \\\"Supplier\\\",\\n    \\\"Status\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Supplier\\\": \\\"glass_vendor\\\",\\n      \\\"Status\\\": \\\"on_time\\\"\\n    },\\n    {\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\",\\n      \\\"Status\\\": \\\"on_time\\\"\\n    },\\n    {\\n      \\\"Supplier\\\": \\\"imaging_vendor\\\",\\n      \\\"Status\\\": \\\"on_time\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `supplier_status` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
         },
         {
-          "tool": "assert_fact_raw",
+          "tool": "query_prolog_rows_raw",
           "arguments": {
-            "fact": "task(enclosure_glazing)."
+            "query": "completed(Task)."
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(enclosure_glazing).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"completed\\\",\\n  \\\"prolog_query\\\": \\\"completed(Task).\\\",\\n  \\\"variables\\\": [\\n    \\\"Task\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Task\\\": \\\"site_prep\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"foundation\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"structural_frame\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `completed` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
         },
         {
-          "tool": "assert_fact_raw",
+          "tool": "query_prolog_rows_raw",
           "arguments": {
-            "fact": "task(roofing)."
+            "query": "milestone(M)."
           },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(roofing).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(interior_buildout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(interior_buildout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(hvac_commissioning)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(hvac_commissioning).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(medical_gas_cert)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(medical_gas_cert).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(or_fitout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(or_fitout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(imaging_suite_install)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(imaging_suite_install).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(it_network_core)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(it_network_core).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(regulatory_inspection)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(regulatory_inspection).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(occupancy_permit)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(occupancy_permit).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task(go_live)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task(go_live).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(foundation, site_prep)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(foundation, site_prep).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(structural_frame, foundation)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(structural_frame, foundation).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(mep_rough_in, structural_frame)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(mep_rough_in, structural_frame).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(fireproofing, structural_frame)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(fireproofing, structural_frame).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(enclosure_glazing, structural_frame)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(enclosure_glazing, structural_frame).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(roofing, structural_frame)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(roofing, structural_frame).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(interior_buildout, mep_rough_in)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(interior_buildout, mep_rough_in).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(interior_buildout, fireproofing)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(interior_buildout, fireproofing).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(hvac_commissioning, interior_buildout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(hvac_commissioning, interior_buildout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(medical_gas_cert, interior_buildout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(medical_gas_cert, interior_buildout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(or_fitout, medical_gas_cert)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(or_fitout, medical_gas_cert).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(imaging_suite_install, interior_buildout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(imaging_suite_install, interior_buildout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(it_network_core, interior_buildout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(it_network_core, interior_buildout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(regulatory_inspection, hvac_commissioning)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(regulatory_inspection, hvac_commissioning).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(regulatory_inspection, medical_gas_cert)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(regulatory_inspection, medical_gas_cert).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(regulatory_inspection, it_network_core)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(regulatory_inspection, it_network_core).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(occupancy_permit, regulatory_inspection)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(occupancy_permit, regulatory_inspection).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(go_live, occupancy_permit)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(go_live, occupancy_permit).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(go_live, or_fitout)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(go_live, or_fitout).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "depends_on(go_live, imaging_suite_install)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"depends_on(go_live, imaging_suite_install).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(site_prep, 12)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(site_prep, 12).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(foundation, 21)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(foundation, 21).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(structural_frame, 35)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(structural_frame, 35).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(interior_buildout, 40)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(interior_buildout, 40).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(regulatory_inspection, 14)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(regulatory_inspection, 14).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(occupancy_permit, 7)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(occupancy_permit, 7).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "duration_days(go_live, 2)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"duration_days(go_live, 2).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task_supplier(enclosure_glazing, glass_vendor)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task_supplier(enclosure_glazing, glass_vendor).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task_supplier(medical_gas_cert, medgas_vendor)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task_supplier(medical_gas_cert, medgas_vendor).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "task_supplier(imaging_suite_install, imaging_vendor)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"task_supplier(imaging_suite_install, imaging_vendor).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "supplier_status(glass_vendor, on_time)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"supplier_status(glass_vendor, on_time).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "supplier_status(medgas_vendor, on_time)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"supplier_status(medgas_vendor, on_time).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "supplier_status(imaging_vendor, on_time)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"supplier_status(imaging_vendor, on_time).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "completed(site_prep)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"completed(site_prep).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "completed(foundation)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"completed(foundation).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "completed(structural_frame)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"completed(structural_frame).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "milestone(regulatory_inspection)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"milestone(regulatory_inspection).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "milestone(occupancy_permit)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"milestone(occupancy_permit).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
-        },
-        {
-          "tool": "assert_fact_raw",
-          "arguments": {
-            "fact": "milestone(go_live)."
-          },
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"fact_asserted\\\",\\n  \\\"fact\\\": \\\"milestone(go_live).\\\",\\n  \\\"message\\\": \\\"Fact asserted into runtime KB for this server process.\\\",\\n  \\\"note\\\": \\\"Use reset_runtime_kb to clear runtime changes.\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"milestone\\\",\\n  \\\"prolog_query\\\": \\\"milestone(M).\\\",\\n  \\\"variables\\\": [\\n    \\\"M\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"M\\\": \\\"regulatory_inspection\\\"\\n    },\\n    {\\n      \\\"M\\\": \\\"occupancy_permit\\\"\\n    },\\n    {\\n      \\\"M\\\": \\\"go_live\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"fact-backed\\\",\\n    \\\"note\\\": \\\"The `milestone` predicate is typically answered from stored facts, though rules may still participate.\\\"\\n  }\\n}\"}]"
         }
       ],
-      "assistant_message": "\n\nAll facts have been successfully asserted using ONLY `assert_fact_raw` calls. \n\n**Final Count: 55 facts**\n\nBreakdown by fact type:\n- **task()**: 16 facts (site_prep, foundation, structural_frame, mep_rough_in, fireproofing, enclosure_glazing, roofing, interior_buildout, hvac_commissioning, medical_gas_cert, or_fitout, imaging_suite_install, it_network_core, regulatory_inspection, occupancy_permit, go_live)\n- **depends_on()**: 20 facts (project dependencies)\n- **duration_days()**: 7 facts (task durations in days)\n- **task_supplier()**: 3 facts (vendor assignments)\n- **supplier_status()**: 3 facts (vendor status)\n- **completed()**: 3 facts (completed tasks)\n- **milestone()**: 3 facts (key milestones)\n\nAll assertions returned success status and were added to the runtime knowledge base."
+      "assistant_message": "\n\n## Bulk Assertion Results\n\n\u2705 **55 facts asserted successfully** (0 failures)\n\n---\n\n## Query Counts\n\n| Predicate | Count | Expected | Status |\n|-----------|-------|----------|--------|\n| `task(Task)` | 16 | 16 | \u2705 Match |\n| `depends_on(Task, Prereq)` | 20 | 20 | \u2705 Match |\n| `task_supplier(Task, Supplier)` | 3 | 3 | \u2705 Match |\n| `supplier_status(Supplier, Status)` | 3 | 3 | \u2705 Match |\n| `completed(Task)` | 3 | 3 | \u2705 Match |\n| `milestone(M)` | 3 | 3 | \u2705 Match |\n\n---\n\n## Summary\n\nAll counts match the expected values from the bulk assertion. No mismatches detected. The knowledge base is consistent with the provided fact list."
     },
     {
       "step": "baseline",
-      "prompt": "Use ONLY query_prolog_rows_raw for these exact queries and then produce markdown tables from returned rows:\n- safe_to_start(Task).\n- waiting_on(Task, Prereq).\n- task_status(Task, Status).\n- delayed_milestone(Milestone, Supplier).\nDo not call query_prolog.\n",
+      "prompt": "Use ONLY query_prolog_rows_raw for these exact queries and return markdown tables plus row counts:\n- safe_to_start(Task).\n- waiting_on(Task, Prereq).\n- task_status(Task, Status).\n- delayed_milestone(Milestone, Supplier).\nDo not call query_prolog.\n",
       "tool_calls": [
         {
           "tool": "query_prolog_rows_raw",
@@ -440,11 +160,11 @@
           "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"delayed_milestone\\\",\\n  \\\"prolog_query\\\": \\\"delayed_milestone(Milestone, Supplier).\\\",\\n  \\\"variables\\\": [\\n    \\\"Milestone\\\",\\n    \\\"Supplier\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `delayed_milestone` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
         }
       ],
-      "assistant_message": "\n\nHere are the results formatted as markdown tables:\n\n### safe_to_start(Task)\n\n| Task |\n|------|\n| site_prep |\n| foundation |\n| structural_frame |\n| mep_rough_in |\n| fireproofing |\n| enclosure_glazing |\n| roofing |\n\n---\n\n### waiting_on(Task, Prereq)\n\n| Task | Prereq |\n|------|--------|\n| interior_buildout | mep_rough_in |\n| interior_buildout | fireproofing |\n| hvac_commissioning | interior_buildout |\n| medical_gas_cert | interior_buildout |\n| or_fitout | medical_gas_cert |\n| imaging_suite_install | interior_buildout |\n| it_network_core | interior_buildout |\n| regulatory_inspection | hvac_commissioning |\n| regulatory_inspection | medical_gas_cert |\n| regulatory_inspection | it_network_core |\n| occupancy_permit | regulatory_inspection |\n| go_live | occupancy_permit |\n| go_live | or_fitout |\n| go_live | imaging_suite_install |\n\n---\n\n### task_status(Task, Status)\n\n| Task | Status |\n|------|--------|\n| site_prep | ready |\n| foundation | ready |\n| structural_frame | ready |\n| mep_rough_in | ready |\n| fireproofing | ready |\n| enclosure_glazing | ready |\n| roofing | ready |\n| interior_buildout | waiting |\n| hvac_commissioning | waiting |\n| medical_gas_cert | waiting |\n| or_fitout | waiting |\n| imaging_suite_install | waiting |\n| it_network_core | waiting |\n| regulatory_inspection | waiting |\n| occupancy_permit | waiting |\n| go_live | waiting |\n\n---\n\n### delayed_milestone(Milestone, Supplier)\n\n*(No results found - 0 rows)*"
+      "assistant_message": "\n\n## Query Results\n\n### 1. safe_to_start(Task)\n| Task |\n|------|\n| site_prep |\n| foundation |\n| structural_frame |\n| mep_rough_in |\n| fireproofing |\n| enclosure_glazing |\n| roofing |\n\n**Row Count: 7**\n\n---\n\n### 2. waiting_on(Task, Prereq)\n| Task | Prereq |\n|------|--------|\n| interior_buildout | mep_rough_in |\n| interior_buildout | fireproofing |\n| hvac_commissioning | interior_buildout |\n| medical_gas_cert | interior_buildout |\n| or_fitout | medical_gas_cert |\n| imaging_suite_install | interior_buildout |\n| it_network_core | interior_buildout |\n| regulatory_inspection | hvac_commissioning |\n| regulatory_inspection | medical_gas_cert |\n| regulatory_inspection | it_network_core |\n| occupancy_permit | regulatory_inspection |\n| go_live | occupancy_permit |\n| go_live | or_fitout |\n| go_live | imaging_suite_install |\n\n**Row Count: 14**\n\n---\n\n### 3. task_status(Task, Status)\n| Task | Status |\n|------|--------|\n| site_prep | ready |\n| foundation | ready |\n| structural_frame | ready |\n| mep_rough_in | ready |\n| fireproofing | ready |\n| enclosure_glazing | ready |\n| roofing | ready |\n| interior_buildout | waiting |\n| hvac_commissioning | waiting |\n| medical_gas_cert | waiting |\n| or_fitout | waiting |\n| imaging_suite_install | waiting |\n| it_network_core | waiting |\n| regulatory_inspection | waiting |\n| occupancy_permit | waiting |\n| go_live | waiting |\n\n**Row Count: 16**\n\n---\n\n### 4. delayed_milestone(Milestone, Supplier)\n*(No results found)*\n\n**Row Count: 0**"
     },
     {
       "step": "shock_glass",
-      "prompt": "Use only these tools in order:\n1) retract_fact_raw supplier_status(glass_vendor, on_time).\n2) assert_fact_raw supplier_status(glass_vendor, delayed).\n3) query_prolog_rows_raw blocked_task(Task, Supplier).\n4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\nReturn two tables.\n",
+      "prompt": "Use only these tools in order:\n1) retract_fact_raw supplier_status(glass_vendor, on_time).\n2) assert_fact_raw supplier_status(glass_vendor, delayed).\n3) query_prolog_rows_raw blocked_task(Task, Supplier).\n4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n5) query_prolog_rows_raw task_status(Task, Status).\nReturn three tables and one short propagation narrative.\n",
       "tool_calls": [
         {
           "tool": "retract_fact_raw",
@@ -473,13 +193,20 @@
             "query": "delayed_milestone(Milestone, Supplier)."
           },
           "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"no_results\\\",\\n  \\\"result_type\\\": \\\"no_result\\\",\\n  \\\"predicate\\\": \\\"delayed_milestone\\\",\\n  \\\"prolog_query\\\": \\\"delayed_milestone(Milestone, Supplier).\\\",\\n  \\\"variables\\\": [\\n    \\\"Milestone\\\",\\n    \\\"Supplier\\\"\\n  ],\\n  \\\"rows\\\": [],\\n  \\\"num_rows\\\": 0,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `delayed_milestone` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "task_status(Task, Status)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"task_status\\\",\\n  \\\"prolog_query\\\": \\\"task_status(Task, Status).\\\",\\n  \\\"variables\\\": [\\n    \\\"Task\\\",\\n    \\\"Status\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Task\\\": \\\"enclosure_glazing\\\",\\n      \\\"Status\\\": \\\"blocked\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"site_prep\\\",\\n      \\\"Status\\\": \\\"ready\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"foundation\\\",\\n      \\\"Status\\\": \\\"ready\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"structural_frame\\\",\\n      \\\"Status\\\": \\\"ready\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"mep_rough_in\\\",\\n      \\\"Status\\\": \\\"ready\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"fireproofing\\\",\\n      \\\"Status\\\": \\\"ready\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"roofing\\\",\\n      \\\"Status\\\": \\\"ready\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"interior_buildout\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"hvac_commissioning\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"medical_gas_cert\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"or_fitout\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"imaging_suite_install\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"it_network_core\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"regulatory_inspection\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"occupancy_permit\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"go_live\\\",\\n      \\\"Status\\\": \\\"waiting\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 16,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `task_status` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
         }
       ],
-      "assistant_message": "\n\nHere are the two tables from the queries executed in order:\n\n**Table 1: Blocked Tasks**\n| Task | Supplier |\n|------|----------|\n| enclosure_glazing | glass_vendor |\n\n**Table 2: Delayed Milestones**\n| Milestone | Supplier |\n|-----------|----------|\n| *(no results)* | *(no results)* |\n\nThe first table shows one blocked task (enclosure_glazing) associated with the glass_vendor supplier. The second query returned no results for delayed milestones, indicating there are currently no delayed milestones in the knowledge base."
+      "assistant_message": "\n\n## Three Tables\n\n### Table 1: Blocked Tasks\n| Task | Supplier |\n|------|----------|\n| enclosure_glazing | glass_vendor |\n\n### Table 2: Delayed Milestones\n| Milestone | Supplier |\n|-----------|----------|\n| *(no results)* | *(no results)* |\n\n### Table 3: Task Statuses\n| Task | Status |\n|------|--------|\n| enclosure_glazing | blocked |\n| site_prep | ready |\n| foundation | ready |\n| structural_frame | ready |\n| mep_rough_in | ready |\n| fireproofing | ready |\n| roofing | ready |\n| interior_buildout | waiting |\n| hvac_commissioning | waiting |\n| medical_gas_cert | waiting |\n| or_fitout | waiting |\n| imaging_suite_install | waiting |\n| it_network_core | waiting |\n| regulatory_inspection | waiting |\n| occupancy_permit | waiting |\n| go_live | waiting |\n\n---\n\n## Propagation Narrative\n\nThe supplier_status fact for glass_vendor was retracted from \"on_time\" and asserted as \"delayed\". This change triggered rule-based propagation: the blocked_task predicate derived that enclosure_glazing is now blocked due to the glass_vendor delay. The task_status table confirms this impact\u2014enclosure_glazing shows \"blocked\" status while all other tasks remain in their original states (ready or waiting). Notably, no delayed_milestone entries were generated, indicating the delay has propagated to task-level blocking but not yet to milestone-level tracking in this knowledge base configuration."
     },
     {
       "step": "shock_medgas",
-      "prompt": "Use only these tools in order:\n1) retract_fact_raw supplier_status(medgas_vendor, on_time).\n2) assert_fact_raw supplier_status(medgas_vendor, delayed).\n3) query_prolog_rows_raw blocked_task(Task, Supplier).\n4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\nThen provide top 3 interventions to protect go_live.\n",
+      "prompt": "Use only these tools in order:\n1) retract_fact_raw supplier_status(medgas_vendor, on_time).\n2) assert_fact_raw supplier_status(medgas_vendor, delayed).\n3) query_prolog_rows_raw blocked_task(Task, Supplier).\n4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n5) query_prolog_rows_raw waiting_on(Task, Prereq).\nThen provide top 3 interventions to protect go_live.\n",
       "tool_calls": [
         {
           "tool": "retract_fact_raw",
@@ -508,9 +235,16 @@
             "query": "delayed_milestone(Milestone, Supplier)."
           },
           "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"delayed_milestone\\\",\\n  \\\"prolog_query\\\": \\\"delayed_milestone(Milestone, Supplier).\\\",\\n  \\\"variables\\\": [\\n    \\\"Milestone\\\",\\n    \\\"Supplier\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Milestone\\\": \\\"regulatory_inspection\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    },\\n    {\\n      \\\"Milestone\\\": \\\"occupancy_permit\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    },\\n    {\\n      \\\"Milestone\\\": \\\"go_live\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `delayed_milestone` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
+        },
+        {
+          "tool": "query_prolog_rows_raw",
+          "arguments": {
+            "query": "waiting_on(Task, Prereq)."
+          },
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"waiting_on\\\",\\n  \\\"prolog_query\\\": \\\"waiting_on(Task, Prereq).\\\",\\n  \\\"variables\\\": [\\n    \\\"Task\\\",\\n    \\\"Prereq\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Task\\\": \\\"interior_buildout\\\",\\n      \\\"Prereq\\\": \\\"mep_rough_in\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"interior_buildout\\\",\\n      \\\"Prereq\\\": \\\"fireproofing\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"hvac_commissioning\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"imaging_suite_install\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    },\\n    {\\n      \\\"Task\\\": \\\"it_network_core\\\",\\n      \\\"Prereq\\\": \\\"interior_buildout\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 5,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `waiting_on` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
         }
       ],
-      "assistant_message": "\n\nBased on the query results, here are the top 3 interventions to protect go_live:\n\n## **Top 3 Interventions to Protect Go-Live**\n\n### **1. Immediate Escalation & Expedited Delivery for MedGas Vendor**\n- **Critical Issue**: `medgas_vendor` is now marked as \"delayed\" and has **5 blocked tasks** + **3 delayed milestones**, including the critical `go_live` milestone itself\n- **Action Required**: \n  - Immediately escalate to medgas_vendor management with SLA breach notification\n  - Request expedited delivery/priority scheduling for all pending gas certification work\n  - Assign dedicated account manager to monitor daily progress\n\n### **2. Parallel-Track Regulatory & Occupancy Dependencies**\n- **Critical Issue**: Both `regulatory_inspection` and `occupancy_permit` are blocked by medgas_vendor but are critical path items for go_live\n- **Action Required**:\n  - Identify alternative pathways or pre-compliance work that can proceed independently\n  - Engage regulatory bodies to explore conditional approval options\n  - Prepare contingency documentation to minimize wait time once gas certification is complete\n\n### **3. Contingency Planning for Glass Vendor Enclosure Glazing**\n- **Critical Issue**: `enclosure_glazing` (glass_vendor) is also blocked, creating a compound bottleneck risk\n- **Action Required**:\n  - Assess if enclosure work can proceed with temporary measures while glass vendor resolves issues\n  - Evaluate alternative suppliers or expedited shipping options for glass components\n  - Ensure this task doesn't create additional cascading delays on the critical path\n\n---\n\n**Risk Summary**: The medgas_vendor delay is the primary threat to go_live, directly blocking 3 milestones including go_live itself. Immediate intervention on supplier performance and parallel workarounds are essential to protect the launch timeline."
+      "assistant_message": "\n\n## Analysis Results\n\nBased on the tool execution sequence, here's what we discovered:\n\n### Current State:\n- **medgas_vendor status**: Changed from `on_time` \u2192 `delayed`\n- **Blocked tasks by medgas_vendor** (6): medical_gas_cert, or_fitout, regulatory_inspection, occupancy_permit, go_live\n- **Delayed milestones** (3): regulatory_inspection, occupancy_permit, go_live\n- **Waiting task dependencies**: interior_buildout blocked by mep_rough_in & fireproofing; hvac_commissioning, imaging_suite_install, it_network_core all waiting on interior_buildout\n\n### Critical Risk:\n**go_live is directly blocked by medgas_vendor**, which is now delayed. This creates a critical path threat to the go-live milestone.\n\n---\n\n## Top 3 Interventions to Protect Go-Live\n\n### 1. **Immediate Vendor Escalation & Expedited Delivery Plan**\n- **Action**: Escalate to medgas_vendor management with SLA breach notification and demand expedited delivery timeline\n- **Rationale**: Since go_live itself is blocked by this delayed vendor, immediate intervention is required to compress remaining work or secure alternative delivery windows\n- **Impact**: Directly addresses the root cause blocking go_live\n\n### 2. **Parallel Regulatory & Permit Workstream Activation**\n- **Action**: Activate parallel workstreams for regulatory_inspection and occupancy_permit with alternative suppliers or pre-approved pathways\n- **Rationale**: Both milestones are blocked by medgas_vendor but are critical path items; parallel execution can mitigate delay impact\n- **Impact**: Reduces dependency on single vendor for multiple critical milestones\n\n### 3. **Interior Buildout Prerequisite Acceleration**\n- **Action**: Expedite mep_rough_in and fireproofing completion to unblock interior_buildout, which cascades to hvac_commissioning, imaging_suite_install, and it_network_core\n- **Rationale**: Interior_buildout is a major dependency bottleneck; accelerating its prerequisites prevents downstream task delays from compounding go_live risk\n- **Impact**: Unblocks 4 dependent tasks and reduces overall critical path duration\n\n---\n\n**Priority Order**: #1 > #2 > #3 (direct vendor intervention first, then parallel workstreams, then dependency acceleration)"
     },
     {
       "step": "recovery",
@@ -573,7 +307,7 @@
           "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"table\\\",\\n  \\\"predicate\\\": \\\"delayed_milestone\\\",\\n  \\\"prolog_query\\\": \\\"delayed_milestone(Milestone, Supplier).\\\",\\n  \\\"variables\\\": [\\n    \\\"Milestone\\\",\\n    \\\"Supplier\\\"\\n  ],\\n  \\\"rows\\\": [\\n    {\\n      \\\"Milestone\\\": \\\"regulatory_inspection\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    },\\n    {\\n      \\\"Milestone\\\": \\\"occupancy_permit\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    },\\n    {\\n      \\\"Milestone\\\": \\\"go_live\\\",\\n      \\\"Supplier\\\": \\\"medgas_vendor\\\"\\n    }\\n  ],\\n  \\\"num_rows\\\": 3,\\n  \\\"reasoning_basis\\\": {\\n    \\\"kind\\\": \\\"rule-derived\\\",\\n    \\\"note\\\": \\\"The `delayed_milestone` predicate is typically computed through rules rather than stored as a single explicit fact.\\\"\\n  }\\n}\"}]"
         }
       ],
-      "assistant_message": "\n\nBased on the operations executed, here are the results organized into the requested sections:\n\n## Ready now\nThe following tasks are safe to start:\n- site_prep\n- foundation\n- structural_frame\n- mep_rough_in\n- fireproofing\n- enclosure_glazing\n- roofing\n- interior_buildout\n\n## Still waiting\nThe following tasks are waiting on prerequisites:\n- hvac_commissioning (waiting on: interior_buildout)\n- imaging_suite_install (waiting on: interior_buildout)\n- it_network_core (waiting on: interior_buildout)\n\n## Remaining milestone risks\nThe following milestones have delays associated with suppliers:\n- regulatory_inspection (delayed by: medgas_vendor)\n- occupancy_permit (delayed by: medgas_vendor)\n- go_live (delayed by: medgas_vendor)"
+      "assistant_message": "\n\nBased on the executed operations and queries, here are the results organized into the requested sections:\n\n## Ready now\nThe following tasks are safe to start:\n- site_prep\n- foundation\n- structural_frame\n- mep_rough_in\n- fireproofing\n- enclosure_glazing\n- roofing\n- interior_buildout\n\n## Still waiting\nThe following tasks are waiting on prerequisites:\n- hvac_commissioning (waiting on: interior_buildout)\n- imaging_suite_install (waiting on: interior_buildout)\n- it_network_core (waiting on: interior_buildout)\n\n## Remaining milestone risks\nThe following milestones have delays associated with suppliers:\n- regulatory_inspection (Supplier: medgas_vendor)\n- occupancy_permit (Supplier: medgas_vendor)\n- go_live (Supplier: medgas_vendor)"
     }
   ]
 }

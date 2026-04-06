@@ -49,8 +49,15 @@ def _user_prompt(step: str) -> str:
             "Use ONLY reset_runtime_kb. Confirm success in one sentence."
         ),
         "ingest": (
-            "Use ONLY assert_fact_raw calls. Do not use query_prolog or query_prolog_raw.\n"
-            "Assert each fact once and then give the final count.\n\n"
+            "Use bulk_assert_facts_raw with the full fact list below.\n"
+            "Then run query_prolog_rows_raw counts for:\n"
+            "- task(Task).\n"
+            "- depends_on(Task, Prereq).\n"
+            "- task_supplier(Task, Supplier).\n"
+            "- supplier_status(Supplier, Status).\n"
+            "- completed(Task).\n"
+            "- milestone(M).\n"
+            "Return the raw counts and stop if any count mismatches.\n\n"
             "task(site_prep).\n"
             "task(foundation).\n"
             "task(structural_frame).\n"
@@ -108,7 +115,7 @@ def _user_prompt(step: str) -> str:
             "milestone(go_live).\n"
         ),
         "baseline": (
-            "Use ONLY query_prolog_rows_raw for these exact queries and then produce markdown tables from returned rows:\n"
+            "Use ONLY query_prolog_rows_raw for these exact queries and return markdown tables plus row counts:\n"
             "- safe_to_start(Task).\n"
             "- waiting_on(Task, Prereq).\n"
             "- task_status(Task, Status).\n"
@@ -121,7 +128,8 @@ def _user_prompt(step: str) -> str:
             "2) assert_fact_raw supplier_status(glass_vendor, delayed).\n"
             "3) query_prolog_rows_raw blocked_task(Task, Supplier).\n"
             "4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n"
-            "Return two tables.\n"
+            "5) query_prolog_rows_raw task_status(Task, Status).\n"
+            "Return three tables and one short propagation narrative.\n"
         ),
         "shock_medgas": (
             "Use only these tools in order:\n"
@@ -129,6 +137,7 @@ def _user_prompt(step: str) -> str:
             "2) assert_fact_raw supplier_status(medgas_vendor, delayed).\n"
             "3) query_prolog_rows_raw blocked_task(Task, Supplier).\n"
             "4) query_prolog_rows_raw delayed_milestone(Milestone, Supplier).\n"
+            "5) query_prolog_rows_raw waiting_on(Task, Prereq).\n"
             "Then provide top 3 interventions to protect go_live.\n"
         ),
         "recovery": (
