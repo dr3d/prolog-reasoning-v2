@@ -99,6 +99,7 @@ python data/evaluate.py
 
 ### Understand It
 
+- Docs map: [docs/README.md](docs/README.md)
 - Architecture: [architecture.md](architecture.md)
 - Semantic grounding: [docs/semantic-grounding.md](docs/semantic-grounding.md)
 - Failure explanations: [docs/failure-explanations.md](docs/failure-explanations.md)
