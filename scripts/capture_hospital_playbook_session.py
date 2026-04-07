@@ -417,7 +417,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="{prompt_attr}" aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="{prompt_attr}" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>{prompt_html}</pre>
   </div>
@@ -445,7 +445,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="{question_attr}" aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="{question_attr}" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>{question_html}</pre>
   </div>
@@ -697,13 +697,13 @@ def _render_html(transcript: dict[str, Any]) -> str:
       for (const button of buttons) {{
         button.addEventListener('click', async () => {{
           const text = button.getAttribute('data-copy') || '';
-          const before = '[copy]';
+          const before = 'copy';
           try {{
             await navigator.clipboard.writeText(text);
-            button.textContent = '[copied]';
+            button.textContent = 'copied';
             button.classList.add('copied');
           }} catch (error) {{
-            button.textContent = '[copy-failed]';
+            button.textContent = 'copy-failed';
           }}
           window.setTimeout(() => {{
             button.textContent = before;

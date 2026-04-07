@@ -189,6 +189,9 @@
       padding: 6px 8px;
       cursor: pointer;
     }
+    .copy-btn:hover {
+      background: #f8ebd2;
+    }
     .copy-btn.copied {
       background: #dff0d8;
       color: #2f5f2f;
@@ -262,7 +265,7 @@
       <div class="bubble user">
         <div class="bubble-head">
           <div class="label">User</div>
-          <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">[copy]</button>
+          <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
       </div>
@@ -343,7 +346,7 @@ weather(clear).
 time_of_day(day).
 insomnia(silas).
 quest_active(relic_hunt).
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Use bulk_assert_facts with the full fact list below.
 Then verify counts with query_rows for:
@@ -707,7 +710,7 @@ Queries:
 5) can_trade(A, B, L).
 6) high_risk(C).
 7) can_cast_charm(Caster, Target, L).
-Label each table." aria-label="Copy user prompt">[copy]</button>
+Label each table." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Control-room baseline. Use query_rows only, then summarize in 5 bullets.
 Queries:
@@ -964,7 +967,7 @@ Label each table.</pre>
 8) query_rows awake(C).
 9) query_rows exposed(C).
 10) query_rows high_risk(C).
-Then provide a short ops update and one immediate recommendation." aria-label="Copy user prompt">[copy]</button>
+Then provide a short ops update and one immediate recommendation." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Run this event turn in order:
 1) retract_fact time_of_day(day).
@@ -1132,7 +1135,7 @@ Then provide a short ops update and one immediate recommendation.</pre>
 6) query_rows has_item(C, I).
 7) query_rows can_trade(A, B, L).
 8) query_rows high_risk(C).
-Report what changed in locality and inventory." aria-label="Copy user prompt">[copy]</button>
+Report what changed in locality and inventory." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Run this turn in order:
 1) retract_fact at(aria, docks).
@@ -1331,7 +1334,7 @@ Current inventory state:
 7) assert_fact charmed(aria, mara).
 8) query_rows charmed(Target, By).
 9) query_rows threatened(C).
-Explain which edit unlocked the charm interaction and why." aria-label="Copy user prompt">[copy]</button>
+Explain which edit unlocked the charm interaction and why." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Pause and patch the world, then resume:
 1) query_rows can_cast_charm(Caster, Target, L).
@@ -1537,7 +1540,7 @@ The other edits (`insomnia(aria)` and `status(mara, guard_duty)`) added contextu
 11) query_rows can_trade(A, B, L).
 12) query_rows high_risk(C).
 13) query_rows charmed(Target, By).
-Provide end-of-turn report: stable state, unresolved risks, next move." aria-label="Copy user prompt">[copy]</button>
+Provide end-of-turn report: stable state, unresolved risks, next move." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Run recovery turn:
 1) retract_fact charmed(aria, mara).
@@ -1737,14 +1740,14 @@ The recovery turn successfully normalized character states and eliminated immedi
       const buttons = document.querySelectorAll('.copy-btn');
       for (const button of buttons) {
         button.addEventListener('click', async () => {
-          const before = '[copy]';
+          const before = 'copy';
           const text = button.getAttribute('data-copy') || '';
           try {
             await navigator.clipboard.writeText(text);
-            button.textContent = '[copied]';
+            button.textContent = 'copied';
             button.classList.add('copied');
           } catch (error) {
-            button.textContent = '[copy-failed]';
+            button.textContent = 'copy-failed';
           }
           window.setTimeout(() => {
             button.textContent = before;

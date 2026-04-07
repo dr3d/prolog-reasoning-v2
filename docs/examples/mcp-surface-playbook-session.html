@@ -203,7 +203,7 @@
     <div class="bubble-head">
       <div class="label">User</div>
       <button class="copy-btn" data-copy="Use show_system_info and list_known_facts first.
-Then give a one-paragraph summary of what this MCP server can do." aria-label="Copy user prompt">[copy]</button>
+Then give a one-paragraph summary of what this MCP server can do." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use show_system_info and list_known_facts first.
 Then give a one-paragraph summary of what this MCP server can do.</pre>
@@ -218,7 +218,7 @@ This MCP server is a Prolog Reasoning v2 system that serves as a local-first neu
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
   </div>
@@ -240,7 +240,7 @@ depends_on(beta, alpha).
 supplier_status(alpha_vendor, on_time).
 Then call assert_fact with:
 completed(alpha).
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use bulk_assert_facts with these facts, then use assert_fact for one extra fact.
 Facts for bulk_assert_facts:
@@ -274,7 +274,7 @@ All 5 facts have been added to the runtime knowledge base. You can use `reset_kb
       <div class="label">User</div>
       <button class="copy-btn" data-copy="Use ONLY query_rows with this query:
 depends_on(Task, Prereq).
-Return rows and count." aria-label="Copy user prompt">[copy]</button>
+Return rows and count." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY query_rows with this query:
 depends_on(Task, Prereq).
@@ -300,7 +300,7 @@ The query found that task &quot;beta&quot; depends on prerequisite &quot;alpha&q
       <div class="label">User</div>
       <button class="copy-btn" data-copy="Use ONLY query_logic with this exact query:
 depends_on(beta, alpha).
-Return short answer and detailed answer." aria-label="Copy user prompt">[copy]</button>
+Return short answer and detailed answer." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY query_logic with this exact query:
 depends_on(beta, alpha).
@@ -320,7 +320,7 @@ The query was executed successfully against the Prolog knowledge base, confirmin
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="Use ONLY query_prolog on: What task depends on alpha?" aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="Use ONLY query_prolog on: What task depends on alpha?" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY query_prolog on: What task depends on alpha?</pre>
   </div>
@@ -346,7 +346,7 @@ Would you like me to try a different approach using raw Prolog queries instead?<
       <div class="label">User</div>
       <button class="copy-btn" data-copy="Use ONLY classify_statement on:
 Maybe my mother was Ann.
-Return classification fields only." aria-label="Copy user prompt">[copy]</button>
+Return classification fields only." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY classify_statement on:
 Maybe my mother was Ann.
@@ -374,7 +374,7 @@ Return classification fields only.</pre>
       <div class="label">User</div>
       <button class="copy-btn" data-copy="Use ONLY explain_error with this error message:
 Entity &#x27;charlie&#x27; not in KB
-Return the explanation and suggestions." aria-label="Copy user prompt">[copy]</button>
+Return the explanation and suggestions." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY explain_error with this error message:
 Entity &#x27;charlie&#x27; not in KB
@@ -405,7 +405,7 @@ Return the explanation and suggestions.</pre>
       <button class="copy-btn" data-copy="Use ONLY these tools in order:
 1) retract_fact completed(alpha).
 2) reset_kb
-Confirm cleanup complete." aria-label="Copy user prompt">[copy]</button>
+Confirm cleanup complete." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY these tools in order:
 1) retract_fact completed(alpha).
@@ -453,13 +453,13 @@ Cleanup complete. Both operations executed successfully:
       for (const button of buttons) {
         button.addEventListener('click', async () => {
           const text = button.getAttribute('data-copy') || '';
-          const before = '[copy]';
+          const before = 'copy';
           try {
             await navigator.clipboard.writeText(text);
-            button.textContent = '[copied]';
+            button.textContent = 'copied';
             button.classList.add('copied');
           } catch (error) {
-            button.textContent = '[copy-failed]';
+            button.textContent = 'copy-failed';
           }
           window.setTimeout(() => {
             button.textContent = before;

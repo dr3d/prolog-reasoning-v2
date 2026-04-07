@@ -201,7 +201,7 @@
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
   </div>
@@ -280,7 +280,7 @@ completed(structural_frame).
 milestone(regulatory_inspection).
 milestone(occupancy_permit).
 milestone(go_live).
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use bulk_assert_facts with the full fact list below.
 Then run query_rows counts for:
@@ -378,7 +378,7 @@ All 55 facts were successfully asserted and all query counts match the expected 
 - task_status(Task, Status).
 - delayed_milestone(Milestone, Supplier).
 Do not call query_prolog.
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY query_rows for these exact queries and return markdown tables plus row counts:
 - safe_to_start(Task).
@@ -472,7 +472,7 @@ Do not call query_prolog.
 4) query_rows delayed_milestone(Milestone, Supplier).
 5) query_rows task_status(Task, Status).
 Return three tables and one short propagation narrative.
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use only these tools in order:
 1) retract_fact supplier_status(glass_vendor, on_time).
@@ -534,7 +534,7 @@ When the supplier_status for glass_vendor was changed from `on_time` to `delayed
 4) query_rows delayed_milestone(Milestone, Supplier).
 5) query_rows waiting_on(Task, Prereq).
 Then provide top 3 interventions to protect go_live.
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use only these tools in order:
 1) retract_fact supplier_status(medgas_vendor, on_time).
@@ -594,7 +594,7 @@ Based on the query results, here&#x27;s the analysis:
 7) query_rows waiting_on(Task, Prereq).
 8) query_rows delayed_milestone(Milestone, Supplier).
 Return sections: Ready now, Still waiting, Remaining milestone risks.
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use only these tools in order:
 1) retract_fact supplier_status(glass_vendor, delayed).
@@ -648,7 +648,7 @@ The following milestones have delays associated with medgas_vendor:
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="What can safely start this morning, and what is still waiting?" aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="What can safely start this morning, and what is still waiting?" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>What can safely start this morning, and what is still waiting?</pre>
   </div>
@@ -660,7 +660,7 @@ The following milestones have delays associated with medgas_vendor:
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="If the glass vendor is delayed today, what milestones are impacted first?" aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="If the glass vendor is delayed today, what milestones are impacted first?" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>If the glass vendor is delayed today, what milestones are impacted first?</pre>
   </div>
@@ -672,7 +672,7 @@ The following milestones have delays associated with medgas_vendor:
   <div class="bubble user">
     <div class="bubble-head">
       <div class="label">User</div>
-      <button class="copy-btn" data-copy="We recovered glazing and completed rough-in items. What changed for tomorrow&#x27;s plan?" aria-label="Copy user prompt">[copy]</button>
+      <button class="copy-btn" data-copy="We recovered glazing and completed rough-in items. What changed for tomorrow&#x27;s plan?" aria-label="Copy user prompt">copy</button>
     </div>
     <pre>We recovered glazing and completed rough-in items. What changed for tomorrow&#x27;s plan?</pre>
   </div>
@@ -713,13 +713,13 @@ The following milestones have delays associated with medgas_vendor:
       for (const button of buttons) {
         button.addEventListener('click', async () => {
           const text = button.getAttribute('data-copy') || '';
-          const before = '[copy]';
+          const before = 'copy';
           try {
             await navigator.clipboard.writeText(text);
-            button.textContent = '[copied]';
+            button.textContent = 'copied';
             button.classList.add('copied');
           } catch (error) {
-            button.textContent = '[copy-failed]';
+            button.textContent = 'copy-failed';
           }
           window.setTimeout(() => {
             button.textContent = before;

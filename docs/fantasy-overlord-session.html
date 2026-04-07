@@ -189,6 +189,9 @@
       padding: 6px 8px;
       cursor: pointer;
     }
+    .copy-btn:hover {
+      background: #f8ebd2;
+    }
     .copy-btn.copied {
       background: #dff0d8;
       color: #2f5f2f;
@@ -253,7 +256,7 @@
         <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
       </div>
     </div>
-    <div class="meta">Captured: 2026-04-06T06:38:26.514686+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning</div>
+    <div class="meta">Captured: 2026-04-07T01:38:16.858051+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning</div>
     <div class="legend">Overlord view: every step captures user instruction, tool calls, and a deterministic fact delta extracted from assert/retract operations.</div>
     <section class="step-card">
   <h2>reset</h2>
@@ -262,7 +265,7 @@
       <div class="bubble user">
         <div class="bubble-head">
           <div class="label">User</div>
-          <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">[copy]</button>
+          <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
       </div>
@@ -270,7 +273,7 @@
       <div class="overlord"><div class="label">Overlord Delta</div><div class='delta-grid'><div><div class='label'>Added (0)</div><ul><li>(none)</li></ul></div><div><div class='label'>Removed (0)</div><ul><li>(none)</li></ul></div></div></div>
       <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
-The reset_kb operation completed successfully, resetting the runtime knowledge base to its baseline seed state.</pre></div>
+The runtime knowledge base has been successfully reset to its baseline seed state.</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -343,7 +346,7 @@ weather(clear).
 time_of_day(day).
 insomnia(silas).
 quest_active(relic_hunt).
-" aria-label="Copy user prompt">[copy]</button>
+" aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Use bulk_assert_facts with the full fact list below.
 Then verify counts with query_rows for:
@@ -406,21 +409,22 @@ quest_active(relic_hunt).
 
 ## Verification Complete ✅
 
-All row counts match the expected values:
+All row counts match the asserted facts:
 
-| Predicate | Query | Expected Count | Actual Count | Status |
-|-----------|-------|----------------|--------------|--------|
-| character(C) | `character(C).` | 4 | 4 | ✓ Match |
-| location(L) | `location(L).` | 5 | 5 | ✓ Match |
-| at(C, L) | `at(C, L).` | 4 | 4 | ✓ Match |
-| has_item(C, I) | `has_item(C, I).` | 6 | 6 | ✓ Match |
-| connected(A, B) | `connected(A, B).` | 8 | 8 | ✓ Match |
-| status(C, S) | `status(C, S).` | 4 | 4 | ✓ Match |
+| Predicate | Expected Count | Actual Count | Status |
+|-----------|----------------|--------------|--------|
+| character(C) | 4 | 4 | ✓ Match |
+| location(L) | 5 | 5 | ✓ Match |
+| at(C, L) | 4 | 4 | ✓ Match |
+| has_item(C, I) | 6 | 6 | ✓ Match |
+| connected(A, B) | 8 | 8 | ✓ Match |
+| status(C, S) | 4 | 4 | ✓ Match |
 
 **Summary:**
-- All 43 facts were successfully asserted (0 failures)
-- All 6 query predicates returned expected row counts
-- No mismatches detected - verification passed ✅</pre></div>
+- Total facts asserted: **43**
+- All queried predicates returned correct row counts
+- No mismatches detected
+- Knowledge base is consistent and ready for queries</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -706,7 +710,7 @@ Queries:
 5) can_trade(A, B, L).
 6) high_risk(C).
 7) can_cast_charm(Caster, Target, L).
-Label each table." aria-label="Copy user prompt">[copy]</button>
+Label each table." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Control-room baseline. Use query_rows only, then summarize in 5 bullets.
 Queries:
@@ -726,25 +730,25 @@ Label each table.</pre>
 ## Control-Room Baseline Summary
 
 **Table Labels:**
-- **at(C, L)**: Character Location Table
-- **has_item(C, I)**: Character Inventory Table  
-- **awake(C)**: Character Status Table
-- **can_move(C, To)**: Movement Capability Table
-- **can_trade(A, B, L)**: Trading Relationship Table (empty)
-- **high_risk(C)**: High Risk Character Table (empty)
-- **can_cast_charm(Caster, Target, L)**: Charm Casting Table (empty)
+- `at(C, L)` — Character Location Table
+- `has_item(C, I)` — Character Inventory Table  
+- `awake(C)` — Character Status Table
+- `can_move(C, To)` — Movement Capability Table
+- `can_trade(A, B, L)` — Trading Relationship Table
+- `high_risk(C)` — Risk Assessment Table
+- `can_cast_charm(Caster, Target, L)` — Charm Casting Table
 
 **5-Bullet Summary:**
 
-1. **Character Locations**: 4 characters tracked across 3 locations—Aria at docks, Borin and Silas at market, Mara at ruins.
+1. **Location &amp; Status**: All 4 characters (aria, borin, mara, silas) are awake and distributed across 3 locations—aria at docks, borin and silas at market, mara at ruins.
 
-2. **Inventory Distribution**: 6 items held by characters—Aria has map_fragment &amp; copper_key, Borin has ore_crate &amp; shield, Mara has charm_scroll, Silas has healing_herb.
+2. **Inventory Distribution**: 6 items held across the party: aria has map_fragment and copper_key; borin has ore_crate and shield; mara has charm_scroll; silas has healing_herb.
 
-3. **Awake Status**: All 4 characters (aria, borin, mara, silas) are currently awake and active.
+3. **Movement Capabilities**: 8 movement paths defined—borin most mobile (tower, docks, forest); silas can reach tower/docks/forest; aria only to market; mara only to forest.
 
-4. **Movement Capabilities**: 8 movement routes available—Aria can move to market; Borin can access tower, docks, and forest; Mara can reach forest; Silas can go to tower, docks, and forest.
+4. **Trading &amp; Magic**: No trading relationships or charm casting abilities currently active in the knowledge base—all queries return empty results.
 
-5. **No Active Rules Triggered**: Three rule-derived predicates (can_trade, high_risk, can_cast_charm) returned no results, indicating these conditions are not currently satisfied in the knowledge base.</pre></div>
+5. **Risk Profile**: No high-risk characters identified—high_risk predicate returns no matches, indicating all characters are currently within acceptable risk parameters.</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -963,7 +967,7 @@ Label each table.</pre>
 8) query_rows awake(C).
 9) query_rows exposed(C).
 10) query_rows high_risk(C).
-Then provide a short ops update and one immediate recommendation." aria-label="Copy user prompt">[copy]</button>
+Then provide a short ops update and one immediate recommendation." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Run this event turn in order:
 1) retract_fact time_of_day(day).
@@ -984,25 +988,22 @@ Then provide a short ops update and one immediate recommendation.</pre>
 
 ## Ops Update
 
-**Current Situation:**
-- **Time of Day:** Night
-- **Weather:** Storm conditions active
-- **Personnel Status:** 
-  - Asleep: aria, borin, mara (3 personnel)
-  - Awake: silas (1 personnel)
-- **Critical Condition:** Aria is both soaked and exposed while asleep
-- **Risk Assessment:** No current high_risk flags in system
+**Environment Status:** Night with storm conditions (changed from day/clear).
 
-**Key Concerns:**
-1. Storm conditions at night with two personnel (aria, silas) marked as soaked
-2. **CRITICAL:** Aria is simultaneously asleep AND exposed - this creates a significant hypothermia/health risk during storm conditions
-3. Only 1 of 4 tracked personnel is awake and potentially able to respond to emergencies
+**Crew Status:**
+- **Asleep:** aria, borin, mara (3 crew)
+- **Awake:** silas (1 crew)
+- **Soaked:** aria, silas (2 crew)
+- **Exposed:** aria (1 crew)
+- **High Risk:** None currently flagged
+
+**Situation Summary:** The storm has impacted two crew members who are now soaked. Aria is in the most vulnerable position—both soaked and exposed to the elements. Three crew are asleep, which may limit immediate response capability if conditions worsen.
 
 ---
 
 ## Immediate Recommendation
 
-**Wake up Aria immediately.** She is in the highest-risk position: soaked from storm exposure, currently asleep (unable to self-protect), and exposed to environmental hazards. This combination during night-time storm conditions requires urgent intervention to prevent hypothermia or other health complications. Assign Silas (the only awake personnel) to locate and move Aria to sheltered, dry quarters immediately.</pre></div>
+**Prioritize sheltering aria immediately.** As the only exposed and soaked crew member during a storm at night, she faces the highest environmental risk. Wake borin or mara (if safe) to assist with moving her to protected shelter. Monitor silas&#x27;s condition as he is awake but also soaked—ensure he has dry clothing and warmth.</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -1016,7 +1017,7 @@ Then provide a short ops update and one immediate recommendation.</pre>
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;time_of_day(night).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>retract_fact</code> - success | fact_retracted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_retracted&quot;,
@@ -1027,19 +1028,19 @@ Then provide a short ops update and one immediate recommendation.</pre>
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;weather(storm).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>assert_fact</code> - success | fact_asserted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;status(aria, soaked).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>assert_fact</code> - success | fact_asserted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;status(silas, soaked).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>query_rows</code> - success | table | predicate=asleep | rows=3</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;table&quot;,
@@ -1134,7 +1135,7 @@ Then provide a short ops update and one immediate recommendation.</pre>
 6) query_rows has_item(C, I).
 7) query_rows can_trade(A, B, L).
 8) query_rows high_risk(C).
-Report what changed in locality and inventory." aria-label="Copy user prompt">[copy]</button>
+Report what changed in locality and inventory." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Run this turn in order:
 1) retract_fact at(aria, docks).
@@ -1151,52 +1152,40 @@ Report what changed in locality and inventory.</pre>
       <div class="overlord"><div class="label">Overlord Delta</div><div class='delta-grid'><div><div class='label'>Added (2)</div><ul><li><code>at(aria, market).</code></li><li><code>has_item(aria, healing_herb).</code></li></ul></div><div><div class='label'>Removed (2)</div><ul><li><code>at(aria, docks).</code></li><li><code>has_item(silas, healing_herb).</code></li></ul></div></div></div>
       <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
-## Report: Changes in Locality and Inventory
+## Summary of Changes
 
-### **Locality Changes (at/2 predicate)**
+### Locality Changes (at/2 predicate)
+- **aria moved from docks to market**
+  - Retracted: `at(aria, docks).`
+  - Asserted: `at(aria, market).`
 
-**Before operations:**
-- aria was at `docks`
+Current location state:
+| Person | Location |
+|--------|----------|
+| borin  | market   |
+| mara   | ruins    |
+| silas  | market   |
+| aria   | market   |
 
-**After operations:**
-- borin is at `market`
-- mara is at `ruins`
-- silas is at `market`
-- aria is at `market` ✨ **NEW**
+### Inventory Changes (has_item/2 predicate)
+- **silas no longer has healing_herb**
+- **aria now has healing_herb**
+  - Retracted: `has_item(silas, healing_herb).`
+  - Asserted: `has_item(aria, healing_herb).`
 
-**Summary:** Aria moved from **docks** to **market**. This was accomplished by retracting `at(aria, docks)` and asserting `at(aria, market)`.
+Current inventory state:
+| Person | Item          |
+|--------|---------------|
+| aria   | map_fragment  |
+| aria   | copper_key    |
+| borin  | ore_crate     |
+| borin  | shield        |
+| mara   | charm_scroll  |
+| aria   | healing_herb  |
 
----
-
-### **Inventory Changes (has_item/2 predicate)**
-
-**Before operations:**
-- silas had `healing_herb`
-
-**After operations:**
-- aria has `map_fragment`
-- aria has `copper_key`
-- borin has `ore_crate`
-- borin has `shield`
-- mara has `charm_scroll`
-- aria has `healing_herb` ✨ **NEW**
-
-**Summary:** 
-- Silas no longer has the healing herb (retracted)
-- Aria now possesses the healing herb (asserted)
-
----
-
-### **Other Queries**
-
-**Trading relationships (can_trade/3):** No trading relationships found in the knowledge base.
-
-**High-risk entities (high_risk/1):** No high-risk entities identified.
-
----
-
-### **Key Takeaway**
-The operations successfully transferred both **location** and **inventory**: Aria moved from docks to market and acquired the healing herb that was previously held by Silas.</pre></div>
+### Other Queries
+- **can_trade(A, B, L)**: No trade relationships found (rule-derived predicate with no results)
+- **high_risk(C)**: No high-risk entities found (rule-derived predicate with no results)</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -1210,7 +1199,7 @@ The operations successfully transferred both **location** and **inventory**: Ari
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;at(aria, market).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>retract_fact</code> - success | fact_retracted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_retracted&quot;,
@@ -1221,7 +1210,7 @@ The operations successfully transferred both **location** and **inventory**: Ari
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;has_item(aria, healing_herb).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>query_rows</code> - success | table | predicate=at | rows=4</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;table&quot;,
@@ -1345,7 +1334,7 @@ The operations successfully transferred both **location** and **inventory**: Ari
 7) assert_fact charmed(aria, mara).
 8) query_rows charmed(Target, By).
 9) query_rows threatened(C).
-Explain which edit unlocked the charm interaction and why." aria-label="Copy user prompt">[copy]</button>
+Explain which edit unlocked the charm interaction and why." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Pause and patch the world, then resume:
 1) query_rows can_cast_charm(Caster, Target, L).
@@ -1363,35 +1352,47 @@ Explain which edit unlocked the charm interaction and why.</pre>
       <div class="overlord"><div class="label">Overlord Delta</div><div class='delta-grid'><div><div class='label'>Added (4)</div><ul><li><code>insomnia(aria).</code></li><li><code>status(mara, guard_duty).</code></li><li><code>at(mara, market).</code></li><li><code>charmed(aria, mara).</code></li></ul></div><div><div class='label'>Removed (1)</div><ul><li><code>at(mara, ruins).</code></li></ul></div></div></div>
       <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
-Now let me analyze which edit unlocked the charm interaction:
+## Analysis Results
 
-## Analysis of the Charm Interaction Unlock
+### Query Execution Summary:
 
-**The critical edit was steps 4-5: retracting `at(mara, ruins)` and asserting `at(mara, market)`.**
+**Step 1:** `can_cast_charm(Caster, Target, L)` → **No results** (mara couldn&#x27;t cast charm initially)
 
-### Why this unlocked the charm interaction:
+**Steps 2-5:** Facts modified:
+- Added `insomnia(aria)` 
+- Added `status(mara, guard_duty)`
+- Retracted `at(mara, ruins)`
+- Asserted `at(mara, market)`
 
-1. **Initial State (Step 1)**: The query returned **no results** for `can_cast_charm(Caster, Target, L)`, indicating no rules could derive valid charm casting relationships.
+**Step 6:** `can_cast_charm(Caster, Target, L)` → **2 results unlocked!**
+- mara can cast charm on silas at market
+- mara can cast charm on aria at market
 
-2. **After Location Change (Step 6)**: The same query returned **2 results**:
-   - `mara` can cast charm on `silas` at `market`
-   - `mara` can cast charm on `aria` at `market`
+**Steps 7-8:** `charmed(aria, mara)` confirmed as fact-backed relationship.
 
-### The Rule Logic Behind This:
+**Step 9:** `threatened(C)` → 4 entities threatened: borin, silas, aria, mara.
 
-The `can_cast_charm` predicate is **rule-derived** (not a stored fact), meaning it depends on other predicates in the knowledge base. Based on the results, the rule likely requires:
+---
 
-- **Location matching**: Both caster and target must be at the same location (`at(Caster, L)` and `at(Target, L)`)
-- **Status condition**: The caster needs appropriate status (`status(mara, guard_duty)`)
-- **Target vulnerability**: The target may need to have certain conditions (like `insomnia(aria)`)
+## Which Edit Unlocked the Charm Interaction?
 
-### Why the Location Edit Was Decisive:
+**The critical edit was Step 5: `assert_fact at(mara, market).`** (paired with Step 4&#x27;s retraction of `at(mara, ruins)`)
 
-Before steps 4-5, mara was at `ruins` (from a baseline fact). After retracting that and asserting `at(mara, market)`, the location predicate now matched the rule&#x27;s requirements. The other edits supported but didn&#x27;t unlock:
-- `insomnia(aria)` - likely made aria vulnerable to charm
-- `status(mara, guard_duty)` - likely enabled mara&#x27;s casting ability
+### Why This Unlocked It:
 
-**The location change was the key because it satisfied the primary spatial constraint of the charm-casting rule**, allowing the rule to fire and produce results.</pre></div>
+The `can_cast_charm` predicate is **rule-derived**, meaning it&#x27;s computed through logic rules rather than stored as explicit facts. The rule likely contains a location constraint that determines when charm casting is possible.
+
+**Before the edit:**
+- mara was at `ruins` (from the retracted fact)
+- Ruins appears to be an invalid/forbidden location for charm casting
+- Result: No charm casting ability detected
+
+**After the edit:**
+- mara moved to `market` 
+- Market is a valid location for charm casting per the underlying rules
+- Result: mara can now cast charm on silas and aria at the market
+
+The other edits (`insomnia(aria)` and `status(mara, guard_duty)`) added contextual information but didn&#x27;t directly enable the charm interaction. The **location change** was the key that unlocked the charm casting capability by satisfying the rule&#x27;s location precondition.</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -1416,13 +1417,13 @@ Before steps 4-5, mara was at `ruins` (from a baseline fact). After retracting t
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;insomnia(aria).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>assert_fact</code> - success | fact_asserted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;status(mara, guard_duty).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>retract_fact</code> - success | fact_retracted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_retracted&quot;,
@@ -1433,7 +1434,7 @@ Before steps 4-5, mara was at `ruins` (from a baseline fact). After retracting t
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;at(mara, market).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>query_rows</code> - success | table | predicate=can_cast_charm | rows=2</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;table&quot;,
@@ -1466,7 +1467,7 @@ Before steps 4-5, mara was at `ruins` (from a baseline fact). After retracting t
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;charmed(aria, mara).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>query_rows</code> - success | table | predicate=charmed | rows=1</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;table&quot;,
@@ -1539,7 +1540,7 @@ Before steps 4-5, mara was at `ruins` (from a baseline fact). After retracting t
 11) query_rows can_trade(A, B, L).
 12) query_rows high_risk(C).
 13) query_rows charmed(Target, By).
-Provide end-of-turn report: stable state, unresolved risks, next move." aria-label="Copy user prompt">[copy]</button>
+Provide end-of-turn report: stable state, unresolved risks, next move." aria-label="Copy user prompt">copy</button>
         </div>
         <pre>Run recovery turn:
 1) retract_fact charmed(aria, mara).
@@ -1561,35 +1562,27 @@ Provide end-of-turn report: stable state, unresolved risks, next move.</pre>
       <div class="overlord"><div class="label">Overlord Delta</div><div class='delta-grid'><div><div class='label'>Added (4)</div><ul><li><code>status(mara, normal).</code></li><li><code>status(aria, normal).</code></li><li><code>status(silas, normal).</code></li><li><code>time_of_day(day).</code></li></ul></div><div><div class='label'>Removed (5)</div><ul><li><code>charmed(aria, mara).</code></li><li><code>status(mara, guard_duty).</code></li><li><code>status(aria, soaked).</code></li><li><code>status(silas, soaked).</code></li><li><code>time_of_day(night).</code></li></ul></div></div></div>
       <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
-## End-of-Turn Report
+## End-of-Turn Recovery Report
 
-### Stable State ✅
-- **Character Status**: All three main characters recovered:
-  - `aria`: status=normal (was soaked)
-  - `mara`: status=normal (was guard_duty)
-  - `silas`: status=normal (was soaked)
-- **Time of Day**: day (was night)
-- **Awake Characters**: aria, borin, mara, silas (all 4 characters awake)
-- **Charmed Relationships**: None (charmed(aria, mara) successfully retracted)
+### ✅ Stable State
+- **Character Status**: All characters (aria, borin, mara, silas) are awake and in normal condition
+- **Time of Day**: Now set to &quot;day&quot; (recovered from night)
+- **Charmed Relationships**: None active (successfully retracted charmed(aria, mara))
 - **High-Risk Characters**: None identified
-- **Trading Relationships**: None active
+- **Trading Network**: No active trading relationships established
 
-### Unresolved Risks ⚠️
-**None currently identified.** All recovery operations completed successfully:
-- No charmed relationships remain
-- No high-risk characters detected
-- All characters in normal status and awake
-- Time of day reset to day (favorable conditions)
+### ⚠️ Unresolved Risks
+- **Trading Infrastructure**: Zero can_trade relationships detected - may need to establish trade routes for resource management
+- **Mission Objectives**: No explicit mission tasks or objectives currently visible in query results
+- **Knowledge Base Gaps**: Limited predicate coverage suggests potential missing facts/rules for comprehensive situation assessment
 
-### Next Move 🎯
-**Resume Normal Operations.** The system is now in a stable, healthy state with no immediate threats or complications. Recommended actions:
-1. Continue with mission objectives
-2. Monitor character interactions for new developments
-3. Consider initiating trading relationships if beneficial
-4. Maintain vigilance for any emerging risks
+### 🎯 Next Move
+**Priority Actions:**
+1. **Establish Trading Relationships** - Define can_trade(A, B, L) facts to enable resource exchange between characters
+2. **Assess Mission Requirements** - Query for any pending tasks, objectives, or goals that need completion
+3. **Expand Knowledge Base** - Consider adding additional predicates (e.g., location, inventory, relationships) for more comprehensive situational awareness
 
----
-*Recovery turn completed successfully. All systems nominal.*</pre></div>
+The recovery turn successfully normalized character states and eliminated immediate risks. The system is now stable but requires proactive development of trading infrastructure and mission planning to advance objectives.</pre></div>
     </div>
     <aside class="console-pane">
       <div class="label">Prolog Console</div>
@@ -1608,7 +1601,7 @@ Provide end-of-turn report: stable state, unresolved risks, next move.</pre>
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;status(mara, normal).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>retract_fact</code> - success | fact_retracted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_retracted&quot;,
@@ -1619,7 +1612,7 @@ Provide end-of-turn report: stable state, unresolved risks, next move.</pre>
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;status(aria, normal).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>retract_fact</code> - success | fact_retracted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_retracted&quot;,
@@ -1630,7 +1623,7 @@ Provide end-of-turn report: stable state, unresolved risks, next move.</pre>
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;status(silas, normal).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>retract_fact</code> - success | fact_retracted</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;fact_retracted&quot;,
@@ -1641,7 +1634,7 @@ Provide end-of-turn report: stable state, unresolved risks, next move.</pre>
   &quot;result_type&quot;: &quot;fact_asserted&quot;,
   &quot;fact&quot;: &quot;time_of_day(day).&quot;,
   &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
-  &quot;note&quot;: &quot;Use reset_runtime_kb to clear runtime changes.&quot;
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
 }</pre></details><details class='console-item'><summary><code>query_rows</code> - success | table | predicate=awake | rows=4</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;table&quot;,
@@ -1747,14 +1740,14 @@ Provide end-of-turn report: stable state, unresolved risks, next move.</pre>
       const buttons = document.querySelectorAll('.copy-btn');
       for (const button of buttons) {
         button.addEventListener('click', async () => {
-          const before = '[copy]';
+          const before = 'copy';
           const text = button.getAttribute('data-copy') || '';
           try {
             await navigator.clipboard.writeText(text);
-            button.textContent = '[copied]';
+            button.textContent = 'copied';
             button.classList.add('copied');
           } catch (error) {
-            button.textContent = '[copy-failed]';
+            button.textContent = 'copy-failed';
           }
           window.setTimeout(() => {
             button.textContent = before;
