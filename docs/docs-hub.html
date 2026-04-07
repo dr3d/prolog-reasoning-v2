@@ -3,35 +3,43 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prolog Reasoning v2 - Logic for Agents</title>
-  <meta name="description" content="A local-first deterministic logic layer for LLM agents, with practical demos and playbooks." />
+  <title>Prolog Reasoning v2 - Public Docs Hub</title>
+  <meta name="description" content="Public showcase and docs hub for Prolog Reasoning v2: demos, setup, architecture, and research tracks." />
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=IBM+Plex+Mono:wght@400;500;700&display=swap");
+    @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,800&family=IBM+Plex+Mono:wght@400;500;700&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap");
 
     :root {
-      --bg: #e2ddd3;
-      --paper: #ece7de;
-      --ink: #22201b;
-      --muted: #625b51;
-      --border: #c3b8a8;
-      --brand: #9e553b;
-      --brand-soft: #dcc6bb;
-      --accent: #3d5f60;
-      --accent-soft: #c4d5d4;
-      --shadow: 0 12px 30px rgba(34, 28, 22, 0.09);
+      --bg: #e3ddd1;
+      --bg-deep: #d6cdbf;
+      --paper: #efe8dd;
+      --ink: #1f1c17;
+      --muted: #665c4f;
+      --border: #c8bba7;
+      --brand: #9d4f31;
+      --brand-strong: #7c351f;
+      --brand-soft: #e6cdc0;
+      --accent: #2f6667;
+      --accent-soft: #c7dcdb;
+      --ok: #3a6f40;
+      --shadow: 0 14px 30px rgba(35, 29, 20, 0.11);
+      --shadow-soft: 0 8px 18px rgba(35, 29, 20, 0.08);
     }
 
     html[data-theme="dark"] {
-      --bg: #10151b;
-      --paper: #1a212a;
-      --ink: #ecf1f7;
-      --muted: #b4bfca;
-      --border: #30404f;
-      --brand: #e08658;
-      --brand-soft: #4c2f23;
-      --accent: #69c1c9;
-      --accent-soft: #193b44;
-      --shadow: 0 14px 34px rgba(0, 0, 0, 0.4);
+      --bg: #11161d;
+      --bg-deep: #0b1016;
+      --paper: #1a212b;
+      --ink: #eaf0f6;
+      --muted: #b9c3cd;
+      --border: #334252;
+      --brand: #e08758;
+      --brand-strong: #ffb087;
+      --brand-soft: #4c2f22;
+      --accent: #6ac4c7;
+      --accent-soft: #1f3e45;
+      --ok: #73c47e;
+      --shadow: 0 16px 34px rgba(0, 0, 0, 0.42);
+      --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.28);
     }
 
     * {
@@ -40,27 +48,35 @@
 
     body {
       margin: 0;
-      color: var(--ink);
-      background:
-        radial-gradient(1200px 500px at -10% -20%, color-mix(in srgb, var(--brand) 18%, transparent), transparent),
-        radial-gradient(900px 500px at 110% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent),
-        var(--bg);
-      font-family: "Fraunces", Georgia, serif;
       min-height: 100vh;
-      line-height: 1.3;
+      color: var(--ink);
+      font-family: "Newsreader", Georgia, serif;
+      line-height: 1.38;
+      background:
+        radial-gradient(1200px 520px at -5% -20%, color-mix(in srgb, var(--brand) 22%, transparent), transparent),
+        radial-gradient(900px 500px at 108% -10%, color-mix(in srgb, var(--accent) 24%, transparent), transparent),
+        linear-gradient(180deg, var(--bg), var(--bg-deep));
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1180px;
       margin: 0 auto;
-      padding: 28px 20px 60px;
+      padding: 26px 20px 68px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brandline {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .badge {
@@ -84,6 +100,7 @@
       font-family: "IBM Plex Mono", Consolas, monospace;
       font-size: 12px;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .theme-btn:hover {
@@ -91,51 +108,163 @@
     }
 
     .hero {
+      position: relative;
+      overflow: hidden;
       background: var(--paper);
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 30px 26px;
+      border-radius: 28px;
+      padding: 30px 28px 24px;
       box-shadow: var(--shadow);
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+      isolation: isolate;
     }
 
-    h1 {
-      margin: 0 0 12px 0;
-      font-size: clamp(34px, 5vw, 60px);
-      line-height: 0.95;
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, color-mix(in srgb, var(--brand-soft) 54%, transparent), transparent 58%),
+        linear-gradient(25deg, color-mix(in srgb, var(--accent-soft) 44%, transparent), transparent 60%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: clamp(36px, 6vw, 68px);
+      line-height: 0.92;
       letter-spacing: -0.02em;
+      max-width: 840px;
     }
 
     .lede {
-      margin: 0;
-      max-width: 780px;
+      margin: 12px 0 0;
+      max-width: 790px;
       color: var(--muted);
-      font-size: clamp(16px, 2.4vw, 20px);
-      line-height: 1.45;
+      font-size: clamp(17px, 2.25vw, 22px);
+      line-height: 1.42;
     }
 
-    .pill-row {
+    .hero-actions {
+      margin-top: 18px;
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-top: 18px;
     }
 
-    .pill {
-      border: 1px solid var(--border);
+    .jump-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .jump {
+      border: 1px dashed color-mix(in srgb, var(--border) 85%, var(--accent));
       border-radius: 999px;
-      padding: 8px 12px;
+      padding: 6px 10px;
+      font-family: "IBM Plex Mono", Consolas, monospace;
+      font-size: 11px;
+      text-decoration: none;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--paper) 90%, transparent);
+    }
+
+    .jump:hover {
+      border-style: solid;
+      color: var(--ink);
+    }
+
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 11px 14px;
       font-family: "IBM Plex Mono", Consolas, monospace;
       font-size: 12px;
-      color: var(--muted);
+      line-height: 1;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: color-mix(in srgb, var(--brand-strong) 75%, black);
+      color: #fff;
+    }
+
+    .btn.primary:hover {
+      background: color-mix(in srgb, var(--brand) 86%, black);
+    }
+
+    .btn.alt {
+      background: var(--accent-soft);
+      border-color: color-mix(in srgb, var(--accent) 38%, var(--border));
+      color: var(--ink);
+    }
+
+    .btn.ghost {
       background: color-mix(in srgb, var(--paper) 86%, transparent);
+    }
+
+    .metrics {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--paper) 90%, transparent);
+      border-radius: 14px;
+      padding: 10px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .metric .k {
+      font-family: "IBM Plex Mono", Consolas, monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .metric .v {
+      margin-top: 4px;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .metric .hint {
+      margin-top: 4px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .section-title {
+      margin: 26px 0 10px;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: clamp(24px, 3.4vw, 38px);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+    }
+
+    .section-lede {
+      margin: 0 0 10px;
+      color: var(--muted);
+      max-width: 840px;
+      font-size: 17px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(12, minmax(0, 1fr));
       gap: 14px;
-      margin-top: 14px;
     }
 
     .card {
@@ -143,19 +272,25 @@
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 16px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-soft);
+      animation: rise 420ms ease both;
     }
 
-    .card.featured {
+    .card:nth-child(2) { animation-delay: 50ms; }
+    .card:nth-child(3) { animation-delay: 90ms; }
+    .card:nth-child(4) { animation-delay: 130ms; }
+    .card:nth-child(5) { animation-delay: 170ms; }
+    .card:nth-child(6) { animation-delay: 210ms; }
+
+    .card.wide {
       grid-column: span 12;
       border-width: 2px;
-      border-color: color-mix(in srgb, var(--brand) 45%, var(--border));
-      background:
-        linear-gradient(
-          145deg,
-          color-mix(in srgb, var(--brand-soft) 38%, var(--paper)),
-          var(--paper)
-        );
+      border-color: color-mix(in srgb, var(--brand) 42%, var(--border));
+      background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--brand-soft) 36%, var(--paper)),
+        var(--paper)
+      );
     }
 
     .card.half {
@@ -166,74 +301,105 @@
       grid-column: span 4;
     }
 
-    h2 {
-      margin: 0 0 8px;
-      font-size: clamp(22px, 3vw, 32px);
-      line-height: 1.05;
+    .card h3 {
+      margin: 0 0 6px;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 25px;
+      line-height: 1.08;
     }
 
-    h3 {
-      margin: 0 0 8px;
-      font-size: 23px;
-      line-height: 1.1;
-    }
-
-    p {
+    .card p {
       margin: 0;
       color: var(--muted);
       font-size: 16px;
-      line-height: 1.45;
+      line-height: 1.44;
     }
 
-    .actions {
+    .card .actions {
+      margin-top: 12px;
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 14px;
+      gap: 8px;
     }
 
-    .btn {
+    .label {
       display: inline-block;
-      text-decoration: none;
-      border-radius: 12px;
+      margin-bottom: 8px;
       border: 1px solid var(--border);
-      padding: 10px 14px;
+      background: color-mix(in srgb, var(--paper) 86%, transparent);
+      border-radius: 999px;
+      padding: 4px 8px;
       font-family: "IBM Plex Mono", Consolas, monospace;
-      font-size: 12px;
-      line-height: 1;
-      color: var(--ink);
-      background: var(--paper);
-    }
-
-    .btn.primary {
-      background: var(--brand);
-      border-color: color-mix(in srgb, var(--brand) 80%, black);
-      color: #fff;
-    }
-
-    .btn.alt {
-      background: var(--accent-soft);
-      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
-      color: var(--ink);
-    }
-
-    .mini-list {
-      margin: 8px 0 0 0;
-      padding-left: 18px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
       color: var(--muted);
     }
 
-    .mini-list li {
+    .list {
+      margin: 9px 0 0;
+      padding-left: 16px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .list li {
       margin: 5px 0;
     }
 
-    .footer-note {
-      margin-top: 16px;
+    .quickstart {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--paper) 86%, transparent);
+      margin-top: 12px;
+      padding: 10px;
+    }
+
+    .quickstart pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
       font-family: "IBM Plex Mono", Consolas, monospace;
       font-size: 12px;
-      color: var(--muted);
+      color: var(--ink);
+      line-height: 1.45;
+    }
+
+    .footer-note {
+      margin-top: 18px;
       border-top: 1px solid var(--border);
       padding-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: "IBM Plex Mono", Consolas, monospace;
+    }
+
+    .footer-note a {
+      color: inherit;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 1020px) {
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     @media (max-width: 900px) {
@@ -242,7 +408,23 @@
         grid-column: span 12;
       }
       .hero {
-        padding: 22px 18px;
+        padding: 22px 18px 20px;
+      }
+      .hero h1 {
+        line-height: 0.96;
+      }
+      .container {
+        padding: 20px 14px 44px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
   </style>
@@ -250,110 +432,192 @@
 <body>
   <main class="container">
     <div class="topbar">
-      <div class="badge">prolog-reasoning-v2 / docs hub</div>
+      <div class="brandline">
+        <div class="badge">prolog-reasoning-v2</div>
+        <div class="badge">public docs showcase</div>
+      </div>
       <button id="theme-toggle" class="theme-btn" type="button" aria-label="Toggle dark and light theme">theme: light</button>
     </div>
 
     <section class="hero">
-      <h1>Deterministic Logic, In Agent Time.</h1>
+      <h1>Deterministic Logic For Real Agent Workflows.</h1>
       <p class="lede">
-        Prolog Reasoning v2 gives LLM workflows a truth layer they can call, inspect, and trust.
-        This hub is the fastest way to explore live demos, setup guides, and practical playbooks.
+        This hub is the fast path through what matters: live transcripts, MCP setup, architecture, and the fact-ingestion research track.
+        If this becomes the public front door, it should feel like a product surface, not a file index.
       </p>
-      <div class="pill-row">
-        <span class="pill">local-first</span>
-        <span class="pill">deterministic</span>
-        <span class="pill">chat-first demos</span>
-        <span class="pill">mcp integrations</span>
+      <div class="hero-actions">
+        <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html">Open Flagship Demo</a>
+        <a class="btn alt" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/lm-studio-mcp-guide.md">Set Up LM Studio + MCP</a>
+        <a class="btn ghost" href="https://github.com/dr3d/prolog-reasoning-v2">View Repository</a>
+      </div>
+      <div class="jump-row">
+        <a class="jump" href="#demos">demos</a>
+        <a class="jump" href="#quickstart">quickstart</a>
+        <a class="jump" href="#core-docs">core docs</a>
+        <a class="jump" href="#research">research</a>
+      </div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="k">Live Transcripts</div>
+          <div class="v">5</div>
+          <div class="hint">public rendered sessions</div>
+        </div>
+        <div class="metric">
+          <div class="k">MCP Tool Surface</div>
+          <div class="v">11</div>
+          <div class="hint">tested in surface playbook</div>
+        </div>
+        <div class="metric">
+          <div class="k">Tests Passing</div>
+          <div class="v">107</div>
+          <div class="hint">current documented baseline</div>
+        </div>
+        <div class="metric">
+          <div class="k">Mode</div>
+          <div class="v" style="font-size:22px;">local-first</div>
+          <div class="hint">deterministic truth layer</div>
+        </div>
       </div>
     </section>
 
+    <h2 id="demos" class="section-title">Live Demos</h2>
+    <p class="section-lede">Rendered sessions are where the system is easiest to judge: tool calls, responses, and behavior in context.</p>
     <section class="grid">
-      <article class="card featured">
-        <h2>Hospital Critical Path Method (CPM) Control Room</h2>
-        <p>
-          A realistic daily-ops scenario with dependency propagation, supplier shocks, and recovery updates.
-          This is the best quick "show me what this can do" entry point.
-        </p>
+      <article class="card wide">
+        <span class="label">flagship</span>
+        <h3>Hospital Critical Path Method (CPM) Control Room</h3>
+        <p>Dependency propagation, supplier incident handling, and recovery updates in a deterministic operations scenario.</p>
         <div class="actions">
           <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html">Open Interactive Transcript</a>
-          <a class="btn" href="./examples/hospital-cpm-playbook-session.md">Read Markdown Transcript</a>
-          <a class="btn" href="./examples/hospital-cpm-playbook-session.json">View Raw JSON Capture</a>
+          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/examples/hospital-cpm-playbook-session.md">Read Markdown</a>
+          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/examples/hospital-cpm-playbook-session.json">View JSON Capture</a>
         </div>
       </article>
 
       <article class="card half">
-        <h3>New Demo: Fantasy Overlord Sim</h3>
-        <p>
-          Multi-character state simulation with pause/resume edits, locality and inventory updates,
-          and multi-hop rule effects like night sleep logic and risk propagation.
-        </p>
+        <span class="label">simulation</span>
+        <h3>Fantasy Overlord Session</h3>
+        <p>Pause/resume scenario edits, state updates, and multi-hop effects shown in an operational simulation flow.</p>
         <div class="actions">
-          <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html">Open Simulation Transcript</a>
+          <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html">Open Transcript</a>
           <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/fantasy-overlord-mcp-walkthrough.md">Walkthrough</a>
         </div>
       </article>
 
       <article class="card half">
-        <h3>New Demo: Indie Launch War Room</h3>
-        <p>
-          Conversational launch-ops control room with supplier incidents, deterministic dependency propagation,
-          uncertain-intake classification, and recovery planning.
-        </p>
+        <span class="label">launch ops</span>
+        <h3>Indie Launch War Room</h3>
+        <p>Conversational launch-ops flow with deterministic risk propagation and uncertain-note intake handling.</p>
         <div class="actions">
-          <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html">Open War Room Transcript</a>
+          <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html">Open Transcript</a>
           <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/indie-launch-warroom-mcp-walkthrough.md">Walkthrough</a>
         </div>
       </article>
 
       <article class="card half">
-        <h3>Start Here</h3>
-        <p>Install, connect LM Studio, and run copy/paste MCP chat playbooks with minimal friction.</p>
+        <span class="label">tooling stress</span>
+        <h3>Natural Language Robustness Session</h3>
+        <p>Honest pass/miss capture for tool selection under more natural phrasing.</p>
         <div class="actions">
-          <a class="btn alt" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/lm-studio-mcp-guide.md">LM Studio MCP Guide</a>
-          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/mcp-chat-playbooks.md">MCP Chat Playbooks</a>
+          <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html">Open Transcript</a>
+          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/examples/indie-launch-warroom-natural-session.md">Read Notes</a>
         </div>
       </article>
 
       <article class="card half">
-        <h3>Project Spine</h3>
-        <p>Understand the core layering: deterministic logic, fact intake pipeline, and agent integration.</p>
+        <span class="label">surface check</span>
+        <h3>MCP Surface Playbook Session</h3>
+        <p>Compact run that exercises the full MCP tool surface and captures expected behavior markers.</p>
         <div class="actions">
-          <a class="btn alt" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/README.md">README</a>
-          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/status.md">Status</a>
-          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/roadmap.md">Roadmap</a>
+          <a class="btn primary" href="https://dr3d.github.io/prolog-reasoning-v2/examples/mcp-surface-playbook-session.html">Open Transcript</a>
+          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/examples/mcp-surface-playbook-session.md">Playbook Artifact</a>
         </div>
       </article>
+    </section>
+
+    <h2 id="quickstart" class="section-title">Quickstart</h2>
+    <p class="section-lede">Use this if you want to go from clone to a local MCP-backed demo quickly.</p>
+    <section class="grid">
+      <article class="card half">
+        <span class="label">install + verify</span>
+        <h3>Run The Baseline</h3>
+        <p>Install deps, run tests, and sanity-check docs consistency before demo capture work.</p>
+        <div class="quickstart">
+          <pre>git clone &lt;repo&gt;
+cd prolog-reasoning-v2
+pip install -r requirements.txt
+python -m pytest tests -q
+python scripts/check_docs_consistency.py</pre>
+        </div>
+      </article>
+      <article class="card half">
+        <span class="label">mcp setup</span>
+        <h3>Connect Local LLM Tools</h3>
+        <p>Follow LM Studio MCP setup, then run chat playbooks or scripted captures.</p>
+        <div class="actions">
+          <a class="btn alt" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/lm-studio-mcp-guide.md">LM Studio MCP Guide</a>
+          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/mcp-chat-playbooks.md">MCP Chat Playbooks</a>
+          <a class="btn" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/walkthrough-ladder.md">Walkthrough Ladder</a>
+        </div>
+      </article>
+    </section>
+
+    <h2 id="core-docs" class="section-title">Core Docs</h2>
+    <p class="section-lede">Project direction, architecture, and implementation status in one place.</p>
+    <section class="grid">
+      <article class="card third">
+        <h3>Project Spine</h3>
+        <ul class="list">
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/README.md">README</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/status.md">Status</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/roadmap.md">Roadmap</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/architecture.md">Architecture</a></li>
+        </ul>
+      </article>
 
       <article class="card third">
-        <h3>Fact Intake</h3>
-        <ul class="mini-list">
+        <h3>Fact Intake + Memory</h3>
+        <ul class="list">
           <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/fact-intake-pipeline.md">Unified Intake / Memory / Write Spec</a></li>
           <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/agent-ingestion-tests.md">Agent Ingestion Tests</a></li>
-          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/model-scenario-matrix.md">Model Scenario Matrix</a></li>
-          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/fact-ingestion-benchmark-matrix-spec.md">Fact-Ingestion Benchmark Spec</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/pre-thinker-control-plane.md">Pre-Thinker Control Plane</a></li>
         </ul>
       </article>
 
       <article class="card third">
-        <h3>Scenarios</h3>
-        <ul class="mini-list">
-          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/uses-and-scenarios.md">Uses and Scenarios</a></li>
-          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/stretch-logic-scenarios.md">Stretch Logic Scenarios</a></li>
+        <h3>Walkthroughs</h3>
+        <ul class="list">
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/family-tree-agent-mcp-walkthrough.md">Family Tree (Agent + MCP)</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/rule-table-agent-mcp-walkthrough.md">Rule Table (Agent + MCP)</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/drug-triage-agent-mcp-walkthrough.md">Drug Triage (Agent + MCP)</a></li>
         </ul>
       </article>
+    </section>
 
-      <article class="card third">
-        <h3>Session Trail</h3>
-        <ul class="mini-list">
-          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/sessions.md">Compact Tracker</a></li>
-          <li>Long-form notes are local-only (not published yet)</li>
+    <h2 id="research" class="section-title">Research And Benchmarking</h2>
+    <p class="section-lede">Model comparison and ingestion-quality work for understanding where small and large models break.</p>
+    <section class="grid">
+      <article class="card half">
+        <h3>Model Matrices</h3>
+        <ul class="list">
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/model-scenario-matrix.md">Model Scenario Matrix Ledger</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/fact-ingestion-benchmark-matrix-spec.md">Fact-Ingestion Benchmark Matrix Spec</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/lmstudio-classifier-matrix.md">LM Studio Classifier Matrix</a></li>
+        </ul>
+      </article>
+      <article class="card half">
+        <h3>Collaboration + Direction</h3>
+        <ul class="list">
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/collaboration-map.md">Collaboration Map</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/prethinker-lora-playbook.md">Prethinker LoRA Playbook</a></li>
+          <li><a href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/research/lp-lm-comparison.md">LP-LM Comparison Notes</a></li>
         </ul>
       </article>
     </section>
 
     <div class="footer-note">
-      Tip: if GitHub Pages is enabled with source set to <code>main / docs</code>, this page is your default landing point.
+      Public pages root: <a href="https://dr3d.github.io/prolog-reasoning-v2/">https://dr3d.github.io/prolog-reasoning-v2/</a><br />
+      If GitHub Pages source is <code>main / docs</code>, this hub lives at <code>/docs-hub.html</code>.
     </div>
   </main>
 
