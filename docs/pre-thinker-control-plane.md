@@ -20,7 +20,8 @@ Use a small model to decide *how* to think before asking a larger model to decid
 
 In practice:
 - the pre-thinker classifies statements,
-- routes turns into ontology context,
+- routes turns into ontology context (including context/KB switching),
+- runs a pre-handoff fact clarification lane (Fact Pull),
 - detects correction and backtracking cues,
 - and decides when to escalate to a larger model.
 
@@ -46,10 +47,11 @@ The pre-thinker is not a replacement for the reasoning engine and not a final-an
 
 Primary responsibilities:
 1. Statement typing
-2. Ontology context routing
-3. Correction cue detection
-4. Confidence scoring and fallback policy
-5. Structured control outputs for downstream components
+2. Ontological routing (active context and KB-switch candidate)
+3. Fact Pull preparation (clarification candidates before model handoff)
+4. Correction cue detection
+5. Confidence scoring and fallback policy
+6. Structured control outputs for downstream components
 
 Out of scope:
 - proving facts,
@@ -65,8 +67,10 @@ Suggested fields:
 - `statement_type`: `hard_fact | tentative | session | preference | hypothesis`
 - `context_id`
 - `context_confidence`
+- `kb_switch_candidate`: optional context/KB target
+- `manifest_match_score`: float in `[0.0, 1.0]`
 - `memory_operation`: `assert | tentative | confirm | retract | supersede | none`
-- `clarification_eagerness`: float in `[0.0, 1.0]`
+- `clarification_needed`: bool
 - `confirmation_required`: bool
 - `clarification_prompt`: optional targeted "did you mean...?" prompt
 - `correction_cue`: optional label
@@ -80,9 +84,26 @@ This record is consumed by:
 - contradiction and revision workflows,
 - and optional larger-model orchestration.
 
-## 5.1 Fact Pull (Clarification Policy Knob)
+## 5.1 Two Control Lanes
 
-User-facing concept: **Fact Pull**  
+The pre-thinker supports two adjacent but distinct lanes:
+
+1. Ontological routing
+- picks active context and suggests context/KB switches.
+- scoped search/write decisions are handled by routing policy.
+
+2. Fact Pull
+- generates clarification candidates before model handoff.
+- asks "did you mean...?" style questions for uncertain but relevant facts.
+- does not override deterministic commit gates.
+
+Ownership split:
+- routing policy owns the Fact Pull knob (`clarification_eagerness`),
+- pre-thinker emits the signals and candidate prompts.
+
+## 5.2 Fact Pull (Policy Knob)
+
+User-facing concept: **Fact Pull**
 Policy/config key: `clarification_eagerness`
 
 Roadmap note:
@@ -100,7 +121,7 @@ Interpretation:
 Important safety rule:
 - higher Fact Pull means more clarification attempts, not more auto-commits.
 
-## 5.2 Clarification Loop
+## 5.3 Clarification Loop
 
 When a turn maps to likely KB terms but confidence is below auto-commit threshold:
 1. Generate one targeted clarification question.
@@ -126,11 +147,12 @@ The pre-thinker should be viewed as the decision front-end that feeds those syst
 
 1. User turn arrives.
 2. Pre-thinker emits control record.
-3. Router selects ontology context and retrieval scope.
-4. Ingestion layer applies memory operation.
-5. Symbolic layer validates and persists deterministic facts.
-6. Large model is called only if policy says escalation is required.
-7. Response is assembled with context and revision metadata.
+3. Router resolves active context and optional KB switch.
+4. Fact Pull policy decides whether to run clarification before handoff.
+5. Ingestion layer applies memory operation.
+6. Symbolic layer validates and persists deterministic facts.
+7. Large model is called only if policy says escalation is required.
+8. Response is assembled with context and revision metadata.
 
 ## 8. Model Strategy
 

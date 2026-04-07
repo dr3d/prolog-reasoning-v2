@@ -10,7 +10,9 @@ Improve retrieval focus and fact placement by modeling the active conversation a
 
 Instead of searching all knowledge equally on every turn, the system should:
 - infer the active ontology context,
+- switch context/KB scope when signals indicate drift,
 - prioritize retrieval inside that context,
+- run a pre-handoff clarification pass (Fact Pull) for uncertain but relevant facts,
 - store new facts with explicit context tags,
 - and log context transitions for explainability.
 
@@ -32,6 +34,7 @@ Desired behavior:
 - Context Transition: Shift from one active context to another between turns.
 - Scoped Retrieval: Query policy constrained by active context and fallback strategy.
 - Scoped Assertion: Writing a new fact with explicit context metadata.
+- Fact Pull: Clarification lane that tries to confirm uncertain facts before model handoff.
 
 ## 4. Design Principles
 
@@ -103,8 +106,8 @@ Output:
 - manifest alignment score for candidate fact terms.
 
 Optional control-plane inputs from pre-thinker:
-- `clarification_eagerness` (Fact Pull policy knob),
 - candidate fact confidence,
+- `manifest_match_score`,
 - ambiguity flags for entity/relation mapping.
 
 Roadmap note:
@@ -116,6 +119,22 @@ Roadmap note:
 2. If top score >= threshold, select top.
 3. Else keep previous context if previous confidence was stable.
 4. Else select `global` context.
+
+## 6.3 Fact Pull Lane (Pre-Handoff Clarification)
+
+Fact Pull is colocated with routing policy, not final generation.
+
+Policy/config key:
+- `clarification_eagerness` in `[0.0, 1.0]`
+
+Behavior:
+- low: clarify only near-commit uncertain facts.
+- medium: clarify medium-confidence manifest-matched facts.
+- high: aggressively seek confirmation before dropping likely facts.
+
+Safety invariant:
+- this knob increases clarification attempts only.
+- it does not permit uncertain auto-commit.
 
 ## 7. Retrieval Policy
 

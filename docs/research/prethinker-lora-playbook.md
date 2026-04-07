@@ -52,6 +52,10 @@ Intended behavior for later phases:
 - prompt targeted clarification ("did you mean ...?") to improve fact capture quality,
 - require explicit confirmation before uncertain persistence.
 
+Placement note:
+- Fact Pull lives alongside ontological routing policy.
+- pre-thinker predicts signals and candidate prompts; routing policy applies the knob.
+
 Training implication:
 - evaluate not only classification accuracy,
 - also clarification precision (asks when needed) and confirmation safety (no uncertain auto-commit).
