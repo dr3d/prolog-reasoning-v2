@@ -1,4 +1,4 @@
-﻿# Using Prolog Reasoning with LM Studio via MCP
+# Using Prolog Reasoning with LM Studio via MCP
 
 **Model Context Protocol (MCP) integration for local LLMs in LM Studio**
 
@@ -35,7 +35,7 @@ This guide walks you through setting up and using the Prolog Reasoning system as
 ### Option A: Quick Start (Recommended for Testing)
 
 ```bash
-cd d:\\_PROJECTS\prolog-reasoning-v2
+cd d:\\_PROJECTS\prolog-reasoning
 
 # Test that everything works
 python src/mcp_server.py --test
@@ -511,7 +511,7 @@ This would be **Course 04** in the training library!
 
 ## Support & Feedback
 
-- GitHub Issues: [prolog-reasoning-v2](https://github.com/dr3d/prolog-reasoning-v2)
+- GitHub Issues: [prolog-reasoning](https://github.com/dr3d/prolog-reasoning)
 - Found a bug? Please report it!
 - Want to contribute? PRs welcome!
 

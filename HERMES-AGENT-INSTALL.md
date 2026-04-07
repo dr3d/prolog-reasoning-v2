@@ -2,9 +2,9 @@
 
 This is an agent-execution playbook, not a general user tutorial.
 
-Read this file fully before taking action. It is written for an agent with filesystem and shell tools that must configure `prolog-reasoning-v2` for Hermes.
+Read this file fully before taking action. It is written for an agent with filesystem and shell tools that must configure `prolog-reasoning` for Hermes.
 
-The goal is to make `prolog-reasoning-v2` discoverable as a Hermes skill and add the smallest useful Hermes prefill so the agent is more likely to actually use it.
+The goal is to make `prolog-reasoning` discoverable as a Hermes skill and add the smallest useful Hermes prefill so the agent is more likely to actually use it.
 
 This file is intentionally practical:
 - install the skill,
@@ -18,7 +18,7 @@ If you are a human reading this, treat it as a precise checklist an agent can ex
 
 This repo can help Hermes in two different ways:
 
-1. As a skill folder discovered from `~/.hermes/skills/prolog-reasoning-v2`
+1. As a skill folder discovered from `~/.hermes/skills/prolog-reasoning`
 2. As a small behavioral prefill that biases the agent to use the skill for symbolic questions
 
 Important current limitation:
@@ -57,27 +57,27 @@ If `python3` is missing, stop and tell the user Python is required.
 Check whether the skill already exists:
 
 ```bash
-ls ~/.hermes/skills/prolog-reasoning-v2 2>/dev/null && echo EXISTS || echo MISSING
+ls ~/.hermes/skills/prolog-reasoning 2>/dev/null && echo EXISTS || echo MISSING
 ```
 
 If `MISSING`, install it:
 
 ```bash
 mkdir -p ~/.hermes/skills
-git clone <REPO_URL> ~/.hermes/skills/prolog-reasoning-v2
+git clone <REPO_URL> ~/.hermes/skills/prolog-reasoning
 ```
 
 If `EXISTS`, update it:
 
 ```bash
-cd ~/.hermes/skills/prolog-reasoning-v2
+cd ~/.hermes/skills/prolog-reasoning
 git pull
 ```
 
 Do not continue until this file exists:
 
 ```bash
-ls ~/.hermes/skills/prolog-reasoning-v2/SKILL.md
+ls ~/.hermes/skills/prolog-reasoning/SKILL.md
 ```
 
 ## Step 3: Install Python Dependencies
@@ -85,7 +85,7 @@ ls ~/.hermes/skills/prolog-reasoning-v2/SKILL.md
 From inside the skill repo:
 
 ```bash
-cd ~/.hermes/skills/prolog-reasoning-v2
+cd ~/.hermes/skills/prolog-reasoning
 python3 -m pip install -r requirements.txt
 ```
 
@@ -96,7 +96,7 @@ If the user prefers a virtual environment, that is fine. Hermes should then be c
 From the repo root:
 
 ```bash
-cd ~/.hermes/skills/prolog-reasoning-v2
+cd ~/.hermes/skills/prolog-reasoning
 python3 src/mcp_server.py --test
 ```
 
@@ -113,7 +113,7 @@ If the repo is already cloned and dependencies are installed, use the installer
 script instead of editing `~/.hermes/config.yaml` by hand:
 
 ```bash
-cd ~/.hermes/skills/prolog-reasoning-v2
+cd ~/.hermes/skills/prolog-reasoning
 python3 scripts/install_hermes_mcp.py
 ```
 
@@ -137,11 +137,11 @@ Create:
 
 ```bash
 mkdir -p ~/.hermes
-cat > ~/.hermes/prolog-reasoning-v2-prefill.json << 'EOF'
+cat > ~/.hermes/prolog-reasoning-prefill.json << 'EOF'
 [
   {
     "role": "system",
-    "content": "You have access to the prolog-reasoning-v2 skill. Use it for symbolic factual questions and candidate memory statements instead of defaulting to model memory."
+    "content": "You have access to the prolog-reasoning skill. Use it for symbolic factual questions and candidate memory statements instead of defaulting to model memory."
   }
 ]
 EOF
@@ -150,7 +150,7 @@ EOF
 Verify the file:
 
 ```bash
-python3 -m json.tool ~/.hermes/prolog-reasoning-v2-prefill.json >/dev/null && echo VALID || echo INVALID
+python3 -m json.tool ~/.hermes/prolog-reasoning-prefill.json >/dev/null && echo VALID || echo INVALID
 ```
 
 If it is invalid JSON, fix it before continuing.
@@ -168,7 +168,7 @@ If `MISSING`, create:
 ```bash
 cat > ~/.hermes/config.yaml << 'EOF'
 agent:
-  prefill_messages_file: ~/.hermes/prolog-reasoning-v2-prefill.json
+  prefill_messages_file: ~/.hermes/prolog-reasoning-prefill.json
 EOF
 ```
 
@@ -187,7 +187,7 @@ Desired shape:
 
 ```yaml
 agent:
-  prefill_messages_file: ~/.hermes/prolog-reasoning-v2-prefill.json
+  prefill_messages_file: ~/.hermes/prolog-reasoning-prefill.json
 ```
 
 ## Step 7: Restart Hermes And Run A Live Probe

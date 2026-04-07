@@ -902,7 +902,7 @@ class PrologMCPServer:
                 "kb_design": "See training/02-knowledge-bases-101.md",
                 "error_handling": "See training/03-learning-from-failures.md",
                 "lm_studio": "See docs/lm-studio-mcp-guide.md",
-                "github": "https://github.com/dr3d/prolog-reasoning-v2"
+                "github": "https://github.com/dr3d/prolog-reasoning"
             }
         }
     

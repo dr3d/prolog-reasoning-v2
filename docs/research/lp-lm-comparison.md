@@ -10,7 +10,7 @@ Source reviewed:
 - LP-LM code repo (paper-linked): `https://github.com/katherinewu312/lp-lm`
 - Title: `LP-LM: No Hallucinations in Question Answering with Logic Programming`
 
-This note compares LP-LM framing against `prolog-reasoning-v2` and pulls out
+This note compares LP-LM framing against `prolog-reasoning` and pulls out
 ideas that are immediately useful for this repo.
 
 ## What LP-LM Emphasizes
@@ -26,7 +26,7 @@ The paper also explicitly contrasts this approach with RAG-style systems.
 
 ## Where This Repo Already Matches
 
-Strong overlap with current `prolog-reasoning-v2`:
+Strong overlap with current `prolog-reasoning`:
 
 - deterministic fact/rule execution (`src/engine/*`, `src/mcp_server.py`)
 - local KB-oriented reasoning via MCP tools

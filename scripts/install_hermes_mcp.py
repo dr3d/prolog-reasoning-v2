@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Install/update prolog-reasoning-v2 MCP config for Hermes.
+Install/update prolog-reasoning MCP config for Hermes.
 
 Assumptions:
 - The repo is already cloned locally.

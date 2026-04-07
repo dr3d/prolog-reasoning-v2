@@ -10,7 +10,7 @@
         {
           "tool": "reset_kb",
           "arguments": {},
-          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"runtime_reset\\\",\\n  \\\"message\\\": \\\"Runtime KB reset to baseline seed state.\\\",\\n  \\\"knowledge_base_path\\\": \\\"D:\\\\\\\\_PROJECTS\\\\\\\\prolog-reasoning-v2\\\\\\\\prolog\\\\\\\\core.pl\\\"\\n}\"}]"
+          "output": "[{\"type\":\"text\",\"text\":\"{\\n  \\\"status\\\": \\\"success\\\",\\n  \\\"result_type\\\": \\\"runtime_reset\\\",\\n  \\\"message\\\": \\\"Runtime KB reset to baseline seed state.\\\",\\n  \\\"knowledge_base_path\\\": \\\"D:\\\\\\\\_PROJECTS\\\\\\\\prolog-reasoning\\\\\\\\prolog\\\\\\\\core.pl\\\"\\n}\"}]"
         }
       ],
       "assistant_message": "\n\nThe runtime knowledge base has been successfully reset to its baseline seed state."

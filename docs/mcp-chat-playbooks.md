@@ -1,4 +1,4 @@
-﻿# MCP Chat Playbooks (Copy/Paste, No Python Required)
+# MCP Chat Playbooks (Copy/Paste, No Python Required)
 
 Status: Draft  
 Date: 2026-04-06
@@ -281,8 +281,8 @@ A full captured run of this playbook is available:
 
 - JSON transcript: `docs/examples/hospital-cpm-playbook-session.json`
 - Markdown transcript: `docs/examples/hospital-cpm-playbook-session.md`
-- Styled chat transcript (canonical): [examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
-- Styled chat transcript (GitHub Pages): [dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
+- Styled chat transcript (canonical): [examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning/examples/hospital-cpm-playbook-session.html)
+- Styled chat transcript (GitHub Pages): [dr3d.github.io/prolog-reasoning/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning/examples/hospital-cpm-playbook-session.html)
 
 ## Reusable Chat Transcript Template
 
@@ -309,8 +309,8 @@ For a multi-character simulation with pause/resume edits, locality/inventory sta
 and a visible "Prolog Console" side panel in the rendered HTML transcript, use:
 
 - Walkthrough: [fantasy-overlord-mcp-walkthrough.md](fantasy-overlord-mcp-walkthrough.md)
-- Captured transcript (HTML): [examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
-- Captured transcript (GitHub Pages): [dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
+- Captured transcript (HTML): [examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning/examples/fantasy-overlord-session.html)
+- Captured transcript (GitHub Pages): [dr3d.github.io/prolog-reasoning/examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning/examples/fantasy-overlord-session.html)
 
 Optional scripted gate:
 
@@ -606,6 +606,6 @@ Captured artifacts:
 
 - `docs/examples/indie-launch-warroom-session.json`
 - `docs/examples/indie-launch-warroom-session.md`
-- [indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html)
-- [indie-launch-warroom-session.html on GitHub Pages](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html)
+- [indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning/examples/indie-launch-warroom-session.html)
+- [indie-launch-warroom-session.html on GitHub Pages](https://dr3d.github.io/prolog-reasoning/examples/indie-launch-warroom-session.html)
 

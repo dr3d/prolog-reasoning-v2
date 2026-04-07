@@ -5,7 +5,7 @@
 ```bash
 # Clone repo
 git clone <repo>
-cd prolog-reasoning-v2
+cd prolog-reasoning
 
 # Install dependencies
 pip install -r requirements.txt
@@ -176,7 +176,7 @@ flake8 src/ tests/
 ### Import Errors
 ```bash
 # Make sure you're in the project root
-cd /path/to/prolog-reasoning-v2
+cd /path/to/prolog-reasoning
 
 # Or add src to Python path
 export PYTHONPATH=$PYTHONPATH:$(pwd)/src

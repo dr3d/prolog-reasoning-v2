@@ -24,7 +24,7 @@ Use ONLY reset_kb. Confirm success in one sentence.
   "status": "success",
   "result_type": "runtime_reset",
   "message": "Runtime KB reset to baseline seed state.",
-  "knowledge_base_path": "D:\\_PROJECTS\\prolog-reasoning-v2\\prolog\\core.pl"
+  "knowledge_base_path": "D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl"
 }
 ```
 

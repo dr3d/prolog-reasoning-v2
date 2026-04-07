@@ -2,9 +2,9 @@
 
 This is an agent-execution playbook, not a general user tutorial.
 
-Read this file fully before taking action. It is written for an agent with filesystem and shell tools that must configure `prolog-reasoning-v2` for OpenClaw.
+Read this file fully before taking action. It is written for an agent with filesystem and shell tools that must configure `prolog-reasoning` for OpenClaw.
 
-The goal is to make `prolog-reasoning-v2` available as an OpenClaw skill without introducing a second behavioral source of truth.
+The goal is to make `prolog-reasoning` available as an OpenClaw skill without introducing a second behavioral source of truth.
 
 This file is intentionally narrow:
 - install the skill in an OpenClaw-visible skills directory,
@@ -36,20 +36,20 @@ Do not maintain a second copy of the policy in another file unless OpenClaw trul
 
 Use one of these OpenClaw skill roots:
 
-- `~/.agents/skills/prolog-reasoning-v2/`
-- `<workspace>/.agents/skills/prolog-reasoning-v2/`
+- `~/.agents/skills/prolog-reasoning/`
+- `<workspace>/.agents/skills/prolog-reasoning/`
 
 Prefer the personal install for broad availability:
 
 ```bash
 mkdir -p ~/.agents/skills
-git clone <REPO_URL> ~/.agents/skills/prolog-reasoning-v2
+git clone <REPO_URL> ~/.agents/skills/prolog-reasoning
 ```
 
 If the repo already exists there:
 
 ```bash
-cd ~/.agents/skills/prolog-reasoning-v2
+cd ~/.agents/skills/prolog-reasoning
 git pull
 ```
 
@@ -58,13 +58,13 @@ git pull
 Do not continue until this file exists:
 
 ```bash
-ls ~/.agents/skills/prolog-reasoning-v2/SKILL.md
+ls ~/.agents/skills/prolog-reasoning/SKILL.md
 ```
 
 If you are using a workspace-local install, verify:
 
 ```bash
-ls .agents/skills/prolog-reasoning-v2/SKILL.md
+ls .agents/skills/prolog-reasoning/SKILL.md
 ```
 
 ## Install Python Dependencies
@@ -72,7 +72,7 @@ ls .agents/skills/prolog-reasoning-v2/SKILL.md
 From the repo root:
 
 ```bash
-cd ~/.agents/skills/prolog-reasoning-v2
+cd ~/.agents/skills/prolog-reasoning
 python3 -m pip install -r requirements.txt
 ```
 
@@ -83,7 +83,7 @@ If the user prefers a virtual environment, that is fine. The important part is t
 From the repo root:
 
 ```bash
-cd ~/.agents/skills/prolog-reasoning-v2
+cd ~/.agents/skills/prolog-reasoning
 python3 src/mcp_server.py --test
 ```
 

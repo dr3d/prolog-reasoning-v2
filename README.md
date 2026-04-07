@@ -90,7 +90,7 @@ That is intentional to state plainly: the core symbolic layer is real, but not e
 
 ```bash
 git clone <repo>
-cd prolog-reasoning-v2
+cd prolog-reasoning
 pip install -r requirements.txt
 
 # Verify the current baseline
@@ -121,7 +121,7 @@ python data/evaluate.py
 
 ### Use It
 
-- Live docs hub (GitHub Pages): [dr3d.github.io/prolog-reasoning-v2/docs-hub.html](https://dr3d.github.io/prolog-reasoning-v2/docs-hub.html)
+- Live docs hub (GitHub Pages): [dr3d.github.io/prolog-reasoning/docs-hub.html](https://dr3d.github.io/prolog-reasoning/docs-hub.html)
 - Ask natural-language questions through MCP tools (`query_prolog`, `query_logic`, `query_rows`)
 - Run the MCP server for local LLM tools via [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - Run a conversational launch-ops demo via [docs/indie-launch-warroom-mcp-walkthrough.md](docs/indie-launch-warroom-mcp-walkthrough.md)
