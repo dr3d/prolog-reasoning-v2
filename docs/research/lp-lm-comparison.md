@@ -58,6 +58,20 @@ Useful LP-LM-inspired gaps to close here:
 These are mostly evaluation and interface-discipline improvements, not an
 architecture reset.
 
+## Key Bridge To Highlight
+
+One high-value bridge from this paper to this repo is:
+
+- optionally using a small-model pre-processing step to distill noisy user text
+  into candidate structured intents before Prolog execution
+
+Why this matters here:
+
+- it lowers NL ambiguity without handing over truth decisions
+- it fits the current pre-thinker/control-plane direction directly
+- it preserves the guarantee boundary: model proposes, deterministic policy and
+  Prolog execution decide
+
 ## Actionable Experiments For This Repo
 
 ### 1) Parser Discipline Slice
