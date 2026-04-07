@@ -469,7 +469,14 @@ def _render_html(transcript: dict[str, Any]) -> str:
                 f"<pre>{html.escape(details)}</pre>"
                 "</details>"
             )
-        calls_html = "<ul>" + "".join(call_items) + "</ul>" if call_items else "<p>No tool calls.</p>"
+        tool_count = len(step["tool_calls"])
+        calls_body = "<ul>" + "".join(call_items) + "</ul>" if call_items else "<p>No tool calls.</p>"
+        calls_html = (
+            "<details class=\"toolbox tool-expando\">"
+            f"<summary><span class=\"expando-title\">tool calls</span><span class=\"expando-count\">{tool_count}</span></summary>"
+            f"{calls_body}"
+            "</details>"
+        )
         console_html = "".join(console_items) if console_items else "<p>No console output.</p>"
 
         added_items = "".join(f"<li><code>{html.escape(x)}</code></li>" for x in step["delta"]["added"])
@@ -494,7 +501,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
         </div>
         <pre>{prompt_html}</pre>
       </div>
-      <div class="toolbox"><div class="label">Tool Calls</div>{calls_html}</div>
+      {calls_html}
       <div class="overlord"><div class="label">Overlord Delta</div>{delta_html}</div>
       <div class="bubble assistant"><div class="label">Assistant</div><pre>{reply_html}</pre></div>
     </div>
@@ -638,6 +645,47 @@ def _render_html(transcript: dict[str, Any]) -> str:
     .bubble.user {{ background: var(--user); }}
     .bubble.assistant {{ background: var(--assistant); }}
     .toolbox {{ background: var(--tool); font-family: "Courier New", monospace; font-size: 13px; }}
+    .tool-expando {{
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--tool) 88%, var(--panel));
+      padding: 0;
+    }}
+    .tool-expando summary {{
+      cursor: pointer;
+      list-style: none;
+      padding: 8px 10px;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }}
+    .tool-expando summary::-webkit-details-marker {{
+      display: none;
+    }}
+    .tool-expando > ul,
+    .tool-expando > p {{
+      margin: 0;
+      padding: 0 10px 10px 20px;
+    }}
+    .tool-expando > p {{
+      padding-left: 10px;
+    }}
+    .expando-count {{
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+      background: var(--panel);
+    }}
     .overlord {{ background: var(--delta); }}
     .step-layout {{
       display: grid;

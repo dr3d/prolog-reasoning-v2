@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Indie Game Launch War Room Session</title>
+  <style>
+    :root {
+      --bg: #e3ddd2;
+      --panel: #ece7de;
+      --ink: #201f1b;
+      --muted: #59544d;
+      --user: #decfba;
+      --assistant: #cedbe6;
+      --tool: #d9dfd3;
+      --border: #c2b9aa;
+    }
+    html[data-theme="dark"] {
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --user: #3b2f23;
+      --assistant: #21394d;
+      --tool: #293229;
+      --border: #3b4652;
+    }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .topbar-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .nav-link {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .nav-link:hover {
+      filter: brightness(1.06);
+    }
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+    .theme-btn:hover {
+      filter: brightness(1.06);
+    }
+    .meta {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .step-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      text-transform: capitalize;
+    }
+    .bubble {
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+    .bubble-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .bubble.user { background: var(--user); }
+    .bubble.assistant { background: var(--assistant); }
+    .copy-btn {
+      border: 1px solid #b7a990;
+      background: #fff4df;
+      border-radius: 8px;
+      color: #3e3a31;
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+      line-height: 1;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #f8ebd2;
+    }
+    .copy-btn.copied {
+      border-color: #7e9e73;
+      background: #e5f0dd;
+      color: #2f5130;
+    }
+    .label {
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: "Courier New", monospace;
+    }
+    .toolbox {
+      background: var(--tool);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    .tool-expando {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--tool) 88%, var(--panel));
+      padding: 0;
+    }
+    .tool-expando summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 8px 10px;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .tool-expando summary::-webkit-details-marker {
+      display: none;
+    }
+    .tool-expando > ul,
+    .tool-expando > p {
+      margin: 0;
+      padding: 0 10px 10px 20px;
+    }
+    .tool-expando > p {
+      padding-left: 10px;
+    }
+    .expando-count {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+      background: var(--panel);
+    }
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    @media (max-width: 760px) {
+      .topbar {
+        flex-direction: column;
+      }
+      .topbar-right {
+        width: 100%;
+        align-items: flex-start;
+      }
+      .nav-links {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Indie Game Launch War Room Session</h1>
+      <div class="topbar-right">
+        <div class="nav-links">
+          <a class="nav-link" href="../docs-hub.html">Back to Docs Hub</a>
+          <a class="nav-link" href="https://github.com/dr3d/prolog-reasoning-v2">View Repo</a>
+        </div>
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+      </div>
+    </div>
+    <div class="meta">Captured: 2026-04-07T04:56:57.072935+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning</div>
+    <section class="step-card">
+  <h2>preflight</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Quick pulse check before we dive in. I am running on cold brew and optimism.
+Use show_system_info and list_known_facts first.
+Then summarize in one paragraph what this MCP setup can and cannot do today." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Quick pulse check before we dive in. I am running on cold brew and optimism.
+Use show_system_info and list_known_facts first.
+Then summarize in one paragraph what this MCP setup can and cannot do today.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">2</span></summary><ul><li><code>show_system_info</code> <code>{}</code></li><li><code>list_known_facts</code> <code>{}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+This Prolog Reasoning v2 MCP setup is a local-first neuro-symbolic reasoning layer that excels at deterministic knowledge-base inference through natural language queries. It can process plain English questions, classify user statements before ingestion, assert/retract runtime facts for chat-driven scenarios, validate queries semantically against known predicates, and provide friendly failure explanations with suggestions. The system supports family relationships, access control, clinical medication triage, project dependency analysis, and general knowledge representations across 70+ supported predicates (including parent/ancestor, permissions/roles, allergic_to, task dependencies, and game mechanics like hp/status/weather). However, it cannot perform probabilistic reasoning or learn from training data during sessions—all facts must be explicitly asserted. It&#x27;s limited to its predefined predicate vocabulary, cannot make external API calls beyond its KB, and runtime assertions are process-specific (not persistent across MCP server restarts unless stored in core.pl). Essentially, it&#x27;s a powerful symbolic logic engine for structured knowledge but not a general-purpose AI assistant.</pre></div>
+</section>
+<section class="step-card">
+  <h2>reset</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">1</span></summary><ul><li><code>reset_kb</code> <code>{}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+The runtime knowledge base has been successfully reset to its baseline seed state.</pre></div>
+</section>
+<section class="step-card">
+  <h2>ingest</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="We&#x27;re kicking off an indie launch war room simulation.
+Use bulk_assert_facts with the full fact list below.
+Then run query_rows counts for:
+- task(Task).
+- depends_on(Task, Prereq).
+- task_supplier(Task, Supplier).
+- supplier_status(Supplier, Status).
+- completed(Task).
+- milestone(M).
+Expected counts:
+- task: 15
+- depends_on: 24
+- task_supplier: 4
+- supplier_status: 4
+- completed: 4
+- milestone: 3
+- asserted_count from bulk_assert_facts: 62
+If anything mismatches, stop and call it out clearly.
+
+task(vertical_slice_lock).
+task(crash_triage_sweep).
+task(final_build_candidate).
+task(console_submission).
+task(platform_release_slot).
+task(launch_trailer_cut).
+task(press_kit_final).
+task(store_page_lock).
+task(localization_pack).
+task(streamer_preview_keys).
+task(day_one_patch).
+task(matchmaking_scale_test).
+task(community_faq_publish).
+task(embargo_briefing).
+task(global_launch).
+depends_on(crash_triage_sweep, vertical_slice_lock).
+depends_on(final_build_candidate, vertical_slice_lock).
+depends_on(final_build_candidate, crash_triage_sweep).
+depends_on(console_submission, final_build_candidate).
+depends_on(platform_release_slot, console_submission).
+depends_on(launch_trailer_cut, vertical_slice_lock).
+depends_on(press_kit_final, launch_trailer_cut).
+depends_on(store_page_lock, launch_trailer_cut).
+depends_on(store_page_lock, press_kit_final).
+depends_on(localization_pack, final_build_candidate).
+depends_on(streamer_preview_keys, platform_release_slot).
+depends_on(streamer_preview_keys, store_page_lock).
+depends_on(day_one_patch, final_build_candidate).
+depends_on(matchmaking_scale_test, final_build_candidate).
+depends_on(community_faq_publish, press_kit_final).
+depends_on(community_faq_publish, day_one_patch).
+depends_on(embargo_briefing, press_kit_final).
+depends_on(embargo_briefing, streamer_preview_keys).
+depends_on(global_launch, console_submission).
+depends_on(global_launch, day_one_patch).
+depends_on(global_launch, matchmaking_scale_test).
+depends_on(global_launch, store_page_lock).
+depends_on(global_launch, localization_pack).
+depends_on(global_launch, embargo_briefing).
+duration_days(crash_triage_sweep, 3).
+duration_days(final_build_candidate, 2).
+duration_days(console_submission, 4).
+duration_days(platform_release_slot, 2).
+duration_days(localization_pack, 5).
+duration_days(day_one_patch, 4).
+duration_days(matchmaking_scale_test, 3).
+duration_days(global_launch, 1).
+task_supplier(console_submission, console_cert_vendor).
+task_supplier(platform_release_slot, platform_ops_vendor).
+task_supplier(localization_pack, localization_vendor).
+task_supplier(matchmaking_scale_test, cloud_vendor).
+supplier_status(console_cert_vendor, on_time).
+supplier_status(platform_ops_vendor, on_time).
+supplier_status(localization_vendor, on_time).
+supplier_status(cloud_vendor, on_time).
+completed(vertical_slice_lock).
+completed(crash_triage_sweep).
+completed(launch_trailer_cut).
+completed(press_kit_final).
+milestone(platform_release_slot).
+milestone(embargo_briefing).
+milestone(global_launch).
+" aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>We&#x27;re kicking off an indie launch war room simulation.
+Use bulk_assert_facts with the full fact list below.
+Then run query_rows counts for:
+- task(Task).
+- depends_on(Task, Prereq).
+- task_supplier(Task, Supplier).
+- supplier_status(Supplier, Status).
+- completed(Task).
+- milestone(M).
+Expected counts:
+- task: 15
+- depends_on: 24
+- task_supplier: 4
+- supplier_status: 4
+- completed: 4
+- milestone: 3
+- asserted_count from bulk_assert_facts: 62
+If anything mismatches, stop and call it out clearly.
+
+task(vertical_slice_lock).
+task(crash_triage_sweep).
+task(final_build_candidate).
+task(console_submission).
+task(platform_release_slot).
+task(launch_trailer_cut).
+task(press_kit_final).
+task(store_page_lock).
+task(localization_pack).
+task(streamer_preview_keys).
+task(day_one_patch).
+task(matchmaking_scale_test).
+task(community_faq_publish).
+task(embargo_briefing).
+task(global_launch).
+depends_on(crash_triage_sweep, vertical_slice_lock).
+depends_on(final_build_candidate, vertical_slice_lock).
+depends_on(final_build_candidate, crash_triage_sweep).
+depends_on(console_submission, final_build_candidate).
+depends_on(platform_release_slot, console_submission).
+depends_on(launch_trailer_cut, vertical_slice_lock).
+depends_on(press_kit_final, launch_trailer_cut).
+depends_on(store_page_lock, launch_trailer_cut).
+depends_on(store_page_lock, press_kit_final).
+depends_on(localization_pack, final_build_candidate).
+depends_on(streamer_preview_keys, platform_release_slot).
+depends_on(streamer_preview_keys, store_page_lock).
+depends_on(day_one_patch, final_build_candidate).
+depends_on(matchmaking_scale_test, final_build_candidate).
+depends_on(community_faq_publish, press_kit_final).
+depends_on(community_faq_publish, day_one_patch).
+depends_on(embargo_briefing, press_kit_final).
+depends_on(embargo_briefing, streamer_preview_keys).
+depends_on(global_launch, console_submission).
+depends_on(global_launch, day_one_patch).
+depends_on(global_launch, matchmaking_scale_test).
+depends_on(global_launch, store_page_lock).
+depends_on(global_launch, localization_pack).
+depends_on(global_launch, embargo_briefing).
+duration_days(crash_triage_sweep, 3).
+duration_days(final_build_candidate, 2).
+duration_days(console_submission, 4).
+duration_days(platform_release_slot, 2).
+duration_days(localization_pack, 5).
+duration_days(day_one_patch, 4).
+duration_days(matchmaking_scale_test, 3).
+duration_days(global_launch, 1).
+task_supplier(console_submission, console_cert_vendor).
+task_supplier(platform_release_slot, platform_ops_vendor).
+task_supplier(localization_pack, localization_vendor).
+task_supplier(matchmaking_scale_test, cloud_vendor).
+supplier_status(console_cert_vendor, on_time).
+supplier_status(platform_ops_vendor, on_time).
+supplier_status(localization_vendor, on_time).
+supplier_status(cloud_vendor, on_time).
+completed(vertical_slice_lock).
+completed(crash_triage_sweep).
+completed(launch_trailer_cut).
+completed(press_kit_final).
+milestone(platform_release_slot).
+milestone(embargo_briefing).
+milestone(global_launch).</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">7</span></summary><ul><li><code>bulk_assert_facts</code> <code>{&quot;facts&quot;: [&quot;task(vertical_slice_lock).&quot;, &quot;task(crash_triage_sweep).&quot;, &quot;task(final_build_candidate).&quot;, &quot;task(console_submission).&quot;, &quot;task(platform_release_slot).&quot;, &quot;task(launch_trailer_cut).&quot;, &quot;task(press_kit_final).&quot;, &quot;task(store_page_lock).&quot;, &quot;task(localization_pack).&quot;, &quot;task(streamer_preview_keys).&quot;, &quot;task(day_one_patch).&quot;, &quot;task(matchmaking_scale_test).&quot;, &quot;task(community_faq_publish).&quot;, &quot;task(embargo_briefing).&quot;, &quot;task(global_launch).&quot;, &quot;depends_on(crash_triage_sweep, vertical_slice_lock).&quot;, &quot;depends_on(final_build_candidate, vertical_slice_lock).&quot;, &quot;depends_on(final_build_candidate, crash_triage_sweep).&quot;, &quot;depends_on(console_submission, final_build_candidate).&quot;, &quot;depends_on(platform_release_slot, console_submission).&quot;, &quot;depends_on(launch_trailer_cut, vertical_slice_lock).&quot;, &quot;depends_on(press_kit_final, launch_trailer_cut).&quot;, &quot;depends_on(store_page_lock, launch_trailer_cut).&quot;, &quot;depends_on(store_page_lock, press_kit_final).&quot;, &quot;depends_on(localization_pack, final_build_candidate).&quot;, &quot;depends_on(streamer_preview_keys, platform_release_slot).&quot;, &quot;depends_on(streamer_preview_keys, store_page_lock).&quot;, &quot;depends_on(day_one_patch, final_build_candidate).&quot;, &quot;depends_on(matchmaking_scale_test, final_build_candidate).&quot;, &quot;depends_on(community_faq_publish, press_kit_final).&quot;, &quot;depends_on(community_faq_publish, day_one_patch).&quot;, &quot;depends_on(embargo_briefing, press_kit_final).&quot;, &quot;depends_on(embargo_briefing, streamer_preview_keys).&quot;, &quot;depends_on(global_launch, console_submission).&quot;, &quot;depends_on(global_launch, day_one_patch).&quot;, &quot;depends_on(global_launch, matchmaking_scale_test).&quot;, &quot;depends_on(global_launch, store_page_lock).&quot;, &quot;depends_on(global_launch, localization_pack).&quot;, &quot;depends_on(global_launch, embargo_briefing).&quot;, &quot;duration_days(crash_triage_sweep, 3).&quot;, &quot;duration_days(final_build_candidate, 2).&quot;, &quot;duration_days(console_submission, 4).&quot;, &quot;duration_days(platform_release_slot, 2).&quot;, &quot;duration_days(localization_pack, 5).&quot;, &quot;duration_days(day_one_patch, 4).&quot;, &quot;duration_days(matchmaking_scale_test, 3).&quot;, &quot;duration_days(global_launch, 1).&quot;, &quot;task_supplier(console_submission, console_cert_vendor).&quot;, &quot;task_supplier(platform_release_slot, platform_ops_vendor).&quot;, &quot;task_supplier(localization_pack, localization_vendor).&quot;, &quot;task_supplier(matchmaking_scale_test, cloud_vendor).&quot;, &quot;supplier_status(console_cert_vendor, on_time).&quot;, &quot;supplier_status(platform_ops_vendor, on_time).&quot;, &quot;supplier_status(localization_vendor, on_time).&quot;, &quot;supplier_status(cloud_vendor, on_time).&quot;, &quot;completed(vertical_slice_lock).&quot;, &quot;completed(crash_triage_sweep).&quot;, &quot;completed(launch_trailer_cut).&quot;, &quot;completed(press_kit_final).&quot;, &quot;milestone(platform_release_slot).&quot;, &quot;milestone(embargo_briefing).&quot;, &quot;milestone(global_launch).&quot;]}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;depends_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_supplier(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;supplier_status(Supplier, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;completed(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;milestone(M).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## ✅ All Counts Verified - Simulation Ready
+
+**Bulk Assertion Results:**
+- Requested: 62 facts
+- Asserted: 62 facts
+- Failed: 0 facts
+
+**Query Row Counts (All Match Expected):**
+
+| Predicate | Actual Count | Expected Count | Status |
+|-----------|-------------|----------------|--------|
+| `task(Task)` | 15 | 15 | ✅ |
+| `depends_on(Task, Prereq)` | 24 | 24 | ✅ |
+| `task_supplier(Task, Supplier)` | 4 | 4 | ✅ |
+| `supplier_status(Supplier, Status)` | 4 | 4 | ✅ |
+| `completed(Task)` | 4 | 4 | ✅ |
+| `milestone(M)` | 3 | 3 | ✅ |
+
+**No mismatches detected.** The knowledge base is fully loaded and ready for the indie launch war room simulation.</pre></div>
+</section>
+<section class="step-card">
+  <h2>standup</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Morning standup style, keep it practical.
+Use ONLY query_rows for these exact queries:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+Then use query_logic once on:
+depends_on(global_launch, console_submission).
+Return concise sections: ready now, blockers, waiting chain, milestone risk." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Morning standup style, keep it practical.
+Use ONLY query_rows for these exact queries:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+Then use query_logic once on:
+depends_on(global_launch, console_submission).
+Return concise sections: ready now, blockers, waiting chain, milestone risk.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">5</span></summary><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_logic</code> <code>{&quot;query&quot;: &quot;depends_on(global_launch, console_submission).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Morning Standup
+
+### Ready Now
+- vertical_slice_lock
+- crash_triage_sweep
+- final_build_candidate
+- launch_trailer_cut
+- press_kit_final
+- store_page_lock
+
+### Blockers (Waiting)
+- console_submission
+- platform_release_slot
+- localization_pack
+- streamer_preview_keys
+- day_one_patch
+- matchmaking_scale_test
+- community_faq_publish
+- embargo_briefing
+- global_launch
+
+### Waiting Chain
+```
+final_build_candidate → console_submission, localization_pack, day_one_patch, matchmaking_scale_test
+    ↓
+console_submission → platform_release_slot, global_launch
+platform_release_slot → streamer_preview_keys
+streamer_preview_keys → embargo_briefing, global_launch
+day_one_patch → community_faq_publish, global_launch
+matchmaking_scale_test → global_launch
+store_page_lock → streamer_preview_keys, global_launch
+localization_pack → global_launch
+embargo_briefing → global_launch
+```
+
+### Milestone Risk
+- **delayed_milestone**: None detected (0 risks)
+- **global_launch dependency**: Confirmed depends on console_submission ✓</pre></div>
+</section>
+<section class="step-card">
+  <h2>cdn_incident</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Incident update: our cloud contact just pinged me and things look shaky.
+Use only these tools in order:
+1) retract_fact supplier_status(cloud_vendor, on_time).
+2) assert_fact supplier_status(cloud_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows task_status(Task, Status).
+Give me one short propagation narrative and two concrete mitigations." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Incident update: our cloud contact just pinged me and things look shaky.
+Use only these tools in order:
+1) retract_fact supplier_status(cloud_vendor, on_time).
+2) assert_fact supplier_status(cloud_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows task_status(Task, Status).
+Give me one short propagation narrative and two concrete mitigations.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">5</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(cloud_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(cloud_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Propagation Narrative
+The cloud vendor&#x27;s delayed status has cascaded through the dependency chain, blocking two critical tasks (matchmaking_scale_test and global_launch) and delaying the global_launch milestone. This creates a ripple effect where dependent tasks are now waiting on blocked components, potentially pushing back the overall launch timeline by 2-3 weeks based on current task dependencies.
+
+## Two Concrete Mitigations
+1. **Escalate with cloud_vendor**: Engage their escalation channel immediately to secure expedited delivery for matchmaking_scale_test and global_launch deliverables, with daily status checkpoints until resolution.
+2. **Parallelize non-dependent work**: Activate vertical_slice_lock, crash_triage_sweep, final_build_candidate, and other ready tasks while maintaining buffer capacity for delayed components, and prepare a contingency deployment plan that can proceed with available assets.</pre></div>
+</section>
+<section class="step-card">
+  <h2>cert_incident</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Second incident, and yes this is one of those days.
+Use only these tools in order:
+1) retract_fact supplier_status(console_cert_vendor, on_time).
+2) assert_fact supplier_status(console_cert_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows waiting_on(Task, Prereq).
+6) query_logic delayed_milestone(global_launch, console_cert_vendor).
+Return top 3 interventions to protect global_launch." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Second incident, and yes this is one of those days.
+Use only these tools in order:
+1) retract_fact supplier_status(console_cert_vendor, on_time).
+2) assert_fact supplier_status(console_cert_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows waiting_on(Task, Prereq).
+6) query_logic delayed_milestone(global_launch, console_cert_vendor).
+Return top 3 interventions to protect global_launch.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">6</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(console_cert_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(console_cert_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_logic</code> <code>{&quot;query&quot;: &quot;delayed_milestone(global_launch, console_cert_vendor).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+Based on the query results, here are the **top 3 interventions to protect global_launch**:
+
+## 🔴 Critical Analysis Summary
+
+**Current State:**
+- `console_cert_vendor` status changed to **delayed** (just asserted)
+- `global_launch` is **blocked by console_cert_vendor** 
+- `global_launch` appears as a **delayed milestone for both console_cert_vendor and cloud_vendor**
+- 5 tasks are blocked by console_cert_vendor, including global_launch itself
+
+---
+
+## 🎯 Top 3 Interventions
+
+### **1. Expedite console_cert_vendor Delivery (CRITICAL)**
+**Impact:** Unblocks 5 critical tasks including global_launch itself
+- **Tasks affected:** console_submission, platform_release_slot, streamer_preview_keys, embargo_briefing, global_launch
+- **Action:** Assign senior resources to console_cert_vendor; implement crash-time review process; consider temporary vendor escalation
+- **Priority:** P0 - Immediate action required
+
+### **2. Address cloud_vendor Blockers (HIGH)**
+**Impact:** Prevents cascading delays from matchmaking_scale_test
+- **Tasks affected:** global_launch (blocked by cloud_vendor)
+- **Action:** Parallel-track cloud_vendor deliverables; implement daily sync meetings; prepare contingency plan if cloud_vendor cannot meet deadline
+- **Priority:** P1 - High urgency
+
+### **3. Resolve Prerequisite Dependencies (MEDIUM-HIGH)**
+**Impact:** Ensures downstream tasks can proceed once blockers are cleared
+- **Tasks waiting:** localization_pack, day_one_patch (both waiting on final_build_candidate)
+- **Action:** Verify final_build_candidate is ready; if not, expedite build completion; ensure community_faq_publish has clear path forward
+- **Priority:** P2 - Important for post-blocker recovery
+
+---
+
+**Rationale:** The console_cert_vendor delay is the primary threat to global_launch. Addressing this first will unblock the most critical path. Cloud_vendor and prerequisite dependencies are secondary but still essential for full launch readiness.</pre></div>
+</section>
+<section class="step-card">
+  <h2>clarify_intake</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Incoming producer note in messy human form:
+&quot;I think launch date might be June 3, but it is not locked yet&quot;
+Use classify_statement on that text and report classification fields.
+Then use explain_error on:
+Entity &#x27;mystery_vendor&#x27; not in KB
+Do not write any facts in this step." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Incoming producer note in messy human form:
+&quot;I think launch date might be June 3, but it is not locked yet&quot;
+Use classify_statement on that text and report classification fields.
+Then use explain_error on:
+Entity &#x27;mystery_vendor&#x27; not in KB
+Do not write any facts in this step.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">2</span></summary><ul><li><code>classify_statement</code> <code>{&quot;text&quot;: &quot;I think launch date might be June 3, but it is not locked yet&quot;}</code></li><li><code>explain_error</code> <code>{&quot;error_message&quot;: &quot;Entity &#x27;mystery_vendor&#x27; not in KB&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Classification Results
+
+**Classification Fields:**
+- **kind**: &quot;tentative_fact&quot;
+- **confidence**: 0.76
+- **needs_speaker_resolution**: false
+- **can_query_now**: false
+- **can_persist_now**: false
+- **suggested_operation**: &quot;store_tentative_fact&quot;
+- **reasons**: [&quot;tentative language detected&quot;]
+- **status**: &quot;success&quot;
+
+**Proposal Check:**
+- **status**: &quot;needs_clarification&quot;
+- **issues**: [&quot;could not parse a deterministic candidate fact from text&quot;]
+- **reasoning**: [&quot;parser currently handles a small controlled subset of fact patterns&quot;]
+
+---
+
+## Error Explanation
+
+**Error Type**: undefined_entity
+
+**Explanation**: The query refers to an entity that is not currently known to the knowledge base: `mystery_vendor`.
+
+**Suggestions:**
+1. Check the spelling of the entity name
+2. Ask about a known entity such as john, alice, bob, admin, read, or write
+3. Use &#x27;list_known_facts&#x27; to inspect which entities are currently known
+4. If the entity should exist, add facts for it before querying
+
+**Learn More**: See the training materials at training/03-learning-from-failures.md</pre></div>
+</section>
+<section class="step-card">
+  <h2>recovery</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Recovery pass. Assume we negotiated both vendors back on schedule.
+Use only these tools in order:
+1) retract_fact supplier_status(cloud_vendor, delayed).
+2) assert_fact supplier_status(cloud_vendor, on_time).
+3) retract_fact supplier_status(console_cert_vendor, delayed).
+4) assert_fact supplier_status(console_cert_vendor, on_time).
+5) assert_fact completed(final_build_candidate).
+6) assert_fact completed(console_submission).
+7) assert_fact completed(platform_release_slot).
+8) query_rows safe_to_start(Task).
+9) query_rows waiting_on(Task, Prereq).
+10) query_rows delayed_milestone(Milestone, Supplier).
+11) query_rows task_status(Task, Status).
+Close with: ready now, still waiting, remaining launch risk." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Recovery pass. Assume we negotiated both vendors back on schedule.
+Use only these tools in order:
+1) retract_fact supplier_status(cloud_vendor, delayed).
+2) assert_fact supplier_status(cloud_vendor, on_time).
+3) retract_fact supplier_status(console_cert_vendor, delayed).
+4) assert_fact supplier_status(console_cert_vendor, on_time).
+5) assert_fact completed(final_build_candidate).
+6) assert_fact completed(console_submission).
+7) assert_fact completed(platform_release_slot).
+8) query_rows safe_to_start(Task).
+9) query_rows waiting_on(Task, Prereq).
+10) query_rows delayed_milestone(Milestone, Supplier).
+11) query_rows task_status(Task, Status).
+Close with: ready now, still waiting, remaining launch risk.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">11</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(cloud_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(cloud_vendor, on_time).&quot;}</code></li><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(console_cert_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(console_cert_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(final_build_candidate).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(console_submission).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(platform_release_slot).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>
+
+## Recovery Pass Complete
+
+**Supplier Status Updates:**
+✅ cloud_vendor: delayed → on_time  
+✅ console_cert_vendor: delayed → on_time  
+
+**Milestone Completions:**
+✅ final_build_candidate  
+✅ console_submission  
+✅ platform_release_slot  
+
+---
+
+### Query Results Summary:
+
+**Tasks Safe to Start (11):** vertical_slice_lock, crash_triage_sweep, final_build_candidate, console_submission, platform_release_slot, launch_trailer_cut, press_kit_final, store_page_lock, localization_pack, day_one_patch, matchmaking_scale_test
+
+**Tasks Waiting on Prerequisites (8 dependencies):**
+- streamer_preview_keys → store_page_lock
+- community_faq_publish → day_one_patch
+- embargo_briefing → streamer_preview_keys
+- global_launch → day_one_patch, matchmaking_scale_test, store_page_lock, localization_pack, embargo_briefing
+
+**Delayed Milestones:** None (0) - All supplier delays resolved
+
+**Task Status Overview:**
+- **Ready (12):** vertical_slice_lock, crash_triage_sweep, final_build_candidate, console_submission, platform_release_slot, launch_trailer_cut, press_kit_final, store_page_lock, localization_pack, day_one_patch, matchmaking_scale_test
+- **Waiting (3):** streamer_preview_keys, community_faq_publish, embargo_briefing
+- **Global Launch:** Waiting on 5 prerequisites
+
+---
+
+**ready now, still waiting, remaining launch risk**</pre></div>
+</section>
+    <section class="step-card">
+      <h2>Daily Ops Chat Snippets (Illustrative)</h2>
+      <div class="bubble assistant">
+        <div class="label">Note</div>
+        <pre>These snippets intentionally mix normal human phrasing with deterministic tool use, so new users can see natural chat behavior without losing rigor.</pre>
+      </div>
+    </section>
+    <section class="step-card">
+  <h2>Coffee-Fueled Standup</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Morning all. I have exactly one coffee left and zero patience. What can we safely start right now, and what is still waiting?" aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Morning all. I have exactly one coffee left and zero patience. What can we safely start right now, and what is still waiting?</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">2</span></summary><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>Ready-now tasks surface immediately, and waiting tasks show concrete unmet prerequisites. You can assign owners directly from that deterministic list.</pre></div>
+</section>
+<section class="step-card">
+  <h2>What-If Vendor Shock</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="Rumor says cloud load-test support might slip. If that happens, what milestones get hit first?" aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>Rumor says cloud load-test support might slip. If that happens, what milestones get hit first?</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">4</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(cloud_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(cloud_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>The chain moves from blocked supplier-backed tasks into milestone impact through dependency propagation. No guesswork needed.</pre></div>
+</section>
+<section class="step-card">
+  <h2>Uncertain Intake</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="I think launch date might be June 3? Not sure yet." aria-label="Copy user prompt">copy</button>
+    </div>
+    <pre>I think launch date might be June 3? Not sure yet.</pre>
+  </div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">1</span></summary><ul><li><code>classify_statement</code> <code>{&quot;text&quot;: &quot;I think launch date might be June 3? Not sure yet.&quot;}</code></li></ul></details>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>This should classify as tentative and avoid automatic persistence, creating room for clarification first.</pre></div>
+</section>
+  </div>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('theme-toggle');
+      const storageKey = 'indie_launch_playbook_theme';
+
+      const setTheme = (theme) => {
+        root.setAttribute('data-theme', theme);
+        if (themeToggle) {
+          themeToggle.textContent = theme === 'dark' ? 'theme: dark' : 'theme: light';
+        }
+      };
+
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === 'dark' || stored === 'light') {
+        setTheme(stored);
+      } else {
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(prefersDark ? 'dark' : 'light');
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+          const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          setTheme(next);
+          window.localStorage.setItem(storageKey, next);
+        });
+      }
+
+      const buttons = document.querySelectorAll('.copy-btn');
+      for (const button of buttons) {
+        button.addEventListener('click', async () => {
+          const text = button.getAttribute('data-copy') || '';
+          const before = 'copy';
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = 'copied';
+            button.classList.add('copied');
+          } catch (error) {
+            button.textContent = 'copy-failed';
+          }
+          window.setTimeout(() => {
+            button.textContent = before;
+            button.classList.remove('copied');
+          }, 1200);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

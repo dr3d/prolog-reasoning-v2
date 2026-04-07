@@ -150,6 +150,47 @@
       font-family: "Courier New", monospace;
       font-size: 13px;
     }
+    .tool-expando {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--tool) 88%, var(--panel));
+      padding: 0;
+    }
+    .tool-expando summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 8px 10px;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .tool-expando summary::-webkit-details-marker {
+      display: none;
+    }
+    .tool-expando > ul,
+    .tool-expando > p {
+      margin: 0;
+      padding: 0 10px 10px 20px;
+    }
+    .tool-expando > p {
+      padding-left: 10px;
+    }
+    .expando-count {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+      background: var(--panel);
+    }
     .label {
       font-size: 11px;
       letter-spacing: .08em;
@@ -205,7 +246,7 @@
     </div>
     <pre>Use ONLY reset_kb. Confirm success in one sentence.</pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>reset_kb</code> <code>{}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">1</span></summary><ul><li><code>reset_kb</code> <code>{}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
 The runtime knowledge base has been successfully reset to its baseline seed state.</pre></div>
@@ -349,7 +390,7 @@ milestone(occupancy_permit).
 milestone(go_live).
 </pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>bulk_assert_facts</code> <code>{&quot;facts&quot;: [&quot;task(site_prep).&quot;, &quot;task(foundation).&quot;, &quot;task(structural_frame).&quot;, &quot;task(mep_rough_in).&quot;, &quot;task(fireproofing).&quot;, &quot;task(enclosure_glazing).&quot;, &quot;task(roofing).&quot;, &quot;task(interior_buildout).&quot;, &quot;task(hvac_commissioning).&quot;, &quot;task(medical_gas_cert).&quot;, &quot;task(or_fitout).&quot;, &quot;task(imaging_suite_install).&quot;, &quot;task(it_network_core).&quot;, &quot;task(regulatory_inspection).&quot;, &quot;task(occupancy_permit).&quot;, &quot;task(go_live).&quot;, &quot;depends_on(foundation, site_prep).&quot;, &quot;depends_on(structural_frame, foundation).&quot;, &quot;depends_on(mep_rough_in, structural_frame).&quot;, &quot;depends_on(fireproofing, structural_frame).&quot;, &quot;depends_on(enclosure_glazing, structural_frame).&quot;, &quot;depends_on(roofing, structural_frame).&quot;, &quot;depends_on(interior_buildout, mep_rough_in).&quot;, &quot;depends_on(interior_buildout, fireproofing).&quot;, &quot;depends_on(hvac_commissioning, interior_buildout).&quot;, &quot;depends_on(medical_gas_cert, interior_buildout).&quot;, &quot;depends_on(or_fitout, medical_gas_cert).&quot;, &quot;depends_on(imaging_suite_install, interior_buildout).&quot;, &quot;depends_on(it_network_core, interior_buildout).&quot;, &quot;depends_on(regulatory_inspection, hvac_commissioning).&quot;, &quot;depends_on(regulatory_inspection, medical_gas_cert).&quot;, &quot;depends_on(regulatory_inspection, it_network_core).&quot;, &quot;depends_on(occupancy_permit, regulatory_inspection).&quot;, &quot;depends_on(go_live, occupancy_permit).&quot;, &quot;depends_on(go_live, or_fitout).&quot;, &quot;depends_on(go_live, imaging_suite_install).&quot;, &quot;duration_days(site_prep, 12).&quot;, &quot;duration_days(foundation, 21).&quot;, &quot;duration_days(structural_frame, 35).&quot;, &quot;duration_days(interior_buildout, 40).&quot;, &quot;duration_days(regulatory_inspection, 14).&quot;, &quot;duration_days(occupancy_permit, 7).&quot;, &quot;duration_days(go_live, 2).&quot;, &quot;task_supplier(enclosure_glazing, glass_vendor).&quot;, &quot;task_supplier(medical_gas_cert, medgas_vendor).&quot;, &quot;task_supplier(imaging_suite_install, imaging_vendor).&quot;, &quot;supplier_status(glass_vendor, on_time).&quot;, &quot;supplier_status(medgas_vendor, on_time).&quot;, &quot;supplier_status(imaging_vendor, on_time).&quot;, &quot;completed(site_prep).&quot;, &quot;completed(foundation).&quot;, &quot;completed(structural_frame).&quot;, &quot;milestone(regulatory_inspection).&quot;, &quot;milestone(occupancy_permit).&quot;, &quot;milestone(go_live).&quot;]}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;depends_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_supplier(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;supplier_status(Supplier, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;completed(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;milestone(M).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">7</span></summary><ul><li><code>bulk_assert_facts</code> <code>{&quot;facts&quot;: [&quot;task(site_prep).&quot;, &quot;task(foundation).&quot;, &quot;task(structural_frame).&quot;, &quot;task(mep_rough_in).&quot;, &quot;task(fireproofing).&quot;, &quot;task(enclosure_glazing).&quot;, &quot;task(roofing).&quot;, &quot;task(interior_buildout).&quot;, &quot;task(hvac_commissioning).&quot;, &quot;task(medical_gas_cert).&quot;, &quot;task(or_fitout).&quot;, &quot;task(imaging_suite_install).&quot;, &quot;task(it_network_core).&quot;, &quot;task(regulatory_inspection).&quot;, &quot;task(occupancy_permit).&quot;, &quot;task(go_live).&quot;, &quot;depends_on(foundation, site_prep).&quot;, &quot;depends_on(structural_frame, foundation).&quot;, &quot;depends_on(mep_rough_in, structural_frame).&quot;, &quot;depends_on(fireproofing, structural_frame).&quot;, &quot;depends_on(enclosure_glazing, structural_frame).&quot;, &quot;depends_on(roofing, structural_frame).&quot;, &quot;depends_on(interior_buildout, mep_rough_in).&quot;, &quot;depends_on(interior_buildout, fireproofing).&quot;, &quot;depends_on(hvac_commissioning, interior_buildout).&quot;, &quot;depends_on(medical_gas_cert, interior_buildout).&quot;, &quot;depends_on(or_fitout, medical_gas_cert).&quot;, &quot;depends_on(imaging_suite_install, interior_buildout).&quot;, &quot;depends_on(it_network_core, interior_buildout).&quot;, &quot;depends_on(regulatory_inspection, hvac_commissioning).&quot;, &quot;depends_on(regulatory_inspection, medical_gas_cert).&quot;, &quot;depends_on(regulatory_inspection, it_network_core).&quot;, &quot;depends_on(occupancy_permit, regulatory_inspection).&quot;, &quot;depends_on(go_live, occupancy_permit).&quot;, &quot;depends_on(go_live, or_fitout).&quot;, &quot;depends_on(go_live, imaging_suite_install).&quot;, &quot;duration_days(site_prep, 12).&quot;, &quot;duration_days(foundation, 21).&quot;, &quot;duration_days(structural_frame, 35).&quot;, &quot;duration_days(interior_buildout, 40).&quot;, &quot;duration_days(regulatory_inspection, 14).&quot;, &quot;duration_days(occupancy_permit, 7).&quot;, &quot;duration_days(go_live, 2).&quot;, &quot;task_supplier(enclosure_glazing, glass_vendor).&quot;, &quot;task_supplier(medical_gas_cert, medgas_vendor).&quot;, &quot;task_supplier(imaging_suite_install, imaging_vendor).&quot;, &quot;supplier_status(glass_vendor, on_time).&quot;, &quot;supplier_status(medgas_vendor, on_time).&quot;, &quot;supplier_status(imaging_vendor, on_time).&quot;, &quot;completed(site_prep).&quot;, &quot;completed(foundation).&quot;, &quot;completed(structural_frame).&quot;, &quot;milestone(regulatory_inspection).&quot;, &quot;milestone(occupancy_permit).&quot;, &quot;milestone(go_live).&quot;]}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;depends_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_supplier(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;supplier_status(Supplier, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;completed(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;milestone(M).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
 ## Query Results Summary
@@ -388,7 +429,7 @@ Do not call query_prolog.
 Do not call query_prolog.
 </pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">4</span></summary><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
 ## Query Results
@@ -483,7 +524,7 @@ Return three tables and one short propagation narrative.
 Return three tables and one short propagation narrative.
 </pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">5</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
 ## Three Tables
@@ -545,7 +586,7 @@ Then provide top 3 interventions to protect go_live.
 Then provide top 3 interventions to protect go_live.
 </pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">5</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(medgas_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
 Based on the query results, here&#x27;s the analysis:
@@ -608,7 +649,7 @@ Return sections: Ready now, Still waiting, Remaining milestone risks.
 Return sections: Ready now, Still waiting, Remaining milestone risks.
 </pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">8</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>
 
 Based on the query results, here are the three sections:
@@ -652,7 +693,7 @@ The following milestones have delays associated with medgas_vendor:
     </div>
     <pre>What can safely start this morning, and what is still waiting?</pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">2</span></summary><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>Ready now includes enclosure_glazing, roofing, and other tasks with satisfied prerequisites. Most downstream work is still waiting on interior_buildout and then regulatory_inspection.</pre></div>
 </section>
 <section class="step-card">
@@ -664,7 +705,7 @@ The following milestones have delays associated with medgas_vendor:
     </div>
     <pre>If the glass vendor is delayed today, what milestones are impacted first?</pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">4</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;blocked_task(Task, Supplier).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>The first direct blocker is enclosure_glazing, and that propagates to regulatory_inspection, occupancy_permit, and go_live through the critical dependency chain.</pre></div>
 </section>
 <section class="step-card">
@@ -676,7 +717,7 @@ The following milestones have delays associated with medgas_vendor:
     </div>
     <pre>We recovered glazing and completed rough-in items. What changed for tomorrow&#x27;s plan?</pre>
   </div>
-  <div class="toolbox"><div class="label">Tool Calls</div><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></div>
+  <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">7</span></summary><ul><li><code>retract_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, delayed).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;supplier_status(glass_vendor, on_time).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(enclosure_glazing).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(mep_rough_in).&quot;}</code></li><li><code>assert_fact</code> <code>{&quot;fact&quot;: &quot;completed(fireproofing).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li></ul></details>
   <div class="bubble assistant"><div class="label">Assistant</div><pre>The ready set expands and several previously waiting tasks move into executable status. Milestone risk decreases because no supplier remains in delayed state.</pre></div>
 </section>
   </div>

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Capture a full CPM-like hospital playbook chat session via LM Studio API.
+Capture an Indie Game Launch War Room MCP session via LM Studio API.
 
 Outputs:
 - JSON transcript with tool calls and messages
 - Markdown transcript
-- Styled HTML transcript suitable for screenshotting
+- Styled HTML transcript suitable for sharing
 """
 
 from __future__ import annotations
@@ -24,65 +24,151 @@ from typing import Any
 DEFAULT_BASE_URL = "http://127.0.0.1:1234"
 DEFAULT_MODEL = "qwen/qwen3.5-9b"
 DEFAULT_INTEGRATION = "mcp/prolog-reasoning"
-STEP_NAMES = ["reset", "ingest", "baseline", "shock_glass", "shock_medgas", "recovery"]
+STEP_NAMES = [
+    "preflight",
+    "reset",
+    "ingest",
+    "standup",
+    "cdn_incident",
+    "cert_incident",
+    "clarify_intake",
+    "recovery",
+]
 INGEST_EXPECTED_COUNTS = {
-    "task(Task).": 16,
-    "depends_on(Task, Prereq).": 20,
-    "task_supplier(Task, Supplier).": 3,
-    "supplier_status(Supplier, Status).": 3,
-    "completed(Task).": 3,
+    "task(Task).": 15,
+    "depends_on(Task, Prereq).": 24,
+    "task_supplier(Task, Supplier).": 4,
+    "supplier_status(Supplier, Status).": 4,
+    "completed(Task).": 4,
     "milestone(M).": 3,
 }
-INGEST_EXPECTED_ASSERTED_COUNT = 55
+INGEST_EXPECTED_ASSERTED_COUNT = 62
+REQUIRED_TOOLS = {
+    "show_system_info",
+    "list_known_facts",
+    "reset_kb",
+    "bulk_assert_facts",
+    "query_rows",
+    "query_logic",
+    "assert_fact",
+    "retract_fact",
+    "classify_statement",
+    "explain_error",
+}
+FACTS = [
+    "task(vertical_slice_lock).",
+    "task(crash_triage_sweep).",
+    "task(final_build_candidate).",
+    "task(console_submission).",
+    "task(platform_release_slot).",
+    "task(launch_trailer_cut).",
+    "task(press_kit_final).",
+    "task(store_page_lock).",
+    "task(localization_pack).",
+    "task(streamer_preview_keys).",
+    "task(day_one_patch).",
+    "task(matchmaking_scale_test).",
+    "task(community_faq_publish).",
+    "task(embargo_briefing).",
+    "task(global_launch).",
+    "depends_on(crash_triage_sweep, vertical_slice_lock).",
+    "depends_on(final_build_candidate, vertical_slice_lock).",
+    "depends_on(final_build_candidate, crash_triage_sweep).",
+    "depends_on(console_submission, final_build_candidate).",
+    "depends_on(platform_release_slot, console_submission).",
+    "depends_on(launch_trailer_cut, vertical_slice_lock).",
+    "depends_on(press_kit_final, launch_trailer_cut).",
+    "depends_on(store_page_lock, launch_trailer_cut).",
+    "depends_on(store_page_lock, press_kit_final).",
+    "depends_on(localization_pack, final_build_candidate).",
+    "depends_on(streamer_preview_keys, platform_release_slot).",
+    "depends_on(streamer_preview_keys, store_page_lock).",
+    "depends_on(day_one_patch, final_build_candidate).",
+    "depends_on(matchmaking_scale_test, final_build_candidate).",
+    "depends_on(community_faq_publish, press_kit_final).",
+    "depends_on(community_faq_publish, day_one_patch).",
+    "depends_on(embargo_briefing, press_kit_final).",
+    "depends_on(embargo_briefing, streamer_preview_keys).",
+    "depends_on(global_launch, console_submission).",
+    "depends_on(global_launch, day_one_patch).",
+    "depends_on(global_launch, matchmaking_scale_test).",
+    "depends_on(global_launch, store_page_lock).",
+    "depends_on(global_launch, localization_pack).",
+    "depends_on(global_launch, embargo_briefing).",
+    "duration_days(crash_triage_sweep, 3).",
+    "duration_days(final_build_candidate, 2).",
+    "duration_days(console_submission, 4).",
+    "duration_days(platform_release_slot, 2).",
+    "duration_days(localization_pack, 5).",
+    "duration_days(day_one_patch, 4).",
+    "duration_days(matchmaking_scale_test, 3).",
+    "duration_days(global_launch, 1).",
+    "task_supplier(console_submission, console_cert_vendor).",
+    "task_supplier(platform_release_slot, platform_ops_vendor).",
+    "task_supplier(localization_pack, localization_vendor).",
+    "task_supplier(matchmaking_scale_test, cloud_vendor).",
+    "supplier_status(console_cert_vendor, on_time).",
+    "supplier_status(platform_ops_vendor, on_time).",
+    "supplier_status(localization_vendor, on_time).",
+    "supplier_status(cloud_vendor, on_time).",
+    "completed(vertical_slice_lock).",
+    "completed(crash_triage_sweep).",
+    "completed(launch_trailer_cut).",
+    "completed(press_kit_final).",
+    "milestone(platform_release_slot).",
+    "milestone(embargo_briefing).",
+    "milestone(global_launch).",
+]
 
 
 def _daily_ops_examples() -> list[dict[str, Any]]:
-    """Illustrative chat-first prompts that feel like live control-room use."""
     return [
         {
-            "title": "Morning Standup",
-            "question": "What can safely start this morning, and what is still waiting?",
+            "title": "Coffee-Fueled Standup",
+            "question": (
+                "Morning all. I have exactly one coffee left and zero patience. "
+                "What can we safely start right now, and what is still waiting?"
+            ),
             "tool_calls": [
                 {"tool": "query_rows", "arguments": {"query": "safe_to_start(Task)."}},
                 {"tool": "query_rows", "arguments": {"query": "waiting_on(Task, Prereq)."}},
             ],
             "answer": (
-                "Ready now includes enclosure_glazing, roofing, and other tasks with satisfied prerequisites. "
-                "Most downstream work is still waiting on interior_buildout and then regulatory_inspection."
+                "Ready-now tasks surface immediately, and waiting tasks show concrete unmet prerequisites. "
+                "You can assign owners directly from that deterministic list."
             ),
         },
         {
-            "title": "Supplier Delay Update",
-            "question": "If the glass vendor is delayed today, what milestones are impacted first?",
+            "title": "What-If Vendor Shock",
+            "question": (
+                "Rumor says cloud load-test support might slip. If that happens, what milestones get hit first?"
+            ),
             "tool_calls": [
-                {"tool": "retract_fact", "arguments": {"fact": "supplier_status(glass_vendor, on_time)."}},
-                {"tool": "assert_fact", "arguments": {"fact": "supplier_status(glass_vendor, delayed)."}},
+                {"tool": "retract_fact", "arguments": {"fact": "supplier_status(cloud_vendor, on_time)."}},
+                {"tool": "assert_fact", "arguments": {"fact": "supplier_status(cloud_vendor, delayed)."}},
                 {"tool": "query_rows", "arguments": {"query": "blocked_task(Task, Supplier)."}},
                 {"tool": "query_rows", "arguments": {"query": "delayed_milestone(Milestone, Supplier)."}},
             ],
             "answer": (
-                "The first direct blocker is enclosure_glazing, and that propagates to regulatory_inspection, "
-                "occupancy_permit, and go_live through the critical dependency chain."
+                "The chain moves from blocked supplier-backed tasks into milestone impact through dependency propagation. "
+                "No guesswork needed."
             ),
         },
         {
-            "title": "End-of-Day Recovery",
-            "question": "We recovered glazing and completed rough-in items. What changed for tomorrow's plan?",
+            "title": "Uncertain Intake",
+            "question": "I think launch date might be June 3? Not sure yet.",
             "tool_calls": [
-                {"tool": "retract_fact", "arguments": {"fact": "supplier_status(glass_vendor, delayed)."}},
-                {"tool": "assert_fact", "arguments": {"fact": "supplier_status(glass_vendor, on_time)."}},
-                {"tool": "assert_fact", "arguments": {"fact": "completed(enclosure_glazing)."}},
-                {"tool": "assert_fact", "arguments": {"fact": "completed(mep_rough_in)."}},
-                {"tool": "assert_fact", "arguments": {"fact": "completed(fireproofing)."}},
-                {"tool": "query_rows", "arguments": {"query": "safe_to_start(Task)."}},
-                {"tool": "query_rows", "arguments": {"query": "task_status(Task, Status)."}},
+                {"tool": "classify_statement", "arguments": {"text": "I think launch date might be June 3? Not sure yet."}},
             ],
             "answer": (
-                "The ready set expands and several previously waiting tasks move into executable status. "
-                "Milestone risk decreases because no supplier remains in delayed state."
+                "This should classify as tentative and avoid automatic persistence, creating room for clarification first."
             ),
         },
     ]
+
+
+def _facts_block() -> str:
+    return "\n".join(FACTS) + "\n"
 
 
 def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[str, Any]:
@@ -103,7 +189,7 @@ def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[s
                 "Set LM Studio API token before running scripted captures.\n"
                 "PowerShell example:\n"
                 "$env:LMSTUDIO_API_KEY = \"<YOUR_LM_STUDIO_API_TOKEN>\"\n"
-                "python scripts/capture_hospital_playbook_session.py --validate\n"
+                "python scripts/capture_indie_launch_warroom_session.py --validate\n"
                 "Or pass --api-key directly."
             ) from error
         raise RuntimeError(f"HTTP {error.code}: {raw}") from error
@@ -112,7 +198,6 @@ def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[s
 
 
 def _extract_tool_output_json(output_field: Any) -> dict[str, Any] | None:
-    """Decode LM Studio tool-call output payload into a single dict when possible."""
     if output_field is None:
         return None
 
@@ -139,25 +224,29 @@ def _extract_tool_output_json(output_field: Any) -> dict[str, Any] | None:
                 continue
             if isinstance(parsed, dict):
                 return parsed
-
     return None
 
 
 def validate_transcript(transcript: dict[str, Any]) -> list[str]:
-    """Validate key playbook invariants for newcomer success and reproducibility."""
     findings: list[str] = []
-    steps_raw = transcript.get("steps", [])
-    if not isinstance(steps_raw, list):
+    steps = transcript.get("steps", [])
+    if not isinstance(steps, list):
         return ["Transcript is missing a valid 'steps' list."]
 
-    actual_order = [step.get("step") for step in steps_raw if isinstance(step, dict)]
+    actual_order = [step.get("step") for step in steps if isinstance(step, dict)]
     if actual_order != STEP_NAMES:
         findings.append(f"Unexpected step order. Expected {STEP_NAMES}, got {actual_order}.")
 
     by_step: dict[str, dict[str, Any]] = {}
-    for step in steps_raw:
+    seen_tools: set[str] = set()
+    for step in steps:
         if isinstance(step, dict) and isinstance(step.get("step"), str):
             by_step[step["step"]] = step
+            for call in step.get("tool_calls", []):
+                if isinstance(call, dict):
+                    tool_name = call.get("tool")
+                    if isinstance(tool_name, str) and tool_name:
+                        seen_tools.add(tool_name)
 
     for step_name in STEP_NAMES:
         step = by_step.get(step_name)
@@ -169,9 +258,12 @@ def validate_transcript(transcript: dict[str, Any]) -> list[str]:
         if not isinstance(tool_calls, list) or not tool_calls:
             findings.append(f"Step '{step_name}' has no tool calls.")
 
-        assistant_message = str(step.get("assistant_message", "")).strip()
-        if not assistant_message:
+        if not str(step.get("assistant_message", "")).strip():
             findings.append(f"Step '{step_name}' has an empty assistant reply.")
+
+    missing_tools = sorted(REQUIRED_TOOLS - seen_tools)
+    if missing_tools:
+        findings.append(f"Missing required tool usage: {missing_tools}")
 
     ingest_step = by_step.get("ingest")
     if ingest_step is not None:
@@ -210,27 +302,65 @@ def validate_transcript(transcript: dict[str, Any]) -> list[str]:
                 if matching_call is None:
                     findings.append(f"Ingest step missing count query '{query}'.")
                     continue
-
                 query_json = _extract_tool_output_json(matching_call.get("output"))
                 if query_json is None:
                     findings.append(f"Ingest query output for '{query}' was not parseable JSON.")
                     continue
-
                 actual_rows = query_json.get("num_rows")
                 if actual_rows != expected_rows:
                     findings.append(
                         f"Ingest query '{query}' mismatch: expected {expected_rows} rows, got {actual_rows}."
                     )
 
+    clarify_step = by_step.get("clarify_intake")
+    if clarify_step is not None:
+        tool_calls = clarify_step.get("tool_calls", [])
+        classify_calls = [
+            call
+            for call in tool_calls
+            if isinstance(call, dict) and call.get("tool") == "classify_statement"
+        ]
+        if not classify_calls:
+            findings.append("Clarify step is missing classify_statement call.")
+        else:
+            classify_json = _extract_tool_output_json(classify_calls[0].get("output"))
+            if classify_json is None:
+                findings.append("Clarify step classify output was not parseable JSON.")
+            else:
+                if classify_json.get("can_persist_now") is not False:
+                    findings.append("Clarify step expected can_persist_now=false for uncertain intake.")
+                proposal = classify_json.get("proposal_check")
+                if not isinstance(proposal, dict):
+                    findings.append("Clarify step expected proposal_check in classify output.")
+                elif proposal.get("status") not in {"needs_clarification", "reject"}:
+                    findings.append("Clarify step proposal_check should be needs_clarification or reject.")
+
+        write_tools = {"assert_fact", "bulk_assert_facts", "retract_fact", "reset_kb"}
+        unexpected_writes = sorted(
+            {
+                call.get("tool")
+                for call in tool_calls
+                if isinstance(call, dict) and call.get("tool") in write_tools
+            }
+        )
+        if unexpected_writes:
+            findings.append(
+                f"Clarify step must not call write tools: {unexpected_writes}"
+            )
+
     return findings
 
 
 def _user_prompt(step: str) -> str:
     prompts = {
-        "reset": (
-            "Use ONLY reset_kb. Confirm success in one sentence."
+        "preflight": (
+            "Quick pulse check before we dive in. I am running on cold brew and optimism.\n"
+            "Use show_system_info and list_known_facts first.\n"
+            "Then summarize in one paragraph what this MCP setup can and cannot do today."
         ),
+        "reset": "Use ONLY reset_kb. Confirm success in one sentence.",
         "ingest": (
+            "We're kicking off an indie launch war room simulation.\n"
             "Use bulk_assert_facts with the full fact list below.\n"
             "Then run query_rows counts for:\n"
             "- task(Task).\n"
@@ -239,100 +369,72 @@ def _user_prompt(step: str) -> str:
             "- supplier_status(Supplier, Status).\n"
             "- completed(Task).\n"
             "- milestone(M).\n"
-            "Return the raw counts and stop if any count mismatches.\n\n"
-            "task(site_prep).\n"
-            "task(foundation).\n"
-            "task(structural_frame).\n"
-            "task(mep_rough_in).\n"
-            "task(fireproofing).\n"
-            "task(enclosure_glazing).\n"
-            "task(roofing).\n"
-            "task(interior_buildout).\n"
-            "task(hvac_commissioning).\n"
-            "task(medical_gas_cert).\n"
-            "task(or_fitout).\n"
-            "task(imaging_suite_install).\n"
-            "task(it_network_core).\n"
-            "task(regulatory_inspection).\n"
-            "task(occupancy_permit).\n"
-            "task(go_live).\n"
-            "depends_on(foundation, site_prep).\n"
-            "depends_on(structural_frame, foundation).\n"
-            "depends_on(mep_rough_in, structural_frame).\n"
-            "depends_on(fireproofing, structural_frame).\n"
-            "depends_on(enclosure_glazing, structural_frame).\n"
-            "depends_on(roofing, structural_frame).\n"
-            "depends_on(interior_buildout, mep_rough_in).\n"
-            "depends_on(interior_buildout, fireproofing).\n"
-            "depends_on(hvac_commissioning, interior_buildout).\n"
-            "depends_on(medical_gas_cert, interior_buildout).\n"
-            "depends_on(or_fitout, medical_gas_cert).\n"
-            "depends_on(imaging_suite_install, interior_buildout).\n"
-            "depends_on(it_network_core, interior_buildout).\n"
-            "depends_on(regulatory_inspection, hvac_commissioning).\n"
-            "depends_on(regulatory_inspection, medical_gas_cert).\n"
-            "depends_on(regulatory_inspection, it_network_core).\n"
-            "depends_on(occupancy_permit, regulatory_inspection).\n"
-            "depends_on(go_live, occupancy_permit).\n"
-            "depends_on(go_live, or_fitout).\n"
-            "depends_on(go_live, imaging_suite_install).\n"
-            "duration_days(site_prep, 12).\n"
-            "duration_days(foundation, 21).\n"
-            "duration_days(structural_frame, 35).\n"
-            "duration_days(interior_buildout, 40).\n"
-            "duration_days(regulatory_inspection, 14).\n"
-            "duration_days(occupancy_permit, 7).\n"
-            "duration_days(go_live, 2).\n"
-            "task_supplier(enclosure_glazing, glass_vendor).\n"
-            "task_supplier(medical_gas_cert, medgas_vendor).\n"
-            "task_supplier(imaging_suite_install, imaging_vendor).\n"
-            "supplier_status(glass_vendor, on_time).\n"
-            "supplier_status(medgas_vendor, on_time).\n"
-            "supplier_status(imaging_vendor, on_time).\n"
-            "completed(site_prep).\n"
-            "completed(foundation).\n"
-            "completed(structural_frame).\n"
-            "milestone(regulatory_inspection).\n"
-            "milestone(occupancy_permit).\n"
-            "milestone(go_live).\n"
+            "Expected counts:\n"
+            "- task: 15\n"
+            "- depends_on: 24\n"
+            "- task_supplier: 4\n"
+            "- supplier_status: 4\n"
+            "- completed: 4\n"
+            "- milestone: 3\n"
+            "- asserted_count from bulk_assert_facts: 62\n"
+            "If anything mismatches, stop and call it out clearly.\n\n"
+            + _facts_block()
         ),
-        "baseline": (
-            "Use ONLY query_rows for these exact queries and return markdown tables plus row counts:\n"
+        "standup": (
+            "Morning standup style, keep it practical.\n"
+            "Use ONLY query_rows for these exact queries:\n"
             "- safe_to_start(Task).\n"
             "- waiting_on(Task, Prereq).\n"
             "- task_status(Task, Status).\n"
             "- delayed_milestone(Milestone, Supplier).\n"
-            "Do not call query_prolog.\n"
+            "Then use query_logic once on:\n"
+            "depends_on(global_launch, console_submission).\n"
+            "Return concise sections: ready now, blockers, waiting chain, milestone risk."
         ),
-        "shock_glass": (
+        "cdn_incident": (
+            "Incident update: our cloud contact just pinged me and things look shaky.\n"
             "Use only these tools in order:\n"
-            "1) retract_fact supplier_status(glass_vendor, on_time).\n"
-            "2) assert_fact supplier_status(glass_vendor, delayed).\n"
+            "1) retract_fact supplier_status(cloud_vendor, on_time).\n"
+            "2) assert_fact supplier_status(cloud_vendor, delayed).\n"
             "3) query_rows blocked_task(Task, Supplier).\n"
             "4) query_rows delayed_milestone(Milestone, Supplier).\n"
             "5) query_rows task_status(Task, Status).\n"
-            "Return three tables and one short propagation narrative.\n"
+            "Give me one short propagation narrative and two concrete mitigations."
         ),
-        "shock_medgas": (
+        "cert_incident": (
+            "Second incident, and yes this is one of those days.\n"
             "Use only these tools in order:\n"
-            "1) retract_fact supplier_status(medgas_vendor, on_time).\n"
-            "2) assert_fact supplier_status(medgas_vendor, delayed).\n"
+            "1) retract_fact supplier_status(console_cert_vendor, on_time).\n"
+            "2) assert_fact supplier_status(console_cert_vendor, delayed).\n"
             "3) query_rows blocked_task(Task, Supplier).\n"
             "4) query_rows delayed_milestone(Milestone, Supplier).\n"
             "5) query_rows waiting_on(Task, Prereq).\n"
-            "Then provide top 3 interventions to protect go_live.\n"
+            "6) query_logic delayed_milestone(global_launch, console_cert_vendor).\n"
+            "Return top 3 interventions to protect global_launch."
+        ),
+        "clarify_intake": (
+            "Incoming producer note in messy human form:\n"
+            "\"I think launch date might be June 3, but it is not locked yet\"\n"
+            "Use classify_statement on that text and report classification fields.\n"
+            "Then use explain_error on:\n"
+            "Entity 'mystery_vendor' not in KB\n"
+            "Do not write any facts in this step."
         ),
         "recovery": (
+            "Recovery pass. Assume we negotiated both vendors back on schedule.\n"
             "Use only these tools in order:\n"
-            "1) retract_fact supplier_status(glass_vendor, delayed).\n"
-            "2) assert_fact supplier_status(glass_vendor, on_time).\n"
-            "3) assert_fact completed(enclosure_glazing).\n"
-            "4) assert_fact completed(mep_rough_in).\n"
-            "5) assert_fact completed(fireproofing).\n"
-            "6) query_rows safe_to_start(Task).\n"
-            "7) query_rows waiting_on(Task, Prereq).\n"
-            "8) query_rows delayed_milestone(Milestone, Supplier).\n"
-            "Return sections: Ready now, Still waiting, Remaining milestone risks.\n"
+            "1) retract_fact supplier_status(cloud_vendor, delayed).\n"
+            "2) assert_fact supplier_status(cloud_vendor, on_time).\n"
+            "3) retract_fact supplier_status(console_cert_vendor, delayed).\n"
+            "4) assert_fact supplier_status(console_cert_vendor, on_time).\n"
+            "5) assert_fact completed(final_build_candidate).\n"
+            "6) assert_fact completed(console_submission).\n"
+            "7) assert_fact completed(platform_release_slot).\n"
+            "8) query_rows safe_to_start(Task).\n"
+            "9) query_rows waiting_on(Task, Prereq).\n"
+            "10) query_rows delayed_milestone(Milestone, Supplier).\n"
+            "11) query_rows task_status(Task, Status).\n"
+            "Close with: ready now, still waiting, remaining launch risk."
         ),
     }
     return prompts[step]
@@ -340,7 +442,7 @@ def _user_prompt(step: str) -> str:
 
 def _render_markdown(transcript: dict[str, Any]) -> str:
     lines: list[str] = []
-    lines.append("# Hospital CPM Playbook Session (Captured)")
+    lines.append("# Indie Game Launch War Room Session (Captured)")
     lines.append("")
     lines.append(f"- Captured at: {transcript['captured_at']}")
     lines.append(f"- Model: `{transcript['model']}`")
@@ -356,7 +458,6 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
         lines.append(step["prompt"].rstrip())
         lines.append("```")
         lines.append("")
-
         lines.append("### Tool Calls")
         lines.append("")
         if not step["tool_calls"]:
@@ -365,7 +466,6 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
             for call in step["tool_calls"]:
                 lines.append(f"- `{call['tool']}` `{json.dumps(call['arguments'], ensure_ascii=True)}`")
         lines.append("")
-
         lines.append("### Assistant Reply")
         lines.append("")
         lines.append(step["assistant_message"].rstrip() or "(empty reply)")
@@ -373,7 +473,7 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
 
     lines.append("## Daily Ops Chat Snippets (Illustrative)")
     lines.append("")
-    lines.append("These are realistic short prompts for day-to-day usage in chat mode.")
+    lines.append("These are intentionally conversational prompts that still map to deterministic tool calls.")
     lines.append("")
     for example in _daily_ops_examples():
         lines.append(f"### {example['title']}")
@@ -398,18 +498,20 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
 
 
 def _render_html(transcript: dict[str, Any]) -> str:
-    card_blocks: list[str] = []
+    cards: list[str] = []
     for step in transcript["steps"]:
-        prompt_html = html.escape(step["prompt"])
+        prompt_html = html.escape(step["prompt"].rstrip())
         prompt_attr = html.escape(step["prompt"], quote=True)
-        reply_html = html.escape(step["assistant_message"] or "(empty reply)")
+        reply_html = html.escape(step["assistant_message"].rstrip() or "(empty reply)")
 
-        call_items = []
+        tool_items: list[str] = []
         for call in step["tool_calls"]:
-            args = html.escape(json.dumps(call["arguments"], ensure_ascii=True))
-            call_items.append(f"<li><code>{html.escape(call['tool'])}</code> <code>{args}</code></li>")
+            args = html.escape(json.dumps(call.get("arguments", {}), ensure_ascii=True))
+            tool_items.append(
+                f"<li><code>{html.escape(str(call.get('tool', '')))}</code> <code>{args}</code></li>"
+            )
         tool_count = len(step["tool_calls"])
-        calls_body = "<ul>" + "".join(call_items) + "</ul>" if call_items else "<p>No tool calls.</p>"
+        calls_body = "<ul>" + "".join(tool_items) + "</ul>" if tool_items else "<p>No tool calls.</p>"
         calls_html = (
             "<details class=\"toolbox tool-expando\">"
             f"<summary><span class=\"expando-title\">tool calls</span><span class=\"expando-count\">{tool_count}</span></summary>"
@@ -417,7 +519,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
             "</details>"
         )
 
-        card_blocks.append(
+        cards.append(
             f"""
 <section class="step-card">
   <h2>{html.escape(step["step"])}</h2>
@@ -434,7 +536,6 @@ def _render_html(transcript: dict[str, Any]) -> str:
 """.strip()
         )
 
-    body = "\n".join(card_blocks)
     daily_cards: list[str] = []
     for example in _daily_ops_examples():
         question_html = html.escape(example["question"])
@@ -468,6 +569,8 @@ def _render_html(transcript: dict[str, Any]) -> str:
 </section>
 """.strip()
         )
+
+    body = "\n".join(cards)
     daily_body = "\n".join(daily_cards)
 
     return f"""<!doctype html>
@@ -475,7 +578,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hospital CPM Playbook Session</title>
+  <title>Indie Game Launch War Room Session</title>
   <style>
     :root {{
       --bg: #e3ddd2;
@@ -579,6 +682,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
     h2 {{
       margin: 0 0 12px 0;
       font-size: 22px;
+      text-transform: capitalize;
     }}
     .bubble {{
       border-radius: 14px;
@@ -600,9 +704,9 @@ def _render_html(transcript: dict[str, Any]) -> str:
       border-radius: 8px;
       color: #3e3a31;
       font-family: "Courier New", monospace;
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1;
-      padding: 6px 8px;
+      padding: 4px 6px;
       cursor: pointer;
     }}
     .copy-btn:hover {{
@@ -612,6 +716,14 @@ def _render_html(transcript: dict[str, Any]) -> str:
       border-color: #7e9e73;
       background: #e5f0dd;
       color: #2f5130;
+    }}
+    .label {{
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: "Courier New", monospace;
     }}
     .toolbox {{
       background: var(--tool);
@@ -663,14 +775,6 @@ def _render_html(transcript: dict[str, Any]) -> str:
       color: var(--ink);
       background: var(--panel);
     }}
-    .label {{
-      font-size: 11px;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-      font-family: "Courier New", monospace;
-    }}
     pre {{
       margin: 0;
       white-space: pre-wrap;
@@ -699,7 +803,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
 <body>
   <div class="wrap">
     <div class="topbar">
-      <h1>Hospital CPM Playbook Session</h1>
+      <h1>Indie Game Launch War Room Session</h1>
       <div class="topbar-right">
         <div class="nav-links">
           <a class="nav-link" href="../docs-hub.html">Back to Docs Hub</a>
@@ -714,7 +818,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
       <h2>Daily Ops Chat Snippets (Illustrative)</h2>
       <div class="bubble assistant">
         <div class="label">Note</div>
-        <pre>This section is intentionally conversational. It shows believable day-to-day prompts and reports, not test harness steps.</pre>
+        <pre>These snippets intentionally mix normal human phrasing with deterministic tool use, so new users can see natural chat behavior without losing rigor.</pre>
       </div>
     </section>
     {daily_body}
@@ -723,7 +827,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
     (() => {{
       const root = document.documentElement;
       const themeToggle = document.getElementById('theme-toggle');
-      const storageKey = 'cpm_playbook_theme';
+      const storageKey = 'indie_launch_playbook_theme';
 
       const setTheme = (theme) => {{
         root.setAttribute('data-theme', theme);
@@ -775,9 +879,9 @@ def _render_html(transcript: dict[str, Any]) -> str:
 
 def _write_outputs(transcript: dict[str, Any], out_dir: Path) -> dict[str, str]:
     out_dir.mkdir(parents=True, exist_ok=True)
-    json_path = out_dir / "hospital-cpm-playbook-session.json"
-    md_path = out_dir / "hospital-cpm-playbook-session.md"
-    html_path = out_dir / "hospital-cpm-playbook-session.html"
+    json_path = out_dir / "indie-launch-warroom-session.json"
+    md_path = out_dir / "indie-launch-warroom-session.md"
+    html_path = out_dir / "indie-launch-warroom-session.html"
 
     json_path.write_text(json.dumps(transcript, indent=2), encoding="utf-8")
     md_path.write_text(_render_markdown(transcript), encoding="utf-8")
@@ -789,7 +893,6 @@ def run_capture(
     base_url: str, model: str, integration: str, api_key: str | None, out_dir: Path
 ) -> tuple[dict[str, Any], dict[str, str]]:
     endpoint = f"{base_url.rstrip('/')}/api/v1/chat"
-
     steps_out: list[dict[str, Any]] = []
 
     for step in STEP_NAMES:
@@ -799,7 +902,7 @@ def run_capture(
             "input": prompt,
             "integrations": [integration],
             "temperature": 0,
-            "context_length": 14000,
+            "context_length": 16000,
         }
         response = _post_json(endpoint, payload, api_key)
         items = response.get("output", [])
@@ -837,7 +940,7 @@ def run_capture(
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Capture hospital CPM playbook session via LM Studio API.")
+    parser = argparse.ArgumentParser(description="Capture indie launch war-room session via LM Studio API.")
     parser.add_argument("--base-url", default=DEFAULT_BASE_URL, help="LM Studio API base URL")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="Model id from LM Studio /v1/models")
     parser.add_argument("--integration", default=DEFAULT_INTEGRATION, help="MCP integration id")
@@ -855,7 +958,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--validate",
         action="store_true",
-        help="Validate transcript structure and ingest counts after capture/render.",
+        help="Validate transcript structure and ingest/count invariants after capture/render.",
     )
     return parser.parse_args()
 

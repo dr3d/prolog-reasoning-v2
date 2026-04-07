@@ -34,14 +34,15 @@ Before manual chat copy/paste, you can run a scripted capture with validation:
 ./scripts/onboarding_mcp_smoke.ps1
 ```
 
-This runs three onboarding gates (hospital + fantasy + surface sanity) and returns one pass/fail summary.
+This runs four onboarding gates (hospital + fantasy + surface sanity + indie launch war room) and returns one pass/fail summary.
 
-On macOS/Linux, run the three validated gates directly:
+On macOS/Linux, run the four validated gates directly:
 
 ```bash
 python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
 python scripts/capture_fantasy_overlord_session.py --validate --out-dir docs/examples
 python scripts/capture_mcp_surface_playbook_session.py --validate --out-dir docs/examples
+python scripts/capture_indie_launch_warroom_session.py --validate --out-dir docs/examples
 ```
 
 Or run the hospital gate directly:
@@ -424,4 +425,184 @@ Optional scripted gate for this same surface pass:
 ```bash
 python scripts/capture_mcp_surface_playbook_session.py --validate --out-dir docs/examples
 ```
+
+## Playbook D: Indie Game Launch War Room (Conversational)
+
+Use this when you want a realistic, practical demo for newcomers that still feels like normal chat.
+
+### Step D1: Preflight
+
+Paste:
+
+```text
+Quick pulse check before we dive in.
+Use show_system_info and list_known_facts first.
+Then summarize in one paragraph what this MCP setup can and cannot do today.
+```
+
+### Step D2: Reset Runtime
+
+Paste:
+
+```text
+Use ONLY reset_kb. Confirm success in one sentence.
+```
+
+### Step D3: Ingest War-Room Baseline
+
+Paste:
+
+```text
+Use bulk_assert_facts with this full list, then verify counts with query_rows:
+- task(Task).
+- depends_on(Task, Prereq).
+- task_supplier(Task, Supplier).
+- supplier_status(Supplier, Status).
+- completed(Task).
+- milestone(M).
+
+Expected:
+- task: 15
+- depends_on: 24
+- task_supplier: 4
+- supplier_status: 4
+- completed: 4
+- milestone: 3
+- asserted_count: 62
+
+task(vertical_slice_lock).
+task(crash_triage_sweep).
+task(final_build_candidate).
+task(console_submission).
+task(platform_release_slot).
+task(launch_trailer_cut).
+task(press_kit_final).
+task(store_page_lock).
+task(localization_pack).
+task(streamer_preview_keys).
+task(day_one_patch).
+task(matchmaking_scale_test).
+task(community_faq_publish).
+task(embargo_briefing).
+task(global_launch).
+depends_on(crash_triage_sweep, vertical_slice_lock).
+depends_on(final_build_candidate, vertical_slice_lock).
+depends_on(final_build_candidate, crash_triage_sweep).
+depends_on(console_submission, final_build_candidate).
+depends_on(platform_release_slot, console_submission).
+depends_on(launch_trailer_cut, vertical_slice_lock).
+depends_on(press_kit_final, launch_trailer_cut).
+depends_on(store_page_lock, launch_trailer_cut).
+depends_on(store_page_lock, press_kit_final).
+depends_on(localization_pack, final_build_candidate).
+depends_on(streamer_preview_keys, platform_release_slot).
+depends_on(streamer_preview_keys, store_page_lock).
+depends_on(day_one_patch, final_build_candidate).
+depends_on(matchmaking_scale_test, final_build_candidate).
+depends_on(community_faq_publish, press_kit_final).
+depends_on(community_faq_publish, day_one_patch).
+depends_on(embargo_briefing, press_kit_final).
+depends_on(embargo_briefing, streamer_preview_keys).
+depends_on(global_launch, console_submission).
+depends_on(global_launch, day_one_patch).
+depends_on(global_launch, matchmaking_scale_test).
+depends_on(global_launch, store_page_lock).
+depends_on(global_launch, localization_pack).
+depends_on(global_launch, embargo_briefing).
+duration_days(crash_triage_sweep, 3).
+duration_days(final_build_candidate, 2).
+duration_days(console_submission, 4).
+duration_days(platform_release_slot, 2).
+duration_days(localization_pack, 5).
+duration_days(day_one_patch, 4).
+duration_days(matchmaking_scale_test, 3).
+duration_days(global_launch, 1).
+task_supplier(console_submission, console_cert_vendor).
+task_supplier(platform_release_slot, platform_ops_vendor).
+task_supplier(localization_pack, localization_vendor).
+task_supplier(matchmaking_scale_test, cloud_vendor).
+supplier_status(console_cert_vendor, on_time).
+supplier_status(platform_ops_vendor, on_time).
+supplier_status(localization_vendor, on_time).
+supplier_status(cloud_vendor, on_time).
+completed(vertical_slice_lock).
+completed(crash_triage_sweep).
+completed(launch_trailer_cut).
+completed(press_kit_final).
+milestone(platform_release_slot).
+milestone(embargo_briefing).
+milestone(global_launch).
+```
+
+### Step D4: Standup Snapshot
+
+Paste:
+
+```text
+Use ONLY query_rows for:
+- safe_to_start(Task).
+- waiting_on(Task, Prereq).
+- task_status(Task, Status).
+- delayed_milestone(Milestone, Supplier).
+
+Then use query_logic for:
+depends_on(global_launch, console_submission).
+
+Return: ready now, blockers, waiting chain, milestone risk.
+```
+
+### Step D5: Incident and Clarification
+
+Paste:
+
+```text
+Apply this cloud vendor incident:
+1) retract_fact supplier_status(cloud_vendor, on_time).
+2) assert_fact supplier_status(cloud_vendor, delayed).
+3) query_rows blocked_task(Task, Supplier).
+4) query_rows delayed_milestone(Milestone, Supplier).
+5) query_rows task_status(Task, Status).
+```
+
+Then paste:
+
+```text
+Incoming uncertain producer note:
+"I think launch date might be June 3, but it is not locked yet"
+Use classify_statement and return classification fields.
+Then use explain_error on:
+Entity 'mystery_vendor' not in KB
+Do not write any facts in this step.
+```
+
+### Step D6: Recovery
+
+Paste:
+
+```text
+Use only these tools in order:
+1) retract_fact supplier_status(cloud_vendor, delayed).
+2) assert_fact supplier_status(cloud_vendor, on_time).
+3) assert_fact completed(final_build_candidate).
+4) assert_fact completed(console_submission).
+5) assert_fact completed(platform_release_slot).
+6) query_rows safe_to_start(Task).
+7) query_rows waiting_on(Task, Prereq).
+8) query_rows delayed_milestone(Milestone, Supplier).
+9) query_rows task_status(Task, Status).
+
+Close with: ready now, still waiting, remaining launch risk.
+```
+
+Optional scripted gate:
+
+```bash
+python scripts/capture_indie_launch_warroom_session.py --validate --out-dir docs/examples
+```
+
+Captured artifacts:
+
+- `docs/examples/indie-launch-warroom-session.json`
+- `docs/examples/indie-launch-warroom-session.md`
+- [indie-launch-warroom-session.html](examples/indie-launch-warroom-session.html)
 

@@ -1,5 +1,11 @@
-# Prototype Track
+# Prototype Track (Docs)
 
-This folder contains adjacent prototypes that share symbolic ideas but are not core to the main logic-layer roadmap.
+This folder holds prototype-oriented writeups and playbooks.
+
+Runtime/code-level prototype scaffolding lives at repo root:
+
+- [../../prototypes/README.md](../../prototypes/README.md)
+
+Current docs in this track:
 
 - `constraint-editor-mvp-playbook.md`: constraint-graphics exploration and product playbook.

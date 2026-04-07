@@ -13,6 +13,8 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 
 - [hospital-cpm-playbook-session.html](hospital-cpm-playbook-session.html): CPM-style hospital control-room transcript.
 - [fantasy-overlord-session.html](fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view.
+- [examples/indie-launch-warroom-session.html](examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript.
+- [examples/indie-launch-warroom-natural-session.html](examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step).
 - [fantasy-overlord-session.md](fantasy-overlord-session.md): markdown version of the fantasy transcript.
 - [examples/](examples/): canonical captured transcript JSON/MD/HTML artifacts.
 
@@ -26,6 +28,7 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 - [drug-triage-walkthrough.md](drug-triage-walkthrough.md): deterministic triage logic walkthrough.
 - [drug-triage-agent-mcp-walkthrough.md](drug-triage-agent-mcp-walkthrough.md): LLM + MCP triage walkthrough.
 - [fantasy-overlord-mcp-walkthrough.md](fantasy-overlord-mcp-walkthrough.md): pause/resume simulation with multi-hop inference.
+- [indie-launch-warroom-mcp-walkthrough.md](indie-launch-warroom-mcp-walkthrough.md): launch ops war-room walkthrough with incident/recovery turns.
 
 ## Core Design Specs (Core)
 
@@ -56,6 +59,8 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 ## Prototype Track (Optional)
 
 - [prototypes/constraint-editor-mvp-playbook.md](prototypes/constraint-editor-mvp-playbook.md): constraint graphics MVP concept.
+- [prototypes/README.md](prototypes/README.md): prototype-track docs index.
+- [../prototypes/README.md](../prototypes/README.md): repo-level prototype workspace conventions (status lanes, promotion rules, template).
 
 ## Legacy References (Historical)
 

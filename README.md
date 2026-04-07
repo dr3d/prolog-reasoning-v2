@@ -6,7 +6,7 @@ Prolog Reasoning v2 is a local-first deterministic logic layer for LLM agents. I
 
 Here, `local-first` means the core reasoning loop can run on your own machine with local files, local models, and local tooling first, rather than depending on a cloud service as the source of truth.
 
-[![Tests](https://img.shields.io/badge/tests-105%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-107%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -69,7 +69,7 @@ These parts are implemented and working:
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `105 passed`
+- Test suite currently passing: `107 passed`
 
 Runtime boundary (important for reviewers):
 
@@ -123,6 +123,7 @@ python data/evaluate.py
 
 - Ask natural-language questions through MCP tools (`query_prolog`, `query_logic`, `query_rows`)
 - Run the MCP server for local LLM tools via [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
+- Run a conversational launch-ops demo via [docs/indie-launch-warroom-mcp-walkthrough.md](docs/indie-launch-warroom-mcp-walkthrough.md)
 - Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
 - Configure Hermes agent skill usage with [HERMES-AGENT-INSTALL.md](HERMES-AGENT-INSTALL.md)
 - Configure OpenClaw agent skill usage with [OPENCLAW-AGENT-INSTALL.md](OPENCLAW-AGENT-INSTALL.md)
@@ -182,6 +183,7 @@ scripts/         Demos and utility scripts
 tests/           Unit and integration tests
 data/            Benchmarks and evaluation artifacts
 docs/            Design docs, guides, diagrams, and session notes
+prototypes/      Experimental workspaces with status lanes and promotion rules
 training/        Beginner-facing learning materials
 prolog/          Knowledge-base files
 mvp/             Experimental constraint-graphics prototype
@@ -264,6 +266,7 @@ There is an exploratory constraint-based graphics editor in [mvp](mvp/). It is n
 Related doc:
 
 - [docs/prototypes/constraint-editor-mvp-playbook.md](docs/prototypes/constraint-editor-mvp-playbook.md)
+- [prototypes/README.md](prototypes/README.md)
 
 ## Current Status
 

@@ -105,6 +105,7 @@ try {
     $hospitalOut = Join-Path $OutRoot "hospital"
     $fantasyOut = Join-Path $OutRoot "fantasy"
     $surfaceOut = Join-Path $OutRoot "surface"
+    $indieOut = Join-Path $OutRoot "indie"
 
     $results = @()
     $results += Invoke-CaptureStep `
@@ -129,6 +130,15 @@ try {
         -Name "MCP Surface Sanity Capture" `
         -ScriptPath "scripts/capture_mcp_surface_playbook_session.py" `
         -OutputDir $surfaceOut `
+        -PythonExe $Python `
+        -BaseUrlValue $BaseUrl `
+        -ModelValue $Model `
+        -IntegrationValue $Integration
+
+    $results += Invoke-CaptureStep `
+        -Name "Indie Launch War Room Capture" `
+        -ScriptPath "scripts/capture_indie_launch_warroom_session.py" `
+        -OutputDir $indieOut `
         -PythonExe $Python `
         -BaseUrlValue $BaseUrl `
         -ModelValue $Model `
