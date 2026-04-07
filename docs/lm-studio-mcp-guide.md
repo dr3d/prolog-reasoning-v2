@@ -152,6 +152,23 @@ Or pass it explicitly:
 python scripts/demonstrate_family_tree_agent_mcp.py --api-key "<YOUR_LM_STUDIO_API_TOKEN>"
 ```
 
+The hospital playbook capture script supports the same auth pattern and includes
+an optional validation mode:
+
+```bash
+python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
+```
+
+For a one-command onboarding smoke check that runs both hospital and fantasy captures:
+
+```powershell
+./scripts/onboarding_mcp_smoke.ps1
+```
+
+If token auth is enabled and no valid token is provided, the script will fail
+with `HTTP 401` and a remediation hint. The script checks `LMSTUDIO_API_KEY`
+first, then `OPENAI_API_KEY`.
+
 ---
 
 ## Step 3: Use with Your LLM

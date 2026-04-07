@@ -24,6 +24,16 @@ from typing import Any
 DEFAULT_BASE_URL = "http://127.0.0.1:1234"
 DEFAULT_MODEL = "qwen/qwen3.5-9b"
 DEFAULT_INTEGRATION = "mcp/prolog-reasoning"
+STEP_NAMES = ["reset", "ingest", "snapshot", "storm_turn", "market_turn", "charm_turn", "recovery_turn"]
+INGEST_EXPECTED_COUNTS = {
+    "character(C).": 4,
+    "location(L).": 5,
+    "at(C, L).": 4,
+    "has_item(C, I).": 6,
+    "connected(A, B).": 8,
+    "status(C, S).": 4,
+}
+INGEST_EXPECTED_ASSERTED_COUNT = 43
 
 DISPLAY_TOOL_ALIASES = {
     "query_prolog_raw": "query_logic",
@@ -93,9 +103,132 @@ def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[s
             return json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
         raw = error.read().decode("utf-8", errors="replace")
+        if error.code == 401:
+            raise RuntimeError(
+                "HTTP 401 from LM Studio API. API auth appears enabled.\n"
+                "Set LM Studio API token before running scripted captures.\n"
+                "PowerShell example:\n"
+                "$env:LMSTUDIO_API_KEY = \"<YOUR_LM_STUDIO_API_TOKEN>\"\n"
+                "python scripts/capture_fantasy_overlord_session.py --validate\n"
+                "Or pass --api-key directly."
+            ) from error
         raise RuntimeError(f"HTTP {error.code}: {raw}") from error
     except urllib.error.URLError as error:
         raise RuntimeError(f"Connection error: {error}") from error
+
+
+def _extract_tool_output_json(output_field: Any) -> dict[str, Any] | None:
+    """Decode LM Studio tool-call output payload into a single dict when possible."""
+    if output_field is None:
+        return None
+
+    payload: Any = output_field
+    if isinstance(output_field, str):
+        try:
+            payload = json.loads(output_field)
+        except json.JSONDecodeError:
+            return None
+
+    if isinstance(payload, dict):
+        return payload
+
+    if isinstance(payload, list):
+        for item in payload:
+            if not isinstance(item, dict):
+                continue
+            text = item.get("text")
+            if not isinstance(text, str):
+                continue
+            try:
+                parsed = json.loads(text)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(parsed, dict):
+                return parsed
+
+    return None
+
+
+def validate_transcript(transcript: dict[str, Any]) -> list[str]:
+    """Validate key playbook invariants for newcomer success and reproducibility."""
+    findings: list[str] = []
+    steps_raw = transcript.get("steps", [])
+    if not isinstance(steps_raw, list):
+        return ["Transcript is missing a valid 'steps' list."]
+
+    actual_order = [step.get("step") for step in steps_raw if isinstance(step, dict)]
+    if actual_order != STEP_NAMES:
+        findings.append(f"Unexpected step order. Expected {STEP_NAMES}, got {actual_order}.")
+
+    by_step: dict[str, dict[str, Any]] = {}
+    for step in steps_raw:
+        if isinstance(step, dict) and isinstance(step.get("step"), str):
+            by_step[step["step"]] = step
+
+    for step_name in STEP_NAMES:
+        step = by_step.get(step_name)
+        if step is None:
+            findings.append(f"Missing step '{step_name}'.")
+            continue
+
+        tool_calls = step.get("tool_calls", [])
+        if not isinstance(tool_calls, list) or not tool_calls:
+            findings.append(f"Step '{step_name}' has no tool calls.")
+
+        assistant_message = str(step.get("assistant_message", "")).strip()
+        if not assistant_message:
+            findings.append(f"Step '{step_name}' has an empty assistant reply.")
+
+    ingest_step = by_step.get("ingest")
+    if ingest_step is not None:
+        ingest_calls = ingest_step.get("tool_calls", [])
+        if isinstance(ingest_calls, list):
+            bulk_call = None
+            for call in ingest_calls:
+                if isinstance(call, dict) and call.get("tool") in {"bulk_assert_facts", "bulk_assert_facts_raw"}:
+                    bulk_call = call
+                    break
+            if bulk_call is None:
+                findings.append("Ingest step did not call bulk_assert_facts.")
+            else:
+                bulk_json = _extract_tool_output_json(bulk_call.get("output"))
+                if bulk_json is None:
+                    findings.append("Ingest bulk_assert_facts output was not parseable JSON.")
+                else:
+                    asserted_count = bulk_json.get("asserted_count")
+                    failed_count = bulk_json.get("failed_count")
+                    if asserted_count != INGEST_EXPECTED_ASSERTED_COUNT:
+                        findings.append(
+                            f"Ingest asserted_count mismatch: expected {INGEST_EXPECTED_ASSERTED_COUNT}, got {asserted_count}."
+                        )
+                    if failed_count not in (0, None):
+                        findings.append(f"Ingest failed_count should be 0, got {failed_count}.")
+
+            for query, expected_rows in INGEST_EXPECTED_COUNTS.items():
+                matching_call = None
+                for call in ingest_calls:
+                    if not isinstance(call, dict) or call.get("tool") not in {"query_rows", "query_prolog_rows_raw"}:
+                        continue
+                    args = call.get("arguments", {})
+                    if isinstance(args, dict) and args.get("query") == query:
+                        matching_call = call
+                        break
+                if matching_call is None:
+                    findings.append(f"Ingest step missing count query '{query}'.")
+                    continue
+
+                query_json = _extract_tool_output_json(matching_call.get("output"))
+                if query_json is None:
+                    findings.append(f"Ingest query output for '{query}' was not parseable JSON.")
+                    continue
+
+                actual_rows = query_json.get("num_rows")
+                if actual_rows != expected_rows:
+                    findings.append(
+                        f"Ingest query '{query}' mismatch: expected {expected_rows} rows, got {actual_rows}."
+                    )
+
+    return findings
 
 
 def _facts_block() -> str:
@@ -695,11 +828,12 @@ def _write_outputs(transcript: dict[str, Any], out_dir: Path) -> dict[str, str]:
     return {"json": str(json_path), "markdown": str(md_path), "html": str(html_path)}
 
 
-def run_capture(base_url: str, model: str, integration: str, api_key: str | None, out_dir: Path) -> dict[str, str]:
+def run_capture(
+    base_url: str, model: str, integration: str, api_key: str | None, out_dir: Path
+) -> tuple[dict[str, Any], dict[str, str]]:
     endpoint = f"{base_url.rstrip('/')}/api/v1/chat"
-    step_names = ["reset", "ingest", "snapshot", "storm_turn", "market_turn", "charm_turn", "recovery_turn"]
     steps: list[dict[str, Any]] = []
-    for step in step_names:
+    for step in STEP_NAMES:
         prompt = _user_prompt(step)
         payload = {
             "model": model,
@@ -738,7 +872,7 @@ def run_capture(base_url: str, model: str, integration: str, api_key: str | None
         "integration": integration,
         "steps": steps,
     }
-    return _write_outputs(transcript, out_dir)
+    return transcript, _write_outputs(transcript, out_dir)
 
 
 def parse_args() -> argparse.Namespace:
@@ -750,8 +884,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--input-json", default="", help="Render markdown/html from an existing transcript JSON.")
     parser.add_argument(
         "--api-key",
-        default=os.environ.get("LMSTUDIO_API_KEY", ""),
-        help="LM Studio API key. Defaults to LMSTUDIO_API_KEY.",
+        default=os.environ.get("LMSTUDIO_API_KEY") or os.environ.get("OPENAI_API_KEY", ""),
+        help="LM Studio API key. Defaults to LMSTUDIO_API_KEY, then OPENAI_API_KEY.",
+    )
+    parser.add_argument(
+        "--validate",
+        action="store_true",
+        help="Validate transcript structure and ingest counts after capture/render.",
     )
     return parser.parse_args()
 
@@ -764,13 +903,22 @@ def main() -> int:
         outputs = _write_outputs(transcript, out_dir)
     else:
         api_key = args.api_key or None
-        outputs = run_capture(
+        transcript, outputs = run_capture(
             base_url=args.base_url,
             model=args.model,
             integration=args.integration,
             api_key=api_key,
             out_dir=out_dir,
         )
+
+    if args.validate:
+        findings = validate_transcript(transcript)
+        if findings:
+            print("Validation failed:")
+            for finding in findings:
+                print(f"- {finding}")
+            return 2
+        print("Validation passed.")
     print("Capture complete.")
     print(json.dumps(outputs, indent=2))
     return 0

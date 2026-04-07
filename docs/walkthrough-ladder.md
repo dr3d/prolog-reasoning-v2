@@ -25,7 +25,7 @@ For tool-only levels, LM Studio is not required.
 | 4 | Rule-derived table via MCP tool orchestration | `python scripts/demonstrate_rule_table_agent_mcp.py` | Yes |
 | 5 | Drug triage (deterministic constraint reasoning) | `python scripts/demonstrate_drug_triage_tool.py` | No |
 | 6 | Drug triage via MCP tool orchestration | `python scripts/demonstrate_drug_triage_agent_mcp.py` | Yes |
-| 7 | Fantasy simulation (pause/edit/resume state + multi-hop chains) | `python scripts/capture_fantasy_overlord_session.py --model qwen/qwen3.5-9b --out-dir docs/examples` | Yes |
+| 7 | Fantasy simulation (pause/edit/resume state + multi-hop chains) | `python scripts/capture_fantasy_overlord_session.py --model qwen/qwen3.5-9b --validate --out-dir docs/examples` | Yes |
 
 ## Suggested Run Order
 

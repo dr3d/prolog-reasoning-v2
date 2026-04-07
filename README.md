@@ -123,7 +123,7 @@ python data/evaluate.py
 - Failure explanations: [docs/failure-explanations.md](docs/failure-explanations.md)
 - LM Studio + MCP guide: [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - MCP chat playbooks (copy/paste): [docs/mcp-chat-playbooks.md](docs/mcp-chat-playbooks.md)
-- Session summaries: [sessions.md](sessions.md) and [docs/sessions/parts/2026-part-01.md](docs/sessions/parts/2026-part-01.md)
+- Session summaries: [sessions.md](sessions.md) (long-form session logs stay local-only until explicitly published)
 
 ### Build On It
 

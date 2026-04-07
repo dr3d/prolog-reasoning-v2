@@ -14,8 +14,12 @@ Demonstrate pause/edit/resume world-state control with multi-hop deterministic c
 ## Fast Capture
 
 ```bash
-python scripts/capture_fantasy_overlord_session.py --model qwen/qwen3.5-9b --out-dir docs/examples
+python scripts/capture_fantasy_overlord_session.py --model qwen/qwen3.5-9b --validate --out-dir docs/examples
 ```
+
+Expected success signal:
+
+- `Validation passed.`
 
 Outputs:
 

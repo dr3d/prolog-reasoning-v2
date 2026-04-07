@@ -25,6 +25,33 @@ Then wait for my next instruction.
 If LM Studio API auth is enabled, set `LMSTUDIO_API_KEY` before running scripted
 API demos. In normal interactive chat use, LM Studio handles MCP tool transport.
 
+### Fast Success Check (Recommended)
+
+Before manual chat copy/paste, you can run a scripted capture with validation:
+
+```powershell
+./scripts/onboarding_mcp_smoke.ps1
+```
+
+This runs both onboarding gates (hospital + fantasy) and returns one pass/fail summary.
+
+Or run the hospital gate directly:
+
+```bash
+# PowerShell (only needed if LM Studio API auth is enabled)
+$env:LMSTUDIO_API_KEY = "<YOUR_LM_STUDIO_API_TOKEN>"
+
+# Runs the full hospital playbook and validates ingest/count invariants
+python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
+```
+
+Expected success signal:
+
+- `Validation passed.`
+- `ONBOARDING MCP SMOKE: PASS` (if using the combined script)
+
+If you get `HTTP 401`, your API token is missing or invalid for LM Studio's HTTP API.
+
 ## How "Entries" Work In Chat
 
 For these playbooks, entries are facts asserted at runtime:
@@ -256,6 +283,7 @@ It now supports:
 
 - full capture from LM Studio API + MCP integration
 - render-only mode from an existing transcript JSON
+- optional transcript validation (`--validate`) for step structure + ingest counts
 - user-bubble copy buttons (`[copy]` -> `[copied]`)
 
 Render existing transcript artifacts without re-running the API session:
@@ -271,4 +299,10 @@ and a visible "Prolog Console" side panel in the rendered HTML transcript, use:
 
 - Walkthrough: [fantasy-overlord-mcp-walkthrough.md](fantasy-overlord-mcp-walkthrough.md)
 - Captured transcript (HTML): [fantasy-overlord-session.html](fantasy-overlord-session.html)
+
+Optional scripted gate:
+
+```bash
+python scripts/capture_fantasy_overlord_session.py --validate --out-dir docs/examples
+```
 
