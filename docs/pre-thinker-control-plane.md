@@ -100,6 +100,7 @@ The pre-thinker supports two adjacent but distinct lanes:
 Ownership split:
 - routing policy owns the clarification eagerness knob (`clarification_eagerness`),
 - pre-thinker emits the signals and candidate prompts.
+- operational decision table: `docs/secondary/clarification-eagerness-decision-table.md`
 
 ## 5.2 Clarification Eagerness (Policy Knob)
 

@@ -71,6 +71,9 @@ class PrologMCPServer:
         "can_trade",
         "can_cast_charm",
     }
+    DEFAULT_CONTROL_PLANE_POLICY = {
+        "clarification_eagerness": 0.0
+    }
     SUPPORTED_PREDICATES = [
         "parent",
         "sibling",
@@ -139,6 +142,9 @@ class PrologMCPServer:
         self.kb_path = self._resolve_kb_path(kb_path)
         self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
         self.statement_classifier = StatementClassifier()
+        # Reserved policy surface for future routing/clarification behavior.
+        # This is intentionally a no-op in current runtime logic.
+        self.control_plane_policy = dict(self.DEFAULT_CONTROL_PLANE_POLICY)
         self._request_id = 0
 
     def _resolve_kb_path(self, kb_path: str) -> Path:
@@ -823,6 +829,11 @@ class PrologMCPServer:
     
     def show_system_info(self) -> Dict[str, Any]:
         """Show system information and capabilities."""
+        control_plane_policy = getattr(
+            self,
+            "control_plane_policy",
+            dict(self.DEFAULT_CONTROL_PLANE_POLICY),
+        )
         return {
             "status": "success",
             "system": "Prolog Reasoning v2",
@@ -833,6 +844,14 @@ class PrologMCPServer:
             ),
             "knowledge_base_path": str(self.kb_path),
             "core_idea": "Memories are timestamped. Facts are not.",
+            "control_plane_policy": {
+                "clarification_eagerness": control_plane_policy.get("clarification_eagerness", 0.0),
+                "status": "no-op placeholder for future routing policy",
+                "note": (
+                    "This key is reserved for future clarification policy tuning. "
+                    "Current write behavior is unchanged."
+                ),
+            },
             "capabilities": [
                 "Natural language query processing",
                 "Statement classification before query or ingestion decisions",

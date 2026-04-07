@@ -44,6 +44,11 @@
       "proof generation"
     ]
   },
+  "control_plane_policy": {
+    "clarification_eagerness": 0.0,
+    "status": "no-op",
+    "note": "Reserved for future clarification policy in routing/intake control."
+  },
   "query_interface": {
     "command": "python src/engine/runner.py \"<query>\" --kb prolog/core.pl",
     "format": "Prolog syntax (e.g., 'parent(john, X).')",

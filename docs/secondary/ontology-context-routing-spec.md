@@ -136,6 +136,9 @@ Safety invariant:
 - this knob increases clarification attempts only.
 - it does not permit uncertain auto-commit.
 
+Reference policy table:
+- `docs/secondary/clarification-eagerness-decision-table.md`
+
 ## 7. Retrieval Policy
 
 Three deterministic modes:

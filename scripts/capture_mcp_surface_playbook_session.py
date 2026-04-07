@@ -156,6 +156,43 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+def _extract_tool_output_json(output_field: Any) -> dict[str, Any] | None:
+    """Decode LM Studio tool-call output payload into a dict when possible."""
+    if output_field is None:
+        return None
+
+    payload: Any = output_field
+    if isinstance(output_field, str):
+        try:
+            payload = json.loads(output_field)
+        except json.JSONDecodeError:
+            return None
+
+    if isinstance(payload, dict):
+        return payload
+
+    if isinstance(payload, list):
+        for item in payload:
+            if isinstance(item, dict):
+                text = item.get("text")
+                if isinstance(text, str):
+                    try:
+                        parsed = json.loads(text)
+                    except json.JSONDecodeError:
+                        continue
+                    if isinstance(parsed, dict):
+                        return parsed
+            elif isinstance(item, str):
+                try:
+                    parsed = json.loads(item)
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(parsed, dict):
+                    return parsed
+
+    return None
+
+
 def _render_html(transcript: dict[str, Any]) -> str:
     cards: list[str] = []
     for step in transcript["steps"]:
@@ -490,6 +527,43 @@ def validate_transcript(transcript: dict[str, Any]) -> list[str]:
     missing_tools = sorted(REQUIRED_TOOLS - seen_tools)
     if missing_tools:
         findings.append(f"Missing required tool usage: {missing_tools}")
+
+    # Smoke invariant: uncertain candidate facts must not auto-commit.
+    classify_step = next(
+        (s for s in steps if isinstance(s, dict) and s.get("step") == "classify"),
+        None,
+    )
+    if classify_step is not None:
+        classify_calls = [
+            c for c in classify_step.get("tool_calls", [])
+            if isinstance(c, dict) and c.get("tool") == "classify_statement"
+        ]
+        if not classify_calls:
+            findings.append("Classify step is missing classify_statement call.")
+        else:
+            classify_payload = _extract_tool_output_json(classify_calls[0].get("output"))
+            if classify_payload is None:
+                findings.append("Classify step output was not parseable JSON.")
+            else:
+                if classify_payload.get("can_persist_now") is not False:
+                    findings.append(
+                        "Invariant failed: uncertain classify step must return can_persist_now=false."
+                    )
+                if classify_payload.get("kind") != "tentative_fact":
+                    findings.append(
+                        "Invariant failed: classify step expected kind='tentative_fact'."
+                    )
+
+        write_tools = {"assert_fact", "bulk_assert_facts", "retract_fact", "reset_kb"}
+        unexpected_writes = sorted({
+            c.get("tool")
+            for c in classify_step.get("tool_calls", [])
+            if isinstance(c, dict) and c.get("tool") in write_tools
+        })
+        if unexpected_writes:
+            findings.append(
+                f"Invariant failed: classify step must not call write tools: {unexpected_writes}"
+            )
 
     return findings
 

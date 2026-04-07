@@ -229,6 +229,16 @@ class TestMCPServer:
         assert "known_relationships" not in result
         assert "supported predicate" in result["note"]
 
+    def test_show_system_info_exposes_noop_clarification_policy_key(self):
+        server = make_server()
+
+        result = server.show_system_info()
+
+        assert result["status"] == "success"
+        assert "control_plane_policy" in result
+        assert result["control_plane_policy"]["clarification_eagerness"] == 0.0
+        assert result["control_plane_policy"]["status"] == "no-op placeholder for future routing policy"
+
     def test_classify_statement_detects_query(self):
         server = make_server()
 
