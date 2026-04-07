@@ -118,6 +118,16 @@
       color: var(--muted);
     }
 
+    a.badge {
+      text-decoration: none;
+      color: var(--muted);
+    }
+
+    a.badge:hover {
+      color: var(--ink);
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    }
+
     .theme-btn {
       border: 1px solid var(--border);
       background: var(--paper);
@@ -460,8 +470,8 @@
   <main class="container">
     <div class="topbar">
       <div class="brandline">
-        <div class="badge">prolog-reasoning-v2</div>
-        <div class="badge">public docs showcase</div>
+        <a class="badge" href="https://dr3d.github.io/prolog-reasoning-v2/">prolog-reasoning-v2</a>
+        <a class="badge" href="https://github.com/dr3d/prolog-reasoning-v2/blob/main/docs/README.md">public docs showcase</a>
       </div>
       <button id="theme-toggle" class="theme-btn" type="button" aria-label="Toggle dark and light theme">theme: light</button>
     </div>
