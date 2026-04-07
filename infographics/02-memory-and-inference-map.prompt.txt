@@ -1,54 +1,82 @@
-Create a clean technical infographic (16:9, high-resolution, neutral color palette) titled:
+Create a polished 16:9 technical infographic (3200x1800) titled exactly:
 "Two Memory Systems, Two Inference Systems"
 
+Design goal:
+Balanced composition across the full canvas. Avoid center-clustering. Use the left third, middle third, and right third evenly so there is no large empty white area on the left.
+
 Style:
-- professional systems architecture poster
-- subtle gradients, soft shadows, no cartoon style
-- modern sans-serif typography, readable labels
-- visually balanced with clear directional flow arrows
+Professional systems architecture diagram, neutral light background, subtle gradients, soft shadows, clean sans-serif typography, high readability, no cartoon look.
 
-Core structure (must include):
-1) Left: "User Turn / Conversation"
-2) Center top: "Memory A: Active Conversation Memory (Short-term)"
-   - recent turns
-   - session goals
-   - active ontology context
-3) Center middle: "Inference A: Neural/Semantic Inference"
-   - intent parsing
-   - entity grounding
-   - context routing
-4) Center bottom: "Memory B: Symbolic Fact Memory (Long-term)"
-   - Prolog facts and rules
-   - context tags / metadata
-   - manifest and schema constraints
-5) Right middle: "Inference B: Symbolic/Deterministic Inference"
-   - backward chaining
-   - constraint propagation
-   - proof traces / failure traces
-6) Right: "Output"
-   - deterministic answer
-   - explanation/failure guidance
+Hard layout constraints (must follow):
+- Keep outer margin ~5% on all sides.
+- Place boxes on a clear 3-column grid:
+  1) Left column (x ~8% to 24%): User Turn / Conversation
+  2) Middle column (x ~34% to 56%): Memory A (top), Inference A (middle), Memory B (bottom)
+  3) Right column (x ~60% to 80%): Inference B
+  4) Far-right output (x ~83% to 96%): Output
+- Vertical spacing between stacked middle boxes should be even.
+- All boxes must have similar visual weight and aligned edges.
+- No text overlap, no cropped text, no tiny labels.
 
-Flow requirements:
-- User Turn -> Active Conversation Memory
-- Active Conversation Memory -> Neural/Semantic Inference
-- Neural/Semantic Inference -> Symbolic Fact Memory (scoped retrieval/write)
-- Symbolic Fact Memory -> Symbolic/Deterministic Inference
-- Symbolic/Deterministic Inference -> Output
-- Output -> back to Conversation loop
-- Conversation loop -> write validated facts back to Symbolic Fact Memory
+Box content (verbatim):
+1) Left:
+User Turn / Conversation
 
-Visual emphasis:
-- Show that short-term memory guides focus, long-term memory stores truth
-- Show that neural inference routes and interprets, symbolic inference proves
-- Include small legend:
-  - blue = memory
-  - orange = inference
-  - green = outputs
+2) Center top:
+Memory A:
+Active Conversation Memory
+(Short-term)
+• recent turns
+• session goals
+• active ontology context
 
-Text footer:
+3) Center middle:
+Inference A:
+Neural/Semantic Inference
+• intent parsing
+• entity grounding
+• context routing
+
+4) Center bottom:
+Memory B:
+Symbolic Fact Memory
+(Long-term)
+• Prolog facts and rules
+• context tags / metadata
+• manifest and schema constraints
+
+5) Right middle:
+Inference B:
+Symbolic/Deterministic Inference
+• backward chaining
+• constraint propagation
+• proof traces / failure traces
+
+6) Right:
+Output
+• deterministic answer
+• explanation/failure guidance
+
+Flow arrows (clean and readable):
+- User Turn -> Memory A
+- Memory A -> Inference A
+- Inference A -> Memory B (label: "scoped retrieval/write")
+- Memory B -> Inference B
+- Inference B -> Output
+- Output loops back to Conversation around outer border
+- Conversation loops to Memory B (label: "validated facts are written")
+
+Color semantics:
+- memory boxes = blue
+- inference boxes = orange
+- output box = green
+- Include small legend with exactly:
+  blue = memory
+  orange = inference
+  green = outputs
+
+Footer text (verbatim):
 "Focus from context. Reliability from proofs."
 
-Output:
-- transparent background version and white background version
-- save as PNG
+Quality bar:
+Symmetrical, balanced, presentation-ready infographic with intentional use of left-side space. No central crowding.
