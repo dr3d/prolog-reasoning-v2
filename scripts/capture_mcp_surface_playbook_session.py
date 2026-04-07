@@ -156,133 +156,290 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
-def _format_tool_output_preview(output_field: Any) -> str:
-    if output_field is None:
-        return "No output payload."
-
-    payload = output_field
-    if isinstance(output_field, str):
-        try:
-            payload = json.loads(output_field)
-        except json.JSONDecodeError:
-            return output_field
-
-    if isinstance(payload, dict):
-        for key in ("answer", "summary", "message", "explanation"):
-            value = payload.get(key)
-            if isinstance(value, str) and value.strip():
-                return value.strip()
-        return json.dumps(payload, ensure_ascii=True, indent=2)
-
-    if isinstance(payload, list):
-        return json.dumps(payload, ensure_ascii=True, indent=2)
-
-    return str(payload)
-
-
 def _render_html(transcript: dict[str, Any]) -> str:
-    sections: list[str] = []
+    cards: list[str] = []
     for step in transcript["steps"]:
         prompt_html = html.escape(step["prompt"].rstrip())
+        prompt_attr = html.escape(step["prompt"], quote=True)
         reply_html = html.escape(step["assistant_message"].rstrip() or "(empty reply)")
 
-        call_items: list[str] = []
+        tool_items: list[str] = []
         for call in step["tool_calls"]:
-            tool_name = html.escape(str(call.get("tool", "")))
             args = html.escape(json.dumps(call.get("arguments", {}), ensure_ascii=True))
-            preview = html.escape(_format_tool_output_preview(call.get("output")))
-            call_items.append(
-                "<li>"
-                f"<div><code>{tool_name}</code> <code>{args}</code></div>"
-                f"<details><summary>Output preview</summary><pre>{preview}</pre></details>"
-                "</li>"
+            tool_items.append(
+                f"<li><code>{html.escape(str(call.get('tool', '')))}</code> <code>{args}</code></li>"
             )
-        calls_html = "<ul>" + "".join(call_items) + "</ul>" if call_items else "<p>No tool calls.</p>"
+        calls_html = "<ul>" + "".join(tool_items) + "</ul>" if tool_items else "<p>No tool calls.</p>"
 
-        sections.append(
+        cards.append(
             f"""
-<section class="card">
-  <h2>Step: {html.escape(step["step"])}</h2>
-  <div class="label">User Prompt</div>
-  <pre class="prompt">{prompt_html}</pre>
-  <div class="label">Tool Calls</div>
-  {calls_html}
-  <div class="label">Assistant Reply</div>
-  <pre class="reply">{reply_html}</pre>
+<section class="step-card">
+  <h2>{html.escape(step["step"])}</h2>
+  <div class="bubble user">
+    <div class="bubble-head">
+      <div class="label">User</div>
+      <button class="copy-btn" data-copy="{prompt_attr}" aria-label="Copy user prompt">[copy]</button>
+    </div>
+    <pre>{prompt_html}</pre>
+  </div>
+  <div class="toolbox"><div class="label">Tool Calls</div>{calls_html}</div>
+  <div class="bubble assistant"><div class="label">Assistant</div><pre>{reply_html}</pre></div>
 </section>
 """.strip()
         )
 
+    body = "\n".join(cards)
+
     return f"""<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MCP Surface Playbook Session</title>
   <style>
     :root {{
-      --bg: #f3f5f7;
-      --card: #ffffff;
-      --ink: #12212c;
-      --muted: #4c5a64;
-      --border: #d5dee4;
-      --accent: #0f5f7c;
+      --bg: #e3ddd2;
+      --panel: #ece7de;
+      --ink: #201f1b;
+      --muted: #59544d;
+      --user: #decfba;
+      --assistant: #cedbe6;
+      --tool: #d9dfd3;
+      --border: #c2b9aa;
     }}
-    * {{ box-sizing: border-box; }}
+    html[data-theme="dark"] {{
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --user: #3b2f23;
+      --assistant: #21394d;
+      --tool: #293229;
+      --border: #3b4652;
+    }}
     body {{
       margin: 0;
-      font-family: "Segoe UI", Tahoma, sans-serif;
+      font-family: Georgia, "Times New Roman", serif;
       background: var(--bg);
       color: var(--ink);
+      line-height: 1.35;
     }}
     .wrap {{
       max-width: 1080px;
       margin: 0 auto;
-      padding: 20px 16px 40px;
+      padding: 24px;
     }}
-    h1 {{ margin: 0 0 8px; font-size: 1.55rem; }}
-    .meta {{ color: var(--muted); margin-bottom: 18px; }}
-    .card {{
-      background: var(--card);
+    h1 {{
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }}
+    .topbar {{
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }}
+    .topbar-right {{
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }}
+    .nav-links {{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }}
+    .nav-link {{
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 14px;
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      text-decoration: none;
+      white-space: nowrap;
     }}
-    h2 {{ margin: 0 0 10px; font-size: 1.05rem; color: var(--accent); }}
-    .label {{
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .nav-link:hover {{
+      filter: brightness(1.06);
+    }}
+    .theme-btn {{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }}
+    .theme-btn:hover {{
+      filter: brightness(1.06);
+    }}
+    .meta {{
+      font-family: "Courier New", monospace;
+      font-size: 13px;
       color: var(--muted);
-      margin: 10px 0 6px;
+      margin-bottom: 24px;
+    }}
+    .step-card {{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 16px;
+      margin-bottom: 16px;
+    }}
+    h2 {{
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      text-transform: capitalize;
+    }}
+    .bubble {{
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }}
+    .bubble-head {{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }}
+    .bubble.user {{ background: var(--user); }}
+    .bubble.assistant {{ background: var(--assistant); }}
+    .copy-btn {{
+      border: 1px solid #b7a990;
+      background: #fff4df;
+      border-radius: 8px;
+      color: #3e3a31;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 6px 8px;
+      cursor: pointer;
+    }}
+    .copy-btn:hover {{
+      background: #f8ebd2;
+    }}
+    .copy-btn.copied {{
+      border-color: #7e9e73;
+      background: #e5f0dd;
+      color: #2f5130;
+    }}
+    .label {{
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-family: "Courier New", monospace;
+    }}
+    .toolbox {{
+      background: var(--tool);
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
     }}
     pre {{
       margin: 0;
-      background: #f9fbfc;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
       white-space: pre-wrap;
-      overflow-wrap: anywhere;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
     }}
-    ul {{ margin: 6px 0 0 18px; padding: 0; }}
-    li {{ margin-bottom: 10px; }}
-    code {{
-      font-family: Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 0.9rem;
+    ul {{
+      margin: 0;
+      padding-left: 20px;
     }}
-    details {{ margin-top: 6px; }}
-    summary {{ cursor: pointer; color: var(--accent); }}
+    @media (max-width: 760px) {{
+      .topbar {{
+        flex-direction: column;
+      }}
+      .topbar-right {{
+        width: 100%;
+        align-items: flex-start;
+      }}
+      .nav-links {{
+        justify-content: flex-start;
+      }}
+    }}
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <h1>MCP Surface Playbook Session (Captured)</h1>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>MCP Surface Playbook Session</h1>
+      <div class="topbar-right">
+        <div class="nav-links">
+          <a class="nav-link" href="../docs-hub.html">Back to Docs Hub</a>
+          <a class="nav-link" href="https://github.com/dr3d/prolog-reasoning-v2">View Repo</a>
+        </div>
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+      </div>
+    </div>
     <div class="meta">Captured: {html.escape(transcript["captured_at"])} | Model: {html.escape(transcript["model"])} | Integration: {html.escape(transcript["integration"])}</div>
-    {"".join(sections)}
-  </main>
+    {body}
+  </div>
+  <script>
+    (() => {{
+      const root = document.documentElement;
+      const themeToggle = document.getElementById('theme-toggle');
+      const storageKey = 'surface_playbook_theme';
+
+      const setTheme = (theme) => {{
+        root.setAttribute('data-theme', theme);
+        if (themeToggle) {{
+          themeToggle.textContent = theme === 'dark' ? 'theme: dark' : 'theme: light';
+        }}
+      }};
+
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === 'dark' || stored === 'light') {{
+        setTheme(stored);
+      }} else {{
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(prefersDark ? 'dark' : 'light');
+      }}
+
+      if (themeToggle) {{
+        themeToggle.addEventListener('click', () => {{
+          const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+          setTheme(next);
+          window.localStorage.setItem(storageKey, next);
+        }});
+      }}
+
+      const buttons = document.querySelectorAll('.copy-btn');
+      for (const button of buttons) {{
+        button.addEventListener('click', async () => {{
+          const text = button.getAttribute('data-copy') || '';
+          const before = '[copy]';
+          try {{
+            await navigator.clipboard.writeText(text);
+            button.textContent = '[copied]';
+            button.classList.add('copied');
+          }} catch (error) {{
+            button.textContent = '[copy-failed]';
+          }}
+          window.setTimeout(() => {{
+            button.textContent = before;
+            button.classList.remove('copied');
+          }}, 1200);
+        }});
+      }}
+    }})();
+  </script>
 </body>
 </html>
 """
@@ -396,7 +553,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--input-json",
         default="",
-        help="Optional: render markdown from an existing transcript JSON instead of calling the API.",
+        help="Optional: render markdown/html from an existing transcript JSON instead of calling the API.",
     )
     parser.add_argument(
         "--api-key",
