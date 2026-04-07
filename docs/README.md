@@ -2,19 +2,22 @@
 
 This docs tree is intentionally organized by topic and maturity so active guidance stays easy to find.
 
+GitHub Pages base (for shareable rendered HTML):  
+`https://dr3d.github.io/prolog-reasoning-v2/`
+
 ## Start Here (Core)
 
 - [lm-studio-mcp-guide.md](lm-studio-mcp-guide.md): LM Studio + MCP setup and usage.
 - [mcp-chat-playbooks.md](mcp-chat-playbooks.md): copy/paste chat playbooks for deterministic tool use.
-- [index.html](index.html): default docs landing page with project intro and primary demo links.
-- [docs-hub.html](docs-hub.html): styled docs hub page.
+- [index.html](index.html): default docs landing page with project intro and primary demo links. Live: [dr3d.github.io/prolog-reasoning-v2/](https://dr3d.github.io/prolog-reasoning-v2/)
+- [docs-hub.html](docs-hub.html): styled docs hub page. Live: [dr3d.github.io/prolog-reasoning-v2/docs-hub.html](https://dr3d.github.io/prolog-reasoning-v2/docs-hub.html)
 
 ## Live Demo Artifacts (Core)
 
-- [hospital-cpm-playbook-session.html](hospital-cpm-playbook-session.html): CPM-style hospital control-room transcript.
-- [fantasy-overlord-session.html](fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view.
-- [examples/indie-launch-warroom-session.html](examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript.
-- [examples/indie-launch-warroom-natural-session.html](examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step).
+- [examples/hospital-cpm-playbook-session.html](examples/hospital-cpm-playbook-session.html): CPM-style hospital control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
+- [examples/fantasy-overlord-session.html](examples/fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view. Live: [dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
+- [examples/indie-launch-warroom-session.html](examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html)
+- [examples/indie-launch-warroom-natural-session.html](examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step). Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html)
 - [fantasy-overlord-session.md](fantasy-overlord-session.md): markdown version of the fantasy transcript.
 - [examples/](examples/): canonical captured transcript JSON/MD/HTML artifacts.
 
