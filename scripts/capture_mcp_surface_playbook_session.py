@@ -321,9 +321,9 @@ def _render_html(transcript: dict[str, Any]) -> str:
       border-radius: 8px;
       color: #3e3a31;
       font-family: "Courier New", monospace;
-      font-size: 12px;
+      font-size: 11px;
       line-height: 1;
-      padding: 6px 8px;
+      padding: 4px 6px;
       cursor: pointer;
     }}
     .copy-btn:hover {{
