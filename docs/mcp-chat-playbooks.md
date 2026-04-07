@@ -30,10 +30,18 @@ API demos. In normal interactive chat use, LM Studio handles MCP tool transport.
 Before manual chat copy/paste, you can run a scripted capture with validation:
 
 ```powershell
+# Windows / PowerShell
 ./scripts/onboarding_mcp_smoke.ps1
 ```
 
 This runs both onboarding gates (hospital + fantasy) and returns one pass/fail summary.
+
+On macOS/Linux, run the two validated gates directly:
+
+```bash
+python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
+python scripts/capture_fantasy_overlord_session.py --validate --out-dir docs/examples
+```
 
 Or run the hospital gate directly:
 

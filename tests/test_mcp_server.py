@@ -85,7 +85,7 @@ class TestMCPServer:
         assert response["result"]["capabilities"]["tools"]["listChanged"] is False
         assert response["result"]["serverInfo"]["name"] == "prolog-reasoning"
 
-    def test_tools_list_includes_classify_statement_and_write_tools(self):
+    def test_tools_list_hides_legacy_raw_aliases(self):
         server = make_server()
 
         response = server.process_request(
@@ -105,12 +105,89 @@ class TestMCPServer:
         assert "bulk_assert_facts" in tool_names
         assert "retract_fact" in tool_names
         assert "reset_kb" in tool_names
-        assert "query_prolog_raw" in tool_names
-        assert "query_prolog_rows_raw" in tool_names
-        assert "assert_fact_raw" in tool_names
-        assert "bulk_assert_facts_raw" in tool_names
-        assert "retract_fact_raw" in tool_names
-        assert "reset_runtime_kb" in tool_names
+        assert "query_prolog_raw" not in tool_names
+        assert "query_prolog_rows_raw" not in tool_names
+        assert "assert_fact_raw" not in tool_names
+        assert "bulk_assert_facts_raw" not in tool_names
+        assert "retract_fact_raw" not in tool_names
+        assert "reset_runtime_kb" not in tool_names
+
+    def test_legacy_raw_aliases_remain_callable_via_tools_call(self):
+        server = make_server()
+
+        # Alias to reset_kb (switch to real runtime skill instance)
+        response_reset = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 3,
+                "method": "tools/call",
+                "params": {"name": "reset_runtime_kb", "arguments": {}},
+            }
+        )
+        assert response_reset["result"]["structuredContent"]["status"] == "success"
+
+        # Alias to assert_fact
+        response_assert = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 4,
+                "method": "tools/call",
+                "params": {"name": "assert_fact_raw", "arguments": {"fact": "task(foundation)."}},
+            }
+        )
+        assert response_assert["result"]["structuredContent"]["status"] == "success"
+        response_assert_2 = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 5,
+                "method": "tools/call",
+                "params": {"name": "assert_fact_raw", "arguments": {"fact": "task(structural_frame)."}},
+            }
+        )
+        assert response_assert_2["result"]["structuredContent"]["status"] == "success"
+        response_assert_3 = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 6,
+                "method": "tools/call",
+                "params": {
+                    "name": "assert_fact_raw",
+                    "arguments": {"fact": "depends_on(structural_frame, foundation)."},
+                },
+            }
+        )
+        assert response_assert_3["result"]["structuredContent"]["status"] == "success"
+
+        # Alias to query_rows
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 7,
+                "method": "tools/call",
+                "params": {
+                    "name": "query_prolog_rows_raw",
+                    "arguments": {"query": "depends_on(Task, Prereq)."},
+                },
+            }
+        )
+
+        result = response["result"]["structuredContent"]
+        assert result["status"] == "success"
+        assert any(
+            row.get("Task") == "structural_frame" and row.get("Prereq") == "foundation"
+            for row in result.get("rows", [])
+        )
+
+        # Alias to reset_kb remains callable after mutations as well.
+        response_reset_again = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 8,
+                "method": "tools/call",
+                "params": {"name": "reset_runtime_kb", "arguments": {}},
+            }
+        )
+        assert response_reset_again["result"]["structuredContent"]["status"] == "success"
 
     def test_tools_call_wraps_result_and_makes_it_json_safe(self):
         server = make_server()

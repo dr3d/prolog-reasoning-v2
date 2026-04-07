@@ -151,7 +151,12 @@ class PrologMCPServer:
         return (repo_root / candidate).resolve()
         
     def get_tools(self) -> list:
-        """Return available tools for MCP."""
+        """Return available tools for MCP.
+
+        Legacy `_raw` aliases remain callable via `tools/call` for backward
+        compatibility, but are intentionally hidden from discovery to reduce
+        tool-list clutter in MCP clients.
+        """
         return [
             {
                 "name": "query_prolog",
@@ -241,85 +246,6 @@ class PrologMCPServer:
             {
                 "name": "reset_kb",
                 "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {}
-                }
-            },
-            {
-                "name": "query_prolog_raw",
-                "description": "Legacy alias of query_logic (kept for backward compatibility).",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {
-                            "type": "string",
-                            "description": "Raw Prolog query string (e.g., 'allowed(alice, read).' or 'parent(john, X).')"
-                        }
-                    },
-                    "required": ["query"]
-                }
-            },
-            {
-                "name": "query_prolog_rows_raw",
-                "description": "Legacy alias of query_rows (kept for backward compatibility).",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {
-                            "type": "string",
-                            "description": "Raw Prolog query with variables (e.g., 'waiting_on(Task, Prereq).')"
-                        }
-                    },
-                    "required": ["query"]
-                }
-            },
-            {
-                "name": "assert_fact_raw",
-                "description": "Legacy alias of assert_fact (kept for backward compatibility).",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "fact": {
-                            "type": "string",
-                            "description": "Ground Prolog fact string ending in '.' (e.g., 'depends_on(structure, foundation).')"
-                        }
-                    },
-                    "required": ["fact"]
-                }
-            },
-            {
-                "name": "bulk_assert_facts_raw",
-                "description": "Legacy alias of bulk_assert_facts (kept for backward compatibility).",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "facts": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": "List of ground Prolog fact strings."
-                        }
-                    },
-                    "required": ["facts"]
-                }
-            },
-            {
-                "name": "retract_fact_raw",
-                "description": "Legacy alias of retract_fact (kept for backward compatibility).",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "fact": {
-                            "type": "string",
-                            "description": "Ground Prolog fact string ending in '.' to remove."
-                        }
-                    },
-                    "required": ["fact"]
-                }
-            },
-            {
-                "name": "reset_runtime_kb",
-                "description": "Legacy alias of reset_kb (kept for backward compatibility).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {}
