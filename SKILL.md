@@ -54,8 +54,14 @@ Core claim:
 
 The current MCP server is good at:
 - `query_prolog`
+- `query_logic`
+- `query_rows`
 - `classify_statement`
 - `list_known_facts`
+- `assert_fact`
+- `bulk_assert_facts`
+- `retract_fact`
+- `reset_kb`
 - `explain_error`
 - `show_system_info`
 
@@ -63,12 +69,13 @@ It is not yet a full write path.
 
 Important current limitation:
 - `src/agent_skill.py` contains `add_fact()`, but it is still a stub.
-- The MCP layer does not expose a fact-writing tool.
+- MCP write tools are runtime-only (`assert_fact`, `bulk_assert_facts`, `retract_fact`, `reset_kb`) and do not provide durable journaled memory yet.
 - Natural-language statements like "my mother was ann" should not be treated as already-stored truth.
 
 So:
 - questions can be queried,
 - candidate facts can be classified,
+- runtime facts can be asserted/retracted for scenario simulation,
 - but durable storage still needs engineering.
 
 ## Quick Decision Tree

@@ -102,7 +102,7 @@ python3 src/mcp_server.py --test
 
 Expected result:
 - the server initializes,
-- the four tools are listed,
+- the canonical MCP tools are listed (query/query_rows/assert/retract/reset/classify/list/explain/info),
 - and the command exits cleanly.
 
 If this fails, stop and fix the repo installation before editing Hermes config.

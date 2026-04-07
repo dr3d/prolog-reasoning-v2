@@ -23,26 +23,33 @@ Control layers can propose actions, but they do not bypass deterministic gates.
 ### 2.1 Architecture Diagram
 
 ```mermaid
-flowchart LR
-  U[User or Agent Input] --> MCP[MCP Server / Chat Entry]
-  MCP --> C[Statement Classifier]
-  C --> S[Semantic Grounding]
-  S --> V[Deterministic Validation]
-  V --> E[Prolog Engine]
-  E --> X[Explanation Layer]
-  X --> O[Structured Response]
+flowchart TB
+  subgraph MAIN[Now: Runtime Path]
+    direction TB
+    U[User Input] --> MCP[MCP Entry]
+    MCP --> C[Classifier]
+    C --> S[Semantic Grounding]
+    S --> V[Validation]
+    V --> E[Prolog Engine]
+    E --> X[Explanation]
+    X --> O[Structured Response]
 
-  K[prolog/core.pl baseline seed] --> E
-  R[Runtime in-memory facts] --> E
+    V --> WP[Write-path Gates]
+    WP --> R[Runtime Facts]
+    R --> E
+    K[core.pl Seed KB] --> E
+  end
 
-  C -. Future .-> PT[Pre-thinker Model]
-  PT -. Future .-> OR[Ontological Routing Lane]
-  PT -. Future .-> CE[Clarification Eagerness Lane]
-  OR -. scoped context .-> V
-  CE -. clarify before handoff .-> V
+  subgraph FUTURE[Future: Control Extension]
+    direction TB
+    PT[Pre-thinker]
+    PT --> OR[Ontological Routing]
+    PT --> CE[Clarification Eagerness]
+  end
 
-  V --> WP[Write-path Policy Gates]
-  WP --> R
+  C -. Future .-> PT
+  OR -. Future scoped context .-> V
+  CE -. Future clarify before handoff .-> V
 
   classDef now fill:#e8f2ff,stroke:#2a5aa8,stroke-width:1px,color:#0f264a;
   classDef future fill:#fff4e5,stroke:#b26a00,stroke-dasharray: 5 3,color:#5a3300;

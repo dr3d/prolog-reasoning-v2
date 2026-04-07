@@ -69,7 +69,7 @@ These parts are implemented and working:
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `92 passed`
+- Test suite currently passing: `95 passed`
 
 What is still simplified or partly mocked:
 
@@ -89,6 +89,9 @@ pip install -r requirements.txt
 
 # Verify the current baseline
 python -m pytest tests -q
+
+# Quick docs drift check
+python scripts/check_docs_consistency.py
 ```
 
 Then start with a markdown walkthrough:
@@ -109,7 +112,7 @@ python data/evaluate.py
 
 ### Use It
 
-- Ask natural-language questions through `SemanticPrologSkill`
+- Ask natural-language questions through MCP tools (`query_prolog`, `query_logic`, `query_rows`)
 - Run the MCP server for local LLM tools via [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
 - Configure Hermes agent skill usage with [HERMES-AGENT-INSTALL.md](HERMES-AGENT-INSTALL.md)

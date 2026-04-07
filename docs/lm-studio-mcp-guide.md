@@ -268,7 +268,7 @@ Input: {}
     "admin", "alice", "bob", "john",
     "read", "write"
   ],
-  "known_relationships": [
+  "supported_predicates": [
     "parent", "sibling", "ancestor", "child",
     "allergic_to", "takes_medication",
     "user", "role", "permission", "access_level",
@@ -359,7 +359,7 @@ Every tool response has this structure:
 # Test the server manually
 python src/mcp_server.py --test
 
-# Check the output shows all 4 tools
+# Check the output shows the canonical MCP tool set
 # If not, you'll see the error
 ```
 

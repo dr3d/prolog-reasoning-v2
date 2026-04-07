@@ -7,8 +7,8 @@ This file is a compact public summary of recent project state.
 - Last major track completed: Simulation-oriented MCP demos with visible internals, plus pre-thinker LoRA bootstrap scaffolding
 - Current product direction: Core symbolic reliability first, with MVP editor treated as experimental
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13 (improved from 6/13)
-- Latest actions: Standardized capture UI copy controls to plain `copy`/`copied`, clarified pre-thinker architecture into two lanes (ontological routing + clarification eagerness), added a forward-looking clarification decision table (`docs/secondary/clarification-eagerness-decision-table.md`), added no-op `clarification_eagerness` policy surface (`src/mcp_server.py`, `kb_manifest.json`), and added a smoke invariant that uncertain classify steps do not auto-commit (`scripts/capture_mcp_surface_playbook_session.py` validation + MCP test coverage).
-- Next priority: Keep onboarding smoke gates green, run clarification logic in log-only mode before enabling behavior changes, and continue building pre-thinker evaluation slices for routing accuracy and safe ingestion under ambiguity.
+- Latest actions: Switched the architecture diagram to a top-down runtime/control layout (`architecture.md`), ran a docs consistency sweep to remove stale tool-count and schema wording, aligned install guides/skill docs with the real MCP surface, corrected public pass-count markers to `95 passed`, and added `scripts/check_docs_consistency.py` as a lightweight regression guard.
+- Next priority: Keep onboarding smoke gates green, keep docs/examples and install playbooks synchronized with live MCP behavior, and continue pre-thinker evaluation slices for routing accuracy and safe ingestion under ambiguity.
 
 ## Usage Notes
 

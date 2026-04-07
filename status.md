@@ -69,7 +69,7 @@ Current suite:
 - MVP validation test
 - MCP server tests
 
-**Current total:** `92 passed`
+**Current total:** `95 passed`
 
 The only recurring warning is the existing `.pytest_cache` permission warning on
 Windows.

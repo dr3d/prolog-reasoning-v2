@@ -5,7 +5,7 @@ Use these prompts to evaluate whether an external agent is using Prolog Reasonin
 What these tests are trying to catch:
 - answering from model memory instead of the symbolic layer,
 - treating statements as questions,
-- pretending candidate facts were stored when no write path exists,
+- pretending candidate facts were stored when no durable write path exists,
 - missing correction cues,
 - and failing to separate hard fact, tentative fact, session context, and preference memory.
 
@@ -40,7 +40,7 @@ What good looks like:
 What bad looks like:
 - agent answers as if it had queried the KB,
 - agent says "your mother was Ann" as though it proved it,
-- agent claims it stored the fact when no write path exists.
+- agent claims it stored the fact when no durable write path exists.
 
 ## Test 3: Tentative Memory
 

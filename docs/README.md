@@ -64,9 +64,8 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 
 ## Session Records
 
-- [sessions/](sessions/): long-form session notes and part files.
-- [sessions/README.md](sessions/README.md): sessions folder note.
-- [../sessions.md](../sessions.md): compact session tracker in repo root.
+- Long-form session notes stay local-only under `sessions/parts/` and are not published.
+- [../sessions.md](../sessions.md): compact public session tracker in repo root.
 
 ## Intentional Repo-Root Markdown
 
