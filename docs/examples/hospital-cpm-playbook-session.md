@@ -1,6 +1,6 @@
 # Hospital CPM Playbook Session (Captured)
 
-- Captured at: 2026-04-06T23:26:33.252391+00:00
+- Captured at: 2026-04-07T01:36:56.158673+00:00
 - Model: `qwen/qwen3.5-9b`
 - Integration: `mcp/prolog-reasoning`
 
@@ -110,18 +110,18 @@ milestone(go_live).
 
 ## Query Results Summary
 
-All facts were successfully asserted (55/55). Here are the raw counts from each query:
+All queries executed successfully with no count mismatches:
 
-| Query | Count | Expected | Status |
-|-------|-------|----------|--------|
-| `task(Task)` | **16** | 16 | ✓ Match |
-| `depends_on(Task, Prereq)` | **20** | 20 | ✓ Match |
-| `task_supplier(Task, Supplier)` | **3** | 3 | ✓ Match |
-| `supplier_status(Supplier, Status)` | **3** | 3 | ✓ Match |
-| `completed(Task)` | **3** | 3 | ✓ Match |
-| `milestone(M)` | **3** | 3 | ✓ Match |
+| Query | Raw Count | Expected | Status |
+|-------|-----------|----------|--------|
+| `task(Task).` | **16** | 16 | ✓ Match |
+| `depends_on(Task, Prereq).` | **20** | 20 | ✓ Match |
+| `task_supplier(Task, Supplier).` | **3** | 3 | ✓ Match |
+| `supplier_status(Supplier, Status).` | **3** | 3 | ✓ Match |
+| `completed(Task).` | **3** | 3 | ✓ Match |
+| `milestone(M).` | **3** | 3 | ✓ Match |
 
-**All counts match expected values. No mismatches detected.**
+All 55 facts were successfully asserted and all query counts match the expected values. No mismatches detected.
 
 ## Step: baseline
 
@@ -211,7 +211,8 @@ Do not call query_prolog.
 ---
 
 ### 4. delayed_milestone(Milestone, Supplier)
-*(No results found)*
+| Milestone | Supplier |
+|-----------|----------|
 
 **Row Count: 0**
 
@@ -243,17 +244,17 @@ Return three tables and one short propagation narrative.
 
 ## Three Tables
 
-### Table 1: blocked_task(Task, Supplier)
+### Table 1: Blocked Tasks
 | Task | Supplier |
 |------|----------|
 | enclosure_glazing | glass_vendor |
 
-### Table 2: delayed_milestone(Milestone, Supplier)
+### Table 2: Delayed Milestones
 | Milestone | Supplier |
 |-----------|----------|
 | *(no results)* | *(no results)* |
 
-### Table 3: task_status(Task, Status)
+### Table 3: Task Status
 | Task | Status |
 |------|--------|
 | enclosure_glazing | blocked |
@@ -273,11 +274,9 @@ Return three tables and one short propagation narrative.
 | occupancy_permit | waiting |
 | go_live | waiting |
 
----
-
 ## Propagation Narrative
 
-The supplier status change from `on_time` to `delayed` for `glass_vendor` triggered a cascade effect through the knowledge base. This single fact modification caused the `enclosure_glazing` task to transition into a **blocked** state, as it depends on glass vendor delivery. Consequently, all downstream tasks that depend on enclosure glazing completion—such as interior buildout, HVAC commissioning, medical gas certification, OR fitout, imaging suite installation, IT network core setup, regulatory inspection, occupancy permit, and go-live—have shifted to **waiting** status. The system correctly identified no directly delayed milestones, but the supplier delay has propagated through task dependencies, creating a bottleneck at the glazing stage that blocks progress across multiple subsequent construction phases.
+When the supplier_status for glass_vendor was changed from `on_time` to `delayed`, the knowledge base propagated this change through its rule-based system. The enclosure_glazing task, which depends on the glass vendor, immediately transitioned to a **blocked** status as shown in the blocked_task table. No delayed milestones were triggered (empty result), indicating that milestone delays are computed separately from supplier status changes. The overall project impact is localized: only enclosure_glazing is affected, while all other tasks remain in their original states (ready or waiting). This demonstrates the system's ability to isolate and propagate supply chain disruptions through task dependencies without cascading failures across unrelated work streams.
 
 ## Step: shock_medgas
 
@@ -309,34 +308,32 @@ Based on the query results, here's the analysis:
 
 ## Current State Summary:
 - **medgas_vendor** is now marked as **delayed** (fact updated)
-- **6 blocked tasks**, 5 of which are from medgas_vendor including **go_live itself**
+- **6 blocked tasks** identified, all involving medgas_vendor except enclosure_glazing (glass_vendor)
 - **3 delayed milestones**: regulatory_inspection, occupancy_permit, and go_live (all from medgas_vendor)
-- **5 tasks waiting on prerequisites**, with interior_buildout being a critical path blocker
+- **5 tasks waiting on prerequisites**, with interior_buildout being a critical dependency for hvac_commissioning, imaging_suite_install, and it_network_core
+
+---
 
 ## Top 3 Interventions to Protect Go_Live:
 
-### 1. **Immediate Medgas Vendor Escalation & Expedited Resolution**
-   - **Why**: medgas_vendor is blocking 6 tasks including go_live itself, and 3 critical milestones (regulatory_inspection, occupancy_permit, go_live) are delayed
-   - **Action**: 
-     - Contact medgas_vendor immediately to identify delay root cause
-     - Request expedited scheduling for medical_gas_cert, or_fitout, regulatory_inspection, occupancy_permit, and go_live tasks
-     - Consider penalty clauses or contract escalation if delays continue
+### 1. **Immediate Escalation & Expedited Delivery from medgas_vendor**
+   - **Action**: Escalate to senior management/contractor leadership for medgas_vendor deliverables (medical_gas_cert, regulatory_inspection, occupancy_permit, go_live)
+   - **Rationale**: medgas_vendor is blocking 6 critical tasks and causing 3 delayed milestones including go_live itself. This is the root cause requiring immediate intervention.
+   - **Timeline**: Within 24 hours
 
-### 2. **Critical Path Interior Buildout Prerequisite Acceleration**
-   - **Why**: interior_buildout is waiting on mep_rough_in AND fireproofing, blocking hvac_commissioning, imaging_suite_install, and it_network_core
-   - **Action**:
-     - Prioritize completion of mep_rough_in and fireproofing immediately
-     - Deploy additional resources to these prerequisite tasks
-     - Ensure interior_buildout can proceed without further delays
+### 2. **Parallel Workstream Activation for Interior Buildout Dependencies**
+   - **Action**: Expedite mep_rough_in and fireproofing completion to unblock interior_buildout, which is a prerequisite for hvac_commissioning, imaging_suite_install, and it_network_core
+   - **Rationale**: Prevents cascading delays downstream. These tasks are waiting on interior_buildout, which depends on two other prerequisites that need acceleration.
+   - **Timeline**: Within 48 hours
 
-### 3. **Contingency Planning for Regulatory & Permit Dependencies**
-   - **Why**: regulatory_inspection and occupancy_permit are both blocked by medgas_vendor, creating a critical path risk to go_live
-   - **Action**:
-     - Engage with regulatory bodies to explore expedited inspection pathways
-     - Develop temporary compliance measures or phased permitting approach
-     - Create backup vendor options for medical gas certification if primary vendor cannot meet timeline
+### 3. **Contingency Planning for Regulatory & Occupancy Milestones**
+   - **Action**: Develop alternative pathways or parallel processing options for regulatory_inspection and occupancy_permit (both delayed due to medgas_vendor)
+   - **Rationale**: These are critical path milestones that directly impact go_live. Having contingency plans ensures project continuity if delays persist beyond acceptable thresholds.
+   - **Timeline**: Within 72 hours
 
-These interventions address the immediate supplier delay, the cascading dependency risks, and create contingency buffers to protect the go_live milestone.
+---
+
+**Critical Path Impact**: The medgas_vendor delay is the single biggest risk to go_live, affecting both direct tasks and milestone dependencies. Immediate supplier escalation is the highest priority intervention.
 
 ## Step: recovery
 
@@ -370,7 +367,7 @@ Return sections: Ready now, Still waiting, Remaining milestone risks.
 
 
 
-Based on the executed operations and query results, here are the organized sections:
+Based on the query results, here are the three sections:
 
 ## Ready now
 The following tasks are safe to start:
@@ -390,10 +387,10 @@ The following tasks are waiting on prerequisites:
 - it_network_core (waiting on: interior_buildout)
 
 ## Remaining milestone risks
-The following milestones are delayed with their respective suppliers:
-- regulatory_inspection (medgas_vendor)
-- occupancy_permit (medgas_vendor)
-- go_live (medgas_vendor)
+The following milestones have delays associated with medgas_vendor:
+- regulatory_inspection
+- occupancy_permit
+- go_live
 
 ## Daily Ops Chat Snippets (Illustrative)
 

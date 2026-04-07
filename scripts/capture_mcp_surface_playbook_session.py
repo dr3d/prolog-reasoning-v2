@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import html
 import json
 import os
 import urllib.error
@@ -155,13 +156,147 @@ def _render_markdown(transcript: dict[str, Any]) -> str:
     return "\n".join(lines).strip() + "\n"
 
 
+def _format_tool_output_preview(output_field: Any) -> str:
+    if output_field is None:
+        return "No output payload."
+
+    payload = output_field
+    if isinstance(output_field, str):
+        try:
+            payload = json.loads(output_field)
+        except json.JSONDecodeError:
+            return output_field
+
+    if isinstance(payload, dict):
+        for key in ("answer", "summary", "message", "explanation"):
+            value = payload.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        return json.dumps(payload, ensure_ascii=True, indent=2)
+
+    if isinstance(payload, list):
+        return json.dumps(payload, ensure_ascii=True, indent=2)
+
+    return str(payload)
+
+
+def _render_html(transcript: dict[str, Any]) -> str:
+    sections: list[str] = []
+    for step in transcript["steps"]:
+        prompt_html = html.escape(step["prompt"].rstrip())
+        reply_html = html.escape(step["assistant_message"].rstrip() or "(empty reply)")
+
+        call_items: list[str] = []
+        for call in step["tool_calls"]:
+            tool_name = html.escape(str(call.get("tool", "")))
+            args = html.escape(json.dumps(call.get("arguments", {}), ensure_ascii=True))
+            preview = html.escape(_format_tool_output_preview(call.get("output")))
+            call_items.append(
+                "<li>"
+                f"<div><code>{tool_name}</code> <code>{args}</code></div>"
+                f"<details><summary>Output preview</summary><pre>{preview}</pre></details>"
+                "</li>"
+            )
+        calls_html = "<ul>" + "".join(call_items) + "</ul>" if call_items else "<p>No tool calls.</p>"
+
+        sections.append(
+            f"""
+<section class="card">
+  <h2>Step: {html.escape(step["step"])}</h2>
+  <div class="label">User Prompt</div>
+  <pre class="prompt">{prompt_html}</pre>
+  <div class="label">Tool Calls</div>
+  {calls_html}
+  <div class="label">Assistant Reply</div>
+  <pre class="reply">{reply_html}</pre>
+</section>
+""".strip()
+        )
+
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Surface Playbook Session</title>
+  <style>
+    :root {{
+      --bg: #f3f5f7;
+      --card: #ffffff;
+      --ink: #12212c;
+      --muted: #4c5a64;
+      --border: #d5dee4;
+      --accent: #0f5f7c;
+    }}
+    * {{ box-sizing: border-box; }}
+    body {{
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }}
+    .wrap {{
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }}
+    h1 {{ margin: 0 0 8px; font-size: 1.55rem; }}
+    .meta {{ color: var(--muted); margin-bottom: 18px; }}
+    .card {{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }}
+    h2 {{ margin: 0 0 10px; font-size: 1.05rem; color: var(--accent); }}
+    .label {{
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }}
+    pre {{
+      margin: 0;
+      background: #f9fbfc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }}
+    ul {{ margin: 6px 0 0 18px; padding: 0; }}
+    li {{ margin-bottom: 10px; }}
+    code {{
+      font-family: Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.9rem;
+    }}
+    details {{ margin-top: 6px; }}
+    summary {{ cursor: pointer; color: var(--accent); }}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>MCP Surface Playbook Session (Captured)</h1>
+    <div class="meta">Captured: {html.escape(transcript["captured_at"])} | Model: {html.escape(transcript["model"])} | Integration: {html.escape(transcript["integration"])}</div>
+    {"".join(sections)}
+  </main>
+</body>
+</html>
+"""
+
+
 def _write_outputs(transcript: dict[str, Any], out_dir: Path) -> dict[str, str]:
     out_dir.mkdir(parents=True, exist_ok=True)
     json_path = out_dir / "mcp-surface-playbook-session.json"
     md_path = out_dir / "mcp-surface-playbook-session.md"
+    html_path = out_dir / "mcp-surface-playbook-session.html"
     json_path.write_text(json.dumps(transcript, indent=2), encoding="utf-8")
     md_path.write_text(_render_markdown(transcript), encoding="utf-8")
-    return {"json": str(json_path), "markdown": str(md_path)}
+    html_path.write_text(_render_html(transcript), encoding="utf-8")
+    return {"json": str(json_path), "markdown": str(md_path), "html": str(html_path)}
 
 
 def validate_transcript(transcript: dict[str, Any]) -> list[str]:
