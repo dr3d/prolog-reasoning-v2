@@ -159,7 +159,7 @@ an optional validation mode:
 python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
 ```
 
-For a one-command onboarding smoke check that runs both hospital and fantasy captures:
+For a one-command onboarding smoke check that runs hospital, fantasy, and surface-sanity captures:
 
 ```powershell
 # Windows / PowerShell
@@ -171,6 +171,7 @@ On macOS/Linux, run the same validated checks directly:
 ```bash
 python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
 python scripts/capture_fantasy_overlord_session.py --validate --out-dir docs/examples
+python scripts/capture_mcp_surface_playbook_session.py --validate --out-dir docs/examples
 ```
 
 If token auth is enabled and no valid token is provided, the script will fail

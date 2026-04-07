@@ -34,13 +34,14 @@ Before manual chat copy/paste, you can run a scripted capture with validation:
 ./scripts/onboarding_mcp_smoke.ps1
 ```
 
-This runs both onboarding gates (hospital + fantasy) and returns one pass/fail summary.
+This runs three onboarding gates (hospital + fantasy + surface sanity) and returns one pass/fail summary.
 
-On macOS/Linux, run the two validated gates directly:
+On macOS/Linux, run the three validated gates directly:
 
 ```bash
 python scripts/capture_hospital_playbook_session.py --validate --out-dir docs/examples
 python scripts/capture_fantasy_overlord_session.py --validate --out-dir docs/examples
+python scripts/capture_mcp_surface_playbook_session.py --validate --out-dir docs/examples
 ```
 
 Or run the hospital gate directly:
@@ -312,5 +313,115 @@ Optional scripted gate:
 
 ```bash
 python scripts/capture_fantasy_overlord_session.py --validate --out-dir docs/examples
+```
+
+## Playbook C: MCP Surface Sanity (Interactive)
+
+Use this when onboarding someone new and you want a fast "most tools in one chat"
+confidence pass without a long narrative scenario.
+
+### Step C1: Preflight
+
+Paste:
+
+```text
+Use show_system_info and list_known_facts first.
+Then summarize the active KB profile in one paragraph and wait.
+```
+
+### Step C2: Clean Start
+
+Paste:
+
+```text
+Use ONLY reset_kb. Confirm success in one sentence.
+```
+
+### Step C3: Seed Minimal Facts
+
+Paste:
+
+```text
+Use bulk_assert_facts with:
+task(alpha).
+task(beta).
+depends_on(beta, alpha).
+supplier_status(alpha_vendor, on_time).
+
+Then use assert_fact with:
+completed(alpha).
+
+Return asserted_count and a one-line sanity summary.
+```
+
+### Step C4: Table Query
+
+Paste:
+
+```text
+Use ONLY query_rows with:
+depends_on(Task, Prereq).
+
+Return rows and count.
+```
+
+### Step C5: Boolean Logic Query
+
+Paste:
+
+```text
+Use ONLY query_logic with:
+depends_on(beta, alpha).
+
+Return short answer and detailed answer.
+```
+
+### Step C6: Natural-Language Query
+
+Paste:
+
+```text
+Use ONLY query_prolog on:
+What task depends on alpha?
+```
+
+### Step C7: Statement Classification
+
+Paste:
+
+```text
+Use ONLY classify_statement on:
+Maybe my mother was Ann.
+
+Return classification fields only.
+```
+
+### Step C8: Error Explainability
+
+Paste:
+
+```text
+Use ONLY explain_error with:
+Entity 'charlie' not in KB
+
+Return explanation and suggested next actions.
+```
+
+### Step C9: Cleanup
+
+Paste:
+
+```text
+Use ONLY these tools in order:
+1) retract_fact completed(alpha).
+2) reset_kb
+
+Confirm cleanup complete.
+```
+
+Optional scripted gate for this same surface pass:
+
+```bash
+python scripts/capture_mcp_surface_playbook_session.py --validate --out-dir docs/examples
 ```
 

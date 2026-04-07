@@ -56,18 +56,24 @@ function Invoke-CaptureStep {
     Write-Host ""
     Write-Host "=== Running: $Name ==="
 
-    $stepOutput = & $PythonExe $ScriptPath `
-        --validate `
-        --base-url $BaseUrlValue `
-        --model $ModelValue `
-        --integration $IntegrationValue `
-        --out-dir $OutputDir 2>&1
+    $priorErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $stepOutput = & $PythonExe $ScriptPath `
+            --validate `
+            --base-url $BaseUrlValue `
+            --model $ModelValue `
+            --integration $IntegrationValue `
+            --out-dir $OutputDir 2>&1
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $priorErrorAction
+    }
 
     foreach ($line in $stepOutput) {
         Write-Host $line
     }
-
-    $exitCode = $LASTEXITCODE
     if ($exitCode -ne 0) {
         return [PSCustomObject]@{
             Name   = $Name
@@ -98,6 +104,7 @@ try {
 
     $hospitalOut = Join-Path $OutRoot "hospital"
     $fantasyOut = Join-Path $OutRoot "fantasy"
+    $surfaceOut = Join-Path $OutRoot "surface"
 
     $results = @()
     $results += Invoke-CaptureStep `
@@ -113,6 +120,15 @@ try {
         -Name "Fantasy Overlord Capture" `
         -ScriptPath "scripts/capture_fantasy_overlord_session.py" `
         -OutputDir $fantasyOut `
+        -PythonExe $Python `
+        -BaseUrlValue $BaseUrl `
+        -ModelValue $Model `
+        -IntegrationValue $Integration
+
+    $results += Invoke-CaptureStep `
+        -Name "MCP Surface Sanity Capture" `
+        -ScriptPath "scripts/capture_mcp_surface_playbook_session.py" `
+        -OutputDir $surfaceOut `
         -PythonExe $Python `
         -BaseUrlValue $BaseUrl `
         -ModelValue $Model `
