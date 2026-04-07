@@ -100,6 +100,15 @@ Output:
 - predicate/entity matches in parsed IR,
 - continuity bonus for previous active context,
 - explicit user cues ("switch to legal", "back to healthcare").
+- manifest alignment score for candidate fact terms.
+
+Optional control-plane inputs from pre-thinker:
+- `clarification_eagerness` (Fact Pull policy knob),
+- candidate fact confidence,
+- ambiguity flags for entity/relation mapping.
+
+Roadmap note:
+- these inputs are optional future-lane controls and can remain disabled in current deployments.
 
 ## 6.2 Selection Rules
 
@@ -134,6 +143,16 @@ For each new fact assertion:
    - route to better context, or
    - store as `unstructured` for deferred audit.
 4. Persist fact with context metadata.
+
+For uncertain but high-manifest-match candidates:
+1. Run clarification pass before persistence.
+2. Ask targeted confirmation prompt ("did you mean ...?").
+3. Persist only on explicit confirmation.
+4. Otherwise keep tentative or skip write.
+
+Policy note:
+- higher `clarification_eagerness` increases clarification attempts,
+- it does not authorize uncertain auto-commit.
 
 ## 9. Explainability Requirements
 

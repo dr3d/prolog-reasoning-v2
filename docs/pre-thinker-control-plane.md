@@ -66,6 +66,9 @@ Suggested fields:
 - `context_id`
 - `context_confidence`
 - `memory_operation`: `assert | tentative | confirm | retract | supersede | none`
+- `clarification_eagerness`: float in `[0.0, 1.0]`
+- `confirmation_required`: bool
+- `clarification_prompt`: optional targeted "did you mean...?" prompt
 - `correction_cue`: optional label
 - `escalation_required`: bool
 - `escalation_reason`: optional text
@@ -76,6 +79,40 @@ This record is consumed by:
 - ontology-scoped retrieval policy,
 - contradiction and revision workflows,
 - and optional larger-model orchestration.
+
+## 5.1 Fact Pull (Clarification Policy Knob)
+
+User-facing concept: **Fact Pull**  
+Policy/config key: `clarification_eagerness`
+
+Roadmap note:
+- this is a forward-looking control policy, not a mandatory current-runtime behavior.
+
+Purpose:
+- increase eagerness to confirm uncertain but relevant facts,
+- without lowering deterministic write safety.
+
+Interpretation:
+- `0.0`: conservative; clarify only near-commit cases.
+- `0.5`: balanced; clarify medium-confidence manifest-matched facts.
+- `1.0`: aggressive harvest mode; ask targeted clarification before dropping likely facts.
+
+Important safety rule:
+- higher Fact Pull means more clarification attempts, not more auto-commits.
+
+## 5.2 Clarification Loop
+
+When a turn maps to likely KB terms but confidence is below auto-commit threshold:
+1. Generate one targeted clarification question.
+2. Ask user to confirm/adjust the candidate fact shape.
+3. If confirmed, apply write operation.
+4. If corrected, reframe and ask once more.
+5. If unresolved after policy limit, keep as tentative or skip persistence.
+
+Recommended caps:
+- one question at a time,
+- bounded retries per candidate,
+- explicit confirmation required for uncertain persistence.
 
 ## 6. Interaction With Existing Specs
 

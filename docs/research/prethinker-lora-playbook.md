@@ -42,6 +42,20 @@ This keeps the pre-thinker stateless and advisory:
 - it proposes routing
 - deterministic policy still decides write/commit behavior
 
+## Clarification Policy Target (Future Lane)
+
+User-facing concept: **Fact Pull**  
+Config/policy key: `clarification_eagerness`
+
+Intended behavior for later phases:
+- when statement confidence is below commit threshold but ontology/manifest match is high,
+- prompt targeted clarification ("did you mean ...?") to improve fact capture quality,
+- require explicit confirmation before uncertain persistence.
+
+Training implication:
+- evaluate not only classification accuracy,
+- also clarification precision (asks when needed) and confirmation safety (no uncertain auto-commit).
+
 ## Bootstrap Dataset Pipeline
 
 Generate weak-label synthetic bootstrap data:
