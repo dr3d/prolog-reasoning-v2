@@ -1,6 +1,6 @@
 # Development Status
 
-**Last Updated**: April 6, 2026  
+**Last Updated**: April 7, 2026  
 **Status**: Core logic layer is solid; fact intake and memory curation are the next serious build.
 
 ## Project Spine
@@ -145,8 +145,8 @@ If someone wants the current story in the right order:
 1. `README.md`
 2. `docs/fact-intake-pipeline.md`
 3. `docs/research/lmstudio-classifier-matrix.md`
-5. `roadmap.md`
-6. `sessions.md`
+4. `roadmap.md`
+5. `sessions.md`
 
 ## Summary
 

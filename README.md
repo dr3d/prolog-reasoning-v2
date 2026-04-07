@@ -146,6 +146,7 @@ python data/evaluate.py
 - Unified intake/memory/write spec: [docs/fact-intake-pipeline.md](docs/fact-intake-pipeline.md)
 - Split-note compatibility stubs: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md), [docs/write-path-spec.md](docs/write-path-spec.md)
 - LM Studio classifier evaluation: [docs/research/lmstudio-classifier-matrix.md](docs/research/lmstudio-classifier-matrix.md)
+- Model-scenario matrix ledger: [docs/research/model-scenario-matrix.md](docs/research/model-scenario-matrix.md)
 - Pre-thinker LoRA playbook: [docs/research/prethinker-lora-playbook.md](docs/research/prethinker-lora-playbook.md)
 - Collaboration lanes and idea prompts: [docs/research/collaboration-map.md](docs/research/collaboration-map.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)

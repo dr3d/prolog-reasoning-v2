@@ -1,6 +1,6 @@
 # Roadmap: Prolog Reasoning v2
 
-**Last Updated**: April 5, 2026  
+**Last Updated**: April 7, 2026  
 **Vision**: Develop Prolog Reasoning v2 as a lightweight deterministic logic layer for agents, then extend it into a curated symbolic memory pipeline.
 
 ---
@@ -38,7 +38,7 @@ deserves symbolic treatment in the first place.
 - produce inspectable candidate fact records
 
 **Tasks**:
-- [ ] Add `docs/fact-intake-pipeline.md`
+- [x] Add `docs/fact-intake-pipeline.md`
 - [ ] Extend `classify_statement` output toward a richer candidate schema
 - [ ] Add predicate-candidate mapping layer
 - [ ] Add argument normalization / entity shaping rules
@@ -102,7 +102,7 @@ agents call when precision matters.
 - provide invocation patterns
 
 **Tasks**:
-- [ ] Add `docs/uses-and-scenarios.md`
+- [x] Add `docs/uses-and-scenarios.md`
 - [ ] Add examples for:
   - constraints
   - rule-derived spreadsheets/tables

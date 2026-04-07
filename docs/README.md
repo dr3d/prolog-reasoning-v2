@@ -49,6 +49,7 @@ GitHub Pages base (for shareable rendered HTML):
 ## Research Track (Exploratory)
 
 - [research/lmstudio-classifier-matrix.md](research/lmstudio-classifier-matrix.md): local-model classifier matrix findings.
+- [research/model-scenario-matrix.md](research/model-scenario-matrix.md): compact multi-model ledger for scenario-based MCP behavior and logic-ingestion signals.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
 - [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
 - [research/stretch-logic-scenarios.md](research/stretch-logic-scenarios.md): larger and more ambitious scenario ideas.
