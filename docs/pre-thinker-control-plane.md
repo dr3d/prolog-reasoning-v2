@@ -21,7 +21,7 @@ Use a small model to decide *how* to think before asking a larger model to decid
 In practice:
 - the pre-thinker classifies statements,
 - routes turns into ontology context (including context/KB switching),
-- runs a pre-handoff fact clarification lane (Fact Pull),
+- runs a pre-handoff clarification lane (clarification eagerness policy),
 - detects correction and backtracking cues,
 - and decides when to escalate to a larger model.
 
@@ -48,7 +48,7 @@ The pre-thinker is not a replacement for the reasoning engine and not a final-an
 Primary responsibilities:
 1. Statement typing
 2. Ontological routing (active context and KB-switch candidate)
-3. Fact Pull preparation (clarification candidates before model handoff)
+3. clarification preparation (clarification candidates before model handoff)
 4. Correction cue detection
 5. Confidence scoring and fallback policy
 6. Structured control outputs for downstream components
@@ -92,18 +92,18 @@ The pre-thinker supports two adjacent but distinct lanes:
 - picks active context and suggests context/KB switches.
 - scoped search/write decisions are handled by routing policy.
 
-2. Fact Pull
+2. clarification eagerness lane
 - generates clarification candidates before model handoff.
 - asks "did you mean...?" style questions for uncertain but relevant facts.
 - does not override deterministic commit gates.
 
 Ownership split:
-- routing policy owns the Fact Pull knob (`clarification_eagerness`),
+- routing policy owns the clarification eagerness knob (`clarification_eagerness`),
 - pre-thinker emits the signals and candidate prompts.
 
-## 5.2 Fact Pull (Policy Knob)
+## 5.2 Clarification Eagerness (Policy Knob)
 
-User-facing concept: **Fact Pull**
+User-facing concept: clarification eagerness
 Policy/config key: `clarification_eagerness`
 
 Roadmap note:
@@ -119,7 +119,7 @@ Interpretation:
 - `1.0`: aggressive harvest mode; ask targeted clarification before dropping likely facts.
 
 Important safety rule:
-- higher Fact Pull means more clarification attempts, not more auto-commits.
+- higher clarification eagerness means more clarification attempts, not more auto-commits.
 
 ## 5.3 Clarification Loop
 
@@ -148,7 +148,7 @@ The pre-thinker should be viewed as the decision front-end that feeds those syst
 1. User turn arrives.
 2. Pre-thinker emits control record.
 3. Router resolves active context and optional KB switch.
-4. Fact Pull policy decides whether to run clarification before handoff.
+4. clarification policy decides whether to run clarification before handoff.
 5. Ingestion layer applies memory operation.
 6. Symbolic layer validates and persists deterministic facts.
 7. Large model is called only if policy says escalation is required.

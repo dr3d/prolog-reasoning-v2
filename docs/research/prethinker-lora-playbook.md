@@ -44,7 +44,7 @@ This keeps the pre-thinker stateless and advisory:
 
 ## Clarification Policy Target (Future Lane)
 
-User-facing concept: **Fact Pull**  
+User-facing concept: clarification eagerness  
 Config/policy key: `clarification_eagerness`
 
 Intended behavior for later phases:
@@ -53,7 +53,7 @@ Intended behavior for later phases:
 - require explicit confirmation before uncertain persistence.
 
 Placement note:
-- Fact Pull lives alongside ontological routing policy.
+- clarification eagerness policy lives alongside ontological routing policy.
 - pre-thinker predicts signals and candidate prompts; routing policy applies the knob.
 
 Training implication:
