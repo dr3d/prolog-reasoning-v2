@@ -46,6 +46,6 @@ For tool-only levels, LM Studio is not required.
 
 ## Captured Sessions
 
-- [examples/hospital-cpm-playbook-session.html](examples/hospital-cpm-playbook-session.html)
-- [examples/fantasy-overlord-session.html](examples/fantasy-overlord-session.html)
+- [examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
+- [examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
 - [Live pages root](https://dr3d.github.io/prolog-reasoning-v2/examples/)

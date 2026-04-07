@@ -9,15 +9,15 @@ GitHub Pages base (for shareable rendered HTML):
 
 - [lm-studio-mcp-guide.md](lm-studio-mcp-guide.md): LM Studio + MCP setup and usage.
 - [mcp-chat-playbooks.md](mcp-chat-playbooks.md): copy/paste chat playbooks for deterministic tool use.
-- [index.html](index.html): default docs landing page with project intro and primary demo links. Live: [dr3d.github.io/prolog-reasoning-v2/](https://dr3d.github.io/prolog-reasoning-v2/)
-- [docs-hub.html](docs-hub.html): styled docs hub page. Live: [dr3d.github.io/prolog-reasoning-v2/docs-hub.html](https://dr3d.github.io/prolog-reasoning-v2/docs-hub.html)
+- [index.html](https://dr3d.github.io/prolog-reasoning-v2/): default docs landing page with project intro and primary demo links. Live: [dr3d.github.io/prolog-reasoning-v2/](https://dr3d.github.io/prolog-reasoning-v2/)
+- [docs-hub.html](https://dr3d.github.io/prolog-reasoning-v2/docs-hub.html): styled docs hub page. Live: [dr3d.github.io/prolog-reasoning-v2/docs-hub.html](https://dr3d.github.io/prolog-reasoning-v2/docs-hub.html)
 
 ## Live Demo Artifacts (Core)
 
-- [examples/hospital-cpm-playbook-session.html](examples/hospital-cpm-playbook-session.html): Critical Path Method (CPM)-style hospital control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
-- [examples/fantasy-overlord-session.html](examples/fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view. Live: [dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
-- [examples/indie-launch-warroom-session.html](examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html)
-- [examples/indie-launch-warroom-natural-session.html](examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step). Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html)
+- [examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html): Critical Path Method (CPM)-style hospital control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
+- [examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view. Live: [dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
+- [examples/indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html)
+- [examples/indie-launch-warroom-natural-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step). Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html)
 - [fantasy-overlord-session.md](fantasy-overlord-session.md): markdown version of the fantasy transcript.
 - [examples/](examples/): canonical captured transcript JSON/MD/HTML artifacts.
 
@@ -50,6 +50,7 @@ GitHub Pages base (for shareable rendered HTML):
 
 - [research/lmstudio-classifier-matrix.md](research/lmstudio-classifier-matrix.md): local-model classifier matrix findings.
 - [research/model-scenario-matrix.md](research/model-scenario-matrix.md): compact multi-model ledger for scenario-based MCP behavior and logic-ingestion signals.
+- [research/fact-ingestion-benchmark-matrix-spec.md](research/fact-ingestion-benchmark-matrix-spec.md): benchmark matrix spec for fact-recognition scenarios, scoring, and pass/fail gates.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
 - [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
 - [research/stretch-logic-scenarios.md](research/stretch-logic-scenarios.md): larger and more ambitious scenario ideas.

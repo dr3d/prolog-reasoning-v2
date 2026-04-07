@@ -644,7 +644,7 @@ def _render_html(transcript: dict[str, Any]) -> str:
       <h1>Indie Launch Natural-Language Tooling Showcase</h1>
       <div class="topbar-right">
         <div class="nav-links">
-          <a class="nav-link" href="../docs-hub.html">Back to Docs Hub</a>
+          <a class="nav-link" href="https://dr3d.github.io/prolog-reasoning-v2/docs-hub.html">Back to Docs Hub</a>
           <a class="nav-link" href="https://github.com/dr3d/prolog-reasoning-v2">View Repo</a>
         </div>
         <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
