@@ -20,6 +20,36 @@ Control layers can propose actions, but they do not bypass deterministic gates.
 
 ## 2. High-Level Runtime Flow
 
+### 2.1 Architecture Diagram
+
+```mermaid
+flowchart LR
+  U[User or Agent Input] --> MCP[MCP Server / Chat Entry]
+  MCP --> C[Statement Classifier]
+  C --> S[Semantic Grounding]
+  S --> V[Deterministic Validation]
+  V --> E[Prolog Engine]
+  E --> X[Explanation Layer]
+  X --> O[Structured Response]
+
+  K[prolog/core.pl baseline seed] --> E
+  R[Runtime in-memory facts] --> E
+
+  C -. Future .-> PT[Pre-thinker Model]
+  PT -. Future .-> OR[Ontological Routing Lane]
+  PT -. Future .-> CE[Clarification Eagerness Lane]
+  OR -. scoped context .-> V
+  CE -. clarify before handoff .-> V
+
+  V --> WP[Write-path Policy Gates]
+  WP --> R
+
+  classDef now fill:#e8f2ff,stroke:#2a5aa8,stroke-width:1px,color:#0f264a;
+  classDef future fill:#fff4e5,stroke:#b26a00,stroke-dasharray: 5 3,color:#5a3300;
+  class U,MCP,C,S,V,E,X,O,K,R,WP now;
+  class PT,OR,CE future;
+```
+
 Main query path (`Now`):
 
 1. User input arrives (chat or MCP tool call).
