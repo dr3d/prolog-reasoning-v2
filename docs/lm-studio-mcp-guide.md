@@ -183,7 +183,8 @@ first, then `OPENAI_API_KEY`.
 
 ## Step 3: Use with Your LLM
 
-For chat-first copy/paste scenario scripts (including a CPM-like hospital
+For chat-first copy/paste scenario scripts (including a Critical Path Method
+(CPM)-like hospital
 dependency risk playbook), see:
 
 - `docs/mcp-chat-playbooks.md`

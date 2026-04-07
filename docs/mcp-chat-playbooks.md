@@ -73,11 +73,11 @@ For these playbooks, entries are facts asserted at runtime:
 This is perfect for what-if sessions: you can simulate disruptions and recoveries
 without editing code.
 
-## Playbook A: Hospital Build Dependency Risk (CPM-like)
+## Playbook A: Hospital Build Dependency Risk (CPM: Critical Path Method, PERT-like)
 
 This is a rich project-control scenario for architecture/hospital delivery.
-It is CPM/PERT-like in spirit: deterministic dependency propagation and milestone
-risk tracing.
+Here, CPM means Critical Path Method. The flow is CPM/PERT-like in spirit:
+deterministic dependency propagation and milestone risk tracing.
 
 ### Step A1: Reset Runtime
 

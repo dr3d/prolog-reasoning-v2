@@ -14,7 +14,7 @@ GitHub Pages base (for shareable rendered HTML):
 
 ## Live Demo Artifacts (Core)
 
-- [examples/hospital-cpm-playbook-session.html](examples/hospital-cpm-playbook-session.html): CPM-style hospital control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
+- [examples/hospital-cpm-playbook-session.html](examples/hospital-cpm-playbook-session.html): Critical Path Method (CPM)-style hospital control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/hospital-cpm-playbook-session.html)
 - [examples/fantasy-overlord-session.html](examples/fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view. Live: [dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/fantasy-overlord-session.html)
 - [examples/indie-launch-warroom-session.html](examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript. Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-session.html)
 - [examples/indie-launch-warroom-natural-session.html](examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step). Live: [dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html](https://dr3d.github.io/prolog-reasoning-v2/examples/indie-launch-warroom-natural-session.html)
