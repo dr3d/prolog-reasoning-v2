@@ -7,8 +7,8 @@ This file is a compact public summary of recent project state.
 - Last major track completed: Simulation-oriented MCP demos with visible internals, plus pre-thinker LoRA bootstrap scaffolding
 - Current product direction: Core symbolic reliability first, with MVP editor treated as experimental
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13 (improved from 6/13)
-- Latest actions: Switched the architecture diagram to a top-down runtime/control layout (`architecture.md`), ran a docs consistency sweep to remove stale tool-count and schema wording, aligned install guides/skill docs with the real MCP surface, corrected public pass-count markers to `95 passed`, and added `scripts/check_docs_consistency.py` as a lightweight regression guard.
-- Next priority: Keep onboarding smoke gates green, keep docs/examples and install playbooks synchronized with live MCP behavior, and continue pre-thinker evaluation slices for routing accuracy and safe ingestion under ambiguity.
+- Latest actions: Added PR1 write-path proposal-check scaffolding (`src/write_path/` + `data/predicate_registry.json`) and wired `classify_statement` to return deterministic `proposal_check` (`valid | needs_clarification | reject`) without mutating behavior; expanded unit coverage for normalization/alias/arity/fact-shape cases, exercised the MCP surface live against local LM Studio (`127.0.0.1:1234`, `qwen/qwen3.5-9b`) with validation pass, and updated pass-count markers to `105 passed`.
+- Next priority: Add a one-command PR1 smoke runner (unit + live MCP surface), then move to PR2 guarded runtime writes with deterministic validation gates before mutation.
 
 ## Usage Notes
 

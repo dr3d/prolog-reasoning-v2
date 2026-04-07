@@ -6,7 +6,7 @@ Prolog Reasoning v2 is a local-first deterministic logic layer for LLM agents. I
 
 Here, `local-first` means the core reasoning loop can run on your own machine with local files, local models, and local tooling first, rather than depending on a cloud service as the source of truth.
 
-[![Tests](https://img.shields.io/badge/tests-92%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-105%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -69,7 +69,13 @@ These parts are implemented and working:
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `95 passed`
+- Test suite currently passing: `105 passed`
+
+Runtime boundary (important for reviewers):
+
+- MCP supports runtime in-memory fact mutation (`assert_fact`, `bulk_assert_facts`, `retract_fact`, `reset_kb`) for scenario simulation.
+- Runtime mutations are process-local and reset to `prolog/core.pl`; they are not durable journaled memory writes.
+- Pre-thinker, ontological routing, and clarification-eagerness are documented future/control tracks and are not enabled as default runtime behavior.
 
 What is still simplified or partly mocked:
 
@@ -92,6 +98,9 @@ python -m pytest tests -q
 
 # Quick docs drift check
 python scripts/check_docs_consistency.py
+
+# PR1 smoke (Windows/PowerShell; includes live MCP surface by default)
+./scripts/pr1_smoke.ps1
 ```
 
 Then start with a markdown walkthrough:

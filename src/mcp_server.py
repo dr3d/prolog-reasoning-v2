@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from parser.semantic import SemanticPrologSkill
 from parser.statement_classifier import StatementClassifier
 from engine.core import Term
+from write_path.validator import PredicateProposalValidator
 
 
 class PrologMCPServer:
@@ -142,6 +143,7 @@ class PrologMCPServer:
         self.kb_path = self._resolve_kb_path(kb_path)
         self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
         self.statement_classifier = StatementClassifier()
+        self.proposal_validator = self._build_proposal_validator()
         # Reserved policy surface for future routing/clarification behavior.
         # This is intentionally a no-op in current runtime logic.
         self.control_plane_policy = dict(self.DEFAULT_CONTROL_PLANE_POLICY)
@@ -155,6 +157,20 @@ class PrologMCPServer:
 
         repo_root = Path(__file__).resolve().parent.parent
         return (repo_root / candidate).resolve()
+
+    def _build_proposal_validator(self) -> PredicateProposalValidator:
+        """Create deterministic proposal validator from predicate registry."""
+        repo_root = Path(__file__).resolve().parent.parent
+        registry_path = repo_root / "data" / "predicate_registry.json"
+        return PredicateProposalValidator(str(registry_path))
+
+    def _get_proposal_validator(self) -> PredicateProposalValidator:
+        """Lazy getter for tests using __new__ initialization."""
+        validator = getattr(self, "proposal_validator", None)
+        if validator is None:
+            validator = self._build_proposal_validator()
+            self.proposal_validator = validator
+        return validator
         
     def get_tools(self) -> list:
         """Return available tools for MCP.
@@ -307,15 +323,22 @@ class PrologMCPServer:
         """Classify a user utterance for query-vs-ingestion routing."""
         classification = self.statement_classifier.classify(text)
         result = classification.to_dict()
+        proposal_check = self._get_proposal_validator().evaluate(
+            text,
+            kind=result.get("kind", "unknown"),
+            needs_speaker_resolution=bool(result.get("needs_speaker_resolution", False)),
+        )
         result.update(
             {
                 "status": "success",
                 "text": text,
                 "message": (
                     "Return classification only. Do not act on the statement. "
-                    "This is a routing hint, not a write. The current MCP surface can classify "
-                    "candidate facts, but it does not yet persist them."
+                    "This is a routing hint, not a write. Runtime write tools exist "
+                    "(assert/retract/reset), but classify_statement itself performs no mutation, "
+                    "and durable journaled persistence is not implemented yet."
                 ),
+                "proposal_check": proposal_check,
             }
         )
         return result

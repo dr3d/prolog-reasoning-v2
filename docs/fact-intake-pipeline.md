@@ -4,6 +4,10 @@ Status: Draft
 Owner: Core symbolic layer  
 Date: 2026-04-06
 
+Current runtime status (April 7, 2026):
+- this document is the target design contract, not a claim that all components are live
+- current MCP runtime supports in-memory fact mutation tools, but not a durable journaled write path
+
 This is the canonical spec for:
 
 - fact intake

@@ -4,6 +4,10 @@ Status: Draft
 Owner: Core symbolic layer
 Date: 2026-04-05
 
+Current runtime status (April 7, 2026):
+- design-track only; routing lane is not enabled by default runtime path
+- current MCP runtime keeps deterministic global behavior with existing validation gates
+
 ## 1. Goal
 
 Improve retrieval focus and fact placement by modeling the active conversation as a sequence of ontology contexts ("gears").

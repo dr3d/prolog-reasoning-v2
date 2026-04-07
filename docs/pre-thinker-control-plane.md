@@ -4,6 +4,11 @@ Status: Draft
 Date: 2026-04-05
 Owner: Core symbolic layer
 
+Current runtime status (April 7, 2026):
+- design-track only; not enabled as default runtime behavior
+- `mcp_server.py` currently uses deterministic classifier path
+- `clarification_eagerness` is exposed as a no-op policy key for forward compatibility
+
 ## 1. Why This Exists
 
 The project already separates two roles:

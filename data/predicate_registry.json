@@ -1,0 +1,56 @@
+{
+  "version": "2026-04-07",
+  "notes": "Deterministic predicate registry for proposal/validation in write-path PR1.",
+  "predicates": {
+    "parent": {
+      "arity": 2,
+      "aliases": ["mother_of", "father_of", "guardian_of"],
+      "arg_types": ["entity", "entity"]
+    },
+    "allergic_to": {
+      "arity": 2,
+      "aliases": ["allergy_to", "allergic"],
+      "arg_types": ["entity", "entity"]
+    },
+    "role": {
+      "arity": 2,
+      "aliases": ["has_role"],
+      "arg_types": ["entity", "entity"]
+    },
+    "permission": {
+      "arity": 2,
+      "aliases": ["has_permission", "permits"],
+      "arg_types": ["entity", "entity"]
+    },
+    "task": {
+      "arity": 1,
+      "aliases": ["work_item"],
+      "arg_types": ["entity"]
+    },
+    "depends_on": {
+      "arity": 2,
+      "aliases": ["requires"],
+      "arg_types": ["entity", "entity"]
+    },
+    "completed": {
+      "arity": 1,
+      "aliases": ["done"],
+      "arg_types": ["entity"]
+    },
+    "supplier_status": {
+      "arity": 2,
+      "aliases": ["vendor_status"],
+      "arg_types": ["entity", "entity"]
+    },
+    "at": {
+      "arity": 2,
+      "aliases": ["located_at"],
+      "arg_types": ["entity", "entity"]
+    },
+    "has_item": {
+      "arity": 2,
+      "aliases": ["has"],
+      "arg_types": ["entity", "entity"]
+    }
+  }
+}

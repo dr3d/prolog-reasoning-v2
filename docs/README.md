@@ -33,7 +33,7 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 - [fact-intake-pipeline.md](fact-intake-pipeline.md): canonical intake + memory + write-path spec.
 - [write-path-spec.md](write-path-spec.md): compatibility pointer to canonical spec.
 - [memory-ingestion-and-revision-notes.md](memory-ingestion-and-revision-notes.md): compatibility pointer to canonical spec.
-- [pre-thinker-control-plane.md](pre-thinker-control-plane.md): stateless pre-thinker control-plane direction.
+- [pre-thinker-control-plane.md](pre-thinker-control-plane.md): stateless pre-thinker control-plane direction (design-track, not enabled by default runtime).
 
 ## Scenario and Positioning (Core)
 
@@ -51,7 +51,7 @@ This docs tree is intentionally organized by topic and maturity so active guidan
 
 ## Secondary Track (Optional)
 
-- [secondary/ontology-context-routing-spec.md](secondary/ontology-context-routing-spec.md): ontology-context routing direction (non-critical path).
+- [secondary/ontology-context-routing-spec.md](secondary/ontology-context-routing-spec.md): ontology-context routing direction (future/non-critical path, not enabled by default runtime).
 
 ## Prototype Track (Optional)
 

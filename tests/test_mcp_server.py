@@ -248,6 +248,7 @@ class TestMCPServer:
         assert result["kind"] == "query"
         assert result["can_query_now"] is True
         assert result["suggested_operation"] == "query"
+        assert result["proposal_check"]["status"] == "reject"
 
     def test_classify_statement_detects_first_person_candidate_fact(self):
         server = make_server()
@@ -258,6 +259,8 @@ class TestMCPServer:
         assert result["needs_speaker_resolution"] is True
         assert result["can_persist_now"] is False
         assert result["suggested_operation"] == "store_fact"
+        assert result["proposal_check"]["status"] == "needs_clarification"
+        assert result["proposal_check"]["candidate"]["canonical_predicate"] == "parent"
 
     def test_classify_statement_detects_correction(self):
         server = make_server()
@@ -266,6 +269,17 @@ class TestMCPServer:
 
         assert result["kind"] == "correction"
         assert result["suggested_operation"] == "revise_memory"
+        assert result["proposal_check"]["status"] in {"needs_clarification", "reject"}
+
+    def test_classify_statement_includes_valid_proposal_for_prolog_literal(self):
+        server = make_server()
+
+        result = server.classify_statement("parent(ann, scott).")
+
+        assert result["status"] == "success"
+        assert "proposal_check" in result
+        assert result["proposal_check"]["status"] == "valid"
+        assert result["proposal_check"]["candidate"]["canonical_predicate"] == "parent"
 
     def test_explain_error_classifies_undefined_entity(self):
         server = make_server()
