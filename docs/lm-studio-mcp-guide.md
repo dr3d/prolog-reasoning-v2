@@ -407,11 +407,23 @@ cat prolog/core.pl | head -20
 
 ---
 
-## Advanced: Custom Knowledge Base
+## Advanced: Baseline Seed KB (`core.pl`)
 
-### Step 1: Create Your Own KB
+`prolog/core.pl` is the baseline seed knowledge base:
 
-Edit `prolog/core.pl` to add facts relevant to your domain:
+- loaded when the MCP server starts
+- reloaded when you call `reset_kb`
+- source-of-truth starting facts/rules for new sessions
+
+Important:
+
+- runtime tool calls (`assert_fact`, `bulk_assert_facts`, `retract_fact`) mutate in-memory state
+- those runtime changes are not written back to `core.pl`
+- `core.pl` can be intentionally minimal or even effectively empty; that is valid, but answers will be limited until facts are loaded
+
+### Step 1: Edit Baseline Facts/Rules
+
+Edit `prolog/core.pl` if you want a different reset baseline for your domain:
 
 ```prolog
 % Your custom domain facts
@@ -435,7 +447,7 @@ python src/mcp_server.py --stdio
 
 ### Step 3: Use with Your LLM
 
-The LLM can now query your custom knowledge!
+Your LLM now starts from this updated baseline after server start/reset.
 
 ---
 
