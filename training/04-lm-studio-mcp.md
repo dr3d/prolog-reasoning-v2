@@ -27,14 +27,10 @@ In this repo, MCP gives your chat model access to deterministic tool calls.
 
 Common tools:
 
-- `query_prolog` (NL query path)
 - `query_logic` (literal Prolog query)
 - `query_rows` (table-style variable bindings)
 - `assert_fact`, `bulk_assert_facts`, `retract_fact`, `reset_kb`
 - `classify_statement`, `list_known_facts`, `explain_error`, `show_system_info`
-
-Legacy `_raw` tool names are still accepted for compatibility, but the alias
-names above are preferred.
 
 ## Setup
 

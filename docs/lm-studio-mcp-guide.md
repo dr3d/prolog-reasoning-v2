@@ -43,7 +43,8 @@ python src/mcp_server.py --test
 # You should see:
 # MCP Server initialized successfully
 # Available Tools:
-#   - query_prolog: ...
+#   - query_logic: ...
+#   - query_rows: ...
 #   - list_known_facts: ...
 #   - explain_error: ...
 #   - show_system_info: ...
@@ -55,7 +56,7 @@ python src/mcp_server.py --test
 python src/mcp_server.py
 
 # You'll get an interactive prompt
-# > query Who is John's parent?
+# > logic parent(john, X).
 # > list
 # > info
 # > quit
@@ -114,7 +115,6 @@ Add this configuration to your `servers` list. Replace `<PYTHON_EXE>` with the P
 2. Open a chat with your local model
 3. You should see **Prolog Reasoning** in the available tools list
 4. The tools should show:
-   - query_prolog
    - query_logic
    - query_rows
    - classify_statement
@@ -126,7 +126,7 @@ Add this configuration to your `servers` list. Replace `<PYTHON_EXE>` with the P
    - explain_error
    - show_system_info
 
-Use the alias names above in day-to-day chat. Legacy `_raw` variants are still available for compatibility with older prompts.
+Use the tool names above in day-to-day chat. The MCP surface is Prolog-first and expects literal Prolog queries.
 
 ### Step 2d: API Token Note (for Scripted MCP Demos)
 
@@ -196,13 +196,13 @@ dependency risk playbook), see:
 **LLM thinking:** 
 ```
 The user wants me to query a knowledge base. I have access to 
-the "query_prolog" tool. Let me use it to find John's parent.
+the "query_logic" tool. Let me use it to find John's parent.
 ```
 
 **LLM action:**
 ```
-Tool: query_prolog
-Input: {"query": "Who is John's parent?"}
+Tool: query_logic
+Input: {"query": "parent(john, X)."}
 ```
 
 **Result:**
@@ -222,33 +222,25 @@ Input: {"query": "Who is John's parent?"}
 
 ### Example 2: Handling Errors Properly
 
-**You:** Tell me about Charlie's allergies using the knowledge base.
+**You:** Check if Charlie is an ancestor of Bob using the knowledge base.
 
 **LLM action:**
 ```
-Tool: query_prolog
-Input: {"query": "What is Charlie allergic to?"}
+Tool: query_logic
+Input: {"query": "ancestor(charlie, bob)."}
 ```
 
 **Result:**
 ```json
 {
-  "status": "validation_error",
-  "errors": [
-    {
-      "type": "undefined_entity",
-      "message": "Entity 'charlie' not in KB",
-      "severity": "high",
-      "suggestion": "Use a known name like: john, alice, bob",
-      "explanation": "ERROR: I don't know who or what 'charlie' is.\n\nWhy: The system only knows about: john, alice, bob, admin, read, write\n\nTry: Tell me about charlie first, or use a known name."
-    }
-  ],
-  "parsing_confidence": 5.0,
-  "nl_query": "What is Charlie allergic to?"
+  "status": "no_results",
+  "result_type": "no_result",
+  "predicate": "ancestor",
+  "prolog_query": "ancestor(charlie, bob)."
 }
 ```
 
-**LLM response:** "I checked the knowledge base, but it doesn't have information about Charlie. The system knows about: John, Alice, and Bob. Would you like me to ask about one of them instead?"
+**LLM response:** "No matching ancestor fact was found for charlie and bob. We can inspect known entities with `list_known_facts` or try a simpler query."
 
 ---
 
@@ -469,7 +461,7 @@ Your LLM now starts from this updated baseline after server start/reset.
 ### Technical Documentation
 
 - **[architecture.md](../architecture.md)** - System design
-- **[legacy/semantic-grounding.md](legacy/semantic-grounding.md)** - NL processing (legacy reference)
+- **[semantic-grounding.md](legacy/semantic-grounding.md)** - NL processing reference notes
 - **[failure-explanations.md](failure-explanations.md)** - Error handling
 
 ---
@@ -483,10 +475,10 @@ User: "Can we give John the new antibiotic?"
 
 LLM: "Let me check John's allergies and current medications."
 
-Tool: query_prolog({"query": "What is John allergic to?"})
+Tool: query_rows({"query": "allergic_to(john, Allergen)."})
 Result: penicillin (severe), ibuprofen (moderate)
 
-Tool: query_prolog({"query": "What medications is John taking?"})
+Tool: query_rows({"query": "takes_medication(john, Medication)."})
 Result: metformin, lisinopril
 
 LLM: The system confirms John is allergic to penicillin 

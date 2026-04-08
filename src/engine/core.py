@@ -9,7 +9,7 @@ Pure Python Prolog interpreter with:
 - Depth filtering (prevent infinite loops)
 """
 
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from copy import deepcopy
 import re
@@ -156,24 +156,111 @@ class PrologEngine:
         self.clauses.append(clause)
     
     def parse_term(self, s: str) -> Term:
-        """Parse a string into a Term (simplified)."""
+        """Parse a string into a Term."""
         s = s.strip()
-        
-        # TODO: Implement full parser
-        # For now, handle simple cases
-        if "(" in s and s.endswith(")"):
-            name, rest = s.split("(", 1)
-            rest = rest[:-1]
-            args = [self.parse_term(arg.strip()) for arg in rest.split(",")]
+        if not s:
+            raise ValueError("Cannot parse empty term")
+
+        # List syntax: [a, b, c] and [H|T]
+        if s.startswith("[") and s.endswith("]"):
+            return self._parse_list_term(s)
+
+        # Compound term: f(a, b, g(c))
+        open_paren = s.find("(")
+        if open_paren > 0 and s.endswith(")") and self._is_outer_wrapped_parens(s, open_paren):
+            name = s[:open_paren].strip()
+            raw_args = s[open_paren + 1 : -1].strip()
+            if not raw_args:
+                return Term(name, [])
+            args = [self.parse_term(part.strip()) for part in self._split_top_level(raw_args, ",")]
             return Term(name, args)
-        
-        if s[0].isupper() or s == "_":
+
+        if s[0].isupper() or s.startswith("_"):
             return Term(s, is_variable=True)
-        
-        if s.isdigit():
+
+        if re.fullmatch(r"-?\d+(?:\.\d+)?", s):
+            if "." in s:
+                return Term(s, is_number=True)
             return Term(str(int(s)), is_number=True)
-        
+
+        if len(s) >= 2 and s[0] == "'" and s[-1] == "'":
+            return Term(s[1:-1])
+
         return Term(s)
+
+    def _parse_list_term(self, s: str) -> Term:
+        """Parse bracket list syntax into ./2 terms."""
+        inner = s[1:-1].strip()
+        if not inner:
+            return Term("[]")
+
+        list_parts = self._split_top_level(inner, "|")
+        if len(list_parts) > 2:
+            raise ValueError(f"Invalid list syntax: {s}")
+
+        elements_part = list_parts[0].strip()
+        elements: List[Term] = []
+        if elements_part:
+            elements = [self.parse_term(piece.strip()) for piece in self._split_top_level(elements_part, ",")]
+
+        tail = Term("[]")
+        if len(list_parts) == 2:
+            tail = self.parse_term(list_parts[1].strip())
+
+        result = tail
+        for elem in reversed(elements):
+            result = Term(".", [elem, result])
+        return result
+
+    def _split_top_level(self, text: str, delimiter: str) -> List[str]:
+        """Split by delimiter while respecting nested (), [] structures."""
+        parts: List[str] = []
+        current: List[str] = []
+        paren_depth = 0
+        bracket_depth = 0
+
+        for ch in text:
+            if ch == "(":
+                paren_depth += 1
+                current.append(ch)
+                continue
+            if ch == ")":
+                paren_depth = max(0, paren_depth - 1)
+                current.append(ch)
+                continue
+            if ch == "[":
+                bracket_depth += 1
+                current.append(ch)
+                continue
+            if ch == "]":
+                bracket_depth = max(0, bracket_depth - 1)
+                current.append(ch)
+                continue
+
+            if ch == delimiter and paren_depth == 0 and bracket_depth == 0:
+                parts.append("".join(current).strip())
+                current = []
+                continue
+
+            current.append(ch)
+
+        tail = "".join(current).strip()
+        if tail:
+            parts.append(tail)
+        return parts
+
+    def _is_outer_wrapped_parens(self, text: str, first_open_idx: int) -> bool:
+        """True if first '(' is closed by the final ')' in the string."""
+        depth = 0
+        for idx in range(first_open_idx, len(text)):
+            ch = text[idx]
+            if ch == "(":
+                depth += 1
+            elif ch == ")":
+                depth -= 1
+                if depth == 0 and idx != len(text) - 1:
+                    return False
+        return depth == 0
     
     def unify(self, t1: Term, t2: Term, subst: Substitution = None) -> Optional[Substitution]:
         """Unify two terms, returning substitution if successful."""
@@ -250,30 +337,51 @@ class PrologEngine:
                 solutions.append(new_subst)
             else:
                 # Resolve body goals
-                body_solutions = self._resolve_goals(renamed_clause.body, new_subst, depth + 1)
+                body_solutions, did_cut = self._resolve_goals(renamed_clause.body, new_subst, depth + 1)
                 solutions.extend(body_solutions)
+                if did_cut:
+                    break
         
         return solutions
     
-    def _resolve_goals(self, goals: List[Term], subst: Substitution, depth: int) -> List[Substitution]:
-        """Resolve a list of goals."""
+    def _resolve_goals(self, goals: List[Term], subst: Substitution, depth: int) -> Tuple[List[Substitution], bool]:
+        """
+        Resolve a list of goals.
+
+        Returns:
+        - solutions
+        - did_cut: whether a cut occurred in this goal sequence scope
+        """
+        if depth > self.max_depth:
+            return [], False
+
         if not goals:
-            return [subst]
+            return [subst], False
         
         first_goal = goals[0]
         rest_goals = goals[1:]
+
+        # Handle cut as a structural control operator in the current clause scope.
+        if first_goal.name == "!" and not first_goal.args:
+            rest_solutions, _ = self._resolve_goals(rest_goals, subst, depth + 1)
+            return rest_solutions, True
         
         solutions = []
         
         # Resolve first goal
-        first_solutions = self.resolve(first_goal, subst, depth)
+        first_solutions = self.resolve(first_goal, subst, depth + 1)
+
+        cut_triggered = False
         
         # For each solution to first goal, resolve rest
         for sol in first_solutions:
-            rest_solutions = self._resolve_goals(rest_goals, sol, depth)
+            rest_solutions, branch_cut = self._resolve_goals(rest_goals, sol, depth + 1)
             solutions.extend(rest_solutions)
+            if branch_cut:
+                cut_triggered = True
+                break
         
-        return solutions
+        return solutions, cut_triggered
     
     def _rename_clause(self, clause: Clause, depth: int) -> Clause:
         """Rename variables in clause to avoid conflicts.
@@ -319,17 +427,30 @@ class PrologEngine:
     
     def _eval_expr(self, expr: Term) -> float:
         """Evaluate arithmetic expression."""
+        if expr.is_variable:
+            raise ValueError("Unbound variable in arithmetic expression")
+
         if expr.is_number:
             return float(expr.name)
         
         if expr.name == "+":
             return self._eval_expr(expr.args[0]) + self._eval_expr(expr.args[1])
-        elif expr.name == "-":
+        elif expr.name == "-" and len(expr.args) == 2:
             return self._eval_expr(expr.args[0]) - self._eval_expr(expr.args[1])
+        elif expr.name == "-" and len(expr.args) == 1:
+            return -self._eval_expr(expr.args[0])
         elif expr.name == "*":
             return self._eval_expr(expr.args[0]) * self._eval_expr(expr.args[1])
         elif expr.name == "/":
             return self._eval_expr(expr.args[0]) / self._eval_expr(expr.args[1])
+        elif expr.name == "//":
+            return float(int(self._eval_expr(expr.args[0]) // self._eval_expr(expr.args[1])))
+        elif expr.name == "mod":
+            return float(int(self._eval_expr(expr.args[0])) % int(self._eval_expr(expr.args[1])))
+        elif expr.name == "**":
+            return self._eval_expr(expr.args[0]) ** self._eval_expr(expr.args[1])
+        elif expr.name == "abs" and len(expr.args) == 1:
+            return abs(self._eval_expr(expr.args[0]))
         else:
             raise ValueError(f"Unknown operator: {expr.name}")
     
@@ -411,7 +532,7 @@ class PrologEngine:
         return [subst] if not solutions else []
     
     def _builtin_cut(self, goal: Term, subst: Substitution, depth: int) -> List[Substitution]:
-        """! — cut (simplified: just succeed once)."""
+        """! cut marker. Clause-level pruning is handled in _resolve_goals."""
         return [subst]
     
     def _builtin_findall(self, goal: Term, subst: Substitution, depth: int) -> List[Substitution]:
@@ -427,8 +548,7 @@ class PrologEngine:
         inner_solutions = self.resolve(query_goal, subst, depth + 1)
 
         # Apply template to each solution to build the collected list
-        collected = [subst.apply(template) if not inner_solutions else sol.apply(template)
-                     for sol in inner_solutions]
+        collected = [sol.apply(template) for sol in inner_solutions]
 
         prolog_list = self._build_prolog_list(collected)
         new_subst = self.unify(result_slot, prolog_list, subst)

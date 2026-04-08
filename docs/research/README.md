@@ -8,6 +8,9 @@ This folder holds exploratory framing and evaluation notes that inform direction
 - `fact-ingestion-dialog-battery.md`: multi-turn natural-language ingestion battery with post-run deterministic KB checks.
 - `fact-ingestion-dialog-battery.html`: themed HTML render of the ingestion battery ledger.
 - `fact-extraction-steering-matrix.html`: themed HTML render of the extraction matrix ledger.
+- `story-run-template.md`: reusable markdown format for single-conversation story ingestion probes.
+- `story-1.md`: Chronos-Vault deep logic trap prompt pack for story-run probing.
+- `story-1-results.md`: saved Qwen3.5-27B run summary and artifact pointers.
 - `prethinker-lora-playbook.md`: practical plan for when to use stateless pre-thinker baselines vs LoRA fine-tuning.
 - `collaboration-map.md`: contribution lanes and open idea prompts for new collaborators.
 - `stretch-logic-scenarios.md`: trimmed appendix of advanced scenario ideas (canonical practical scenarios live in `docs/uses-and-scenarios.md`).

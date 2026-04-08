@@ -151,8 +151,9 @@ def run_demo(base_url: str, model: str, integration: str, api_key: str | None) -
     print("-" * 60)
 
     summary_prompt = (
-        "Use query_prolog to answer: Why does Bob fail permission checks in this knowledge base? "
-        "Return a short deterministic explanation."
+        "Use ONLY query_rows with this exact query:\n"
+        "allowed(bob, Action).\n"
+        "Then provide a short deterministic explanation of Bob's permission outcome."
     )
     print("Summary prompt:")
     print(f"  {summary_prompt}")

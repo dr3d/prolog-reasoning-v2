@@ -133,7 +133,7 @@ Use ONLY query_rows for these exact queries and return markdown tables plus row 
 - waiting_on(Task, Prereq).
 - task_status(Task, Status).
 - delayed_milestone(Milestone, Supplier).
-Do not call query_prolog.
+Use only query_rows.
 ```
 
 ### Tool Calls

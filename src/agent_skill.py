@@ -476,7 +476,7 @@ class PrologSkill:
         if '(' in query_str and query_str.endswith(')'):
             name, rest = query_str.split('(', 1)
             rest = rest[:-1]
-            args_strs = [a.strip() for a in rest.split(',')]
+            args_strs = self._split_top_level(rest, ',')
             args = []
             for arg in args_strs:
                 if arg and (arg[0].isupper() or arg == '_'):
@@ -486,6 +486,34 @@ class PrologSkill:
             return Term(name.strip(), args)
         
         return Term(query_str)
+
+    def _split_top_level(self, text: str, delimiter: str) -> List[str]:
+        """Split by delimiter while respecting nested parentheses."""
+        parts: List[str] = []
+        current: List[str] = []
+        depth = 0
+
+        for ch in text:
+            if ch == "(":
+                depth += 1
+                current.append(ch)
+                continue
+            if ch == ")":
+                depth = max(0, depth - 1)
+                current.append(ch)
+                continue
+            if ch == delimiter and depth == 0:
+                part = "".join(current).strip()
+                if part:
+                    parts.append(part)
+                current = []
+                continue
+            current.append(ch)
+
+        tail = "".join(current).strip()
+        if tail:
+            parts.append(tail)
+        return parts
     
     def _calculate_confidence(self, solutions: List) -> float:
         """Calculate confidence in result (simplified)."""
@@ -517,6 +545,38 @@ class PrologSkill:
                 if clause.head == fact_term and not clause.body:
                     return True
             self.engine.add_clause(Clause(fact_term))
+            return True
+        except Exception:
+            return False
+
+    def add_rule(self, rule_str: str) -> bool:
+        """Add a rule to the knowledge base."""
+        normalized = (rule_str or "").strip()
+        if not normalized:
+            return False
+        if normalized.endswith("."):
+            normalized = normalized[:-1].strip()
+        if ":-" not in normalized:
+            return False
+
+        try:
+            head_text, body_text = normalized.split(":-", 1)
+            head_text = head_text.strip()
+            body_text = body_text.strip()
+            if not head_text or not body_text:
+                return False
+
+            head = self._parse_query(head_text)
+            body_terms = [self._parse_query(piece) for piece in self._split_top_level(body_text, ",")]
+            if not body_terms:
+                return False
+
+            clause = Clause(head, body_terms)
+            for existing in self.engine.clauses:
+                if existing.head == clause.head and (existing.body or []) == clause.body:
+                    return True
+
+            self.engine.add_clause(clause)
             return True
         except Exception:
             return False

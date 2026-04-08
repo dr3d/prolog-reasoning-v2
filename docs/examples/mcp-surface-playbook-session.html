@@ -361,7 +361,7 @@
         </div>
       </div>
     </div>
-    <div class="meta">Captured: 2026-04-07T15:36:02.313518+00:00 | Model: qwen3.5-27b@q4_k_m | Integration: mcp/prolog-reasoning | Initial skin: standard | Rendered: 2026-04-08 00:03:28 UTC</div>
+    <div class="meta">Captured: 2026-04-07T15:36:02.313518+00:00 | Model: qwen3.5-27b@q4_k_m | Integration: mcp/prolog-reasoning | Initial skin: standard | Rendered: 2026-04-08 05:15:59 UTC</div>
     <section class="step-card"><h2>preflight</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use show_system_info and list_known_facts first.
 Then give a one-paragraph summary of what this MCP server can do." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Use show_system_info and list_known_facts first.
 Then give a one-paragraph summary of what this MCP server can do.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">2</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>show_system_info</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
@@ -377,7 +377,7 @@ Then give a one-paragraph summary of what this MCP server can do.</pre></div><de
     &quot;note&quot;: &quot;This key is reserved for future clarification policy tuning. Current write behavior is unchanged.&quot;
   },
   &quot;capabilities&quot;: [
-    &quot;Natural language query processing&quot;,
+    &quot;Literal Prolog query execution (`query_logic`, `query_rows`)&quot;,
     &quot;Statement classification before query or ingestion decisions&quot;,
     &quot;Deterministic knowledge-base reasoning&quot;,
     &quot;Runtime fact assertion/retraction for chat-driven scenarios&quot;,
@@ -516,7 +516,7 @@ Then give a one-paragraph summary of what this MCP server can do.</pre></div><de
   },
   &quot;note&quot;: &quot;This is a summary view of currently known entities plus the predicate vocabulary the skill knows how to talk about. It is not a full dump of every stored fact, and a supported predicate does not imply facts exist for every entity.&quot;,
   &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
-}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="This Prolog Reasoning v2 MCP server is a local-first neuro-symbolic reliability layer designed to augment LLM agents with deterministic symbolic reasoning capabilities. It enables natural language query processing where user intent is expressed conversationally while the underlying Prolog engine validates truth against a structured knowledge base, supporting domains ranging from family relationships and access control permissions to clinical medication triage and project dependency risk analysis. The system features runtime fact assertion and retraction for dynamic chat-driven scenarios, semantic validation before query execution, friendly failure explanations with suggestions, and proof-trace generation—all built on a rich predicate vocabulary that includes both fact-backed examples (like parent, role, permission) and rule-derived predicates (such as ancestor, allowed, blocked_task, safe_candidate). With its core philosophy that &quot;memories are timestamped but facts are not,&quot; this server provides a reliable reasoning layer that can handle complex logical queries across multiple domains while maintaining transparency through detailed explanations of what the system knows and how it arrives at conclusions." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>This Prolog Reasoning v2 MCP server is a local-first neuro-symbolic reliability layer designed to augment LLM agents with deterministic symbolic reasoning capabilities. It enables natural language query processing where user intent is expressed conversationally while the underlying Prolog engine validates truth against a structured knowledge base, supporting domains ranging from family relationships and access control permissions to clinical medication triage and project dependency risk analysis. The system features runtime fact assertion and retraction for dynamic chat-driven scenarios, semantic validation before query execution, friendly failure explanations with suggestions, and proof-trace generation—all built on a rich predicate vocabulary that includes both fact-backed examples (like parent, role, permission) and rule-derived predicates (such as ancestor, allowed, blocked_task, safe_candidate). With its core philosophy that &quot;memories are timestamped but facts are not,&quot; this server provides a reliable reasoning layer that can handle complex logical queries across multiple domains while maintaining transparency through detailed explanations of what the system knows and how it arrives at conclusions.</pre></div></section><section class="step-card"><h2>reset</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Use ONLY reset_kb. Confirm success in one sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>reset_kb</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="This Prolog Reasoning v2 MCP server is a local-first neuro-symbolic reliability layer designed to augment LLM agents with deterministic symbolic reasoning capabilities. It enables Literal Prolog query execution (`query_logic`, `query_rows`) where user intent is expressed conversationally while the underlying Prolog engine validates truth against a structured knowledge base, supporting domains ranging from family relationships and access control permissions to clinical medication triage and project dependency risk analysis. The system features runtime fact assertion and retraction for dynamic chat-driven scenarios, semantic validation before query execution, friendly failure explanations with suggestions, and proof-trace generation—all built on a rich predicate vocabulary that includes both fact-backed examples (like parent, role, permission) and rule-derived predicates (such as ancestor, allowed, blocked_task, safe_candidate). With its core philosophy that &quot;memories are timestamped but facts are not,&quot; this server provides a reliable reasoning layer that can handle complex logical queries across multiple domains while maintaining transparency through detailed explanations of what the system knows and how it arrives at conclusions." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>This Prolog Reasoning v2 MCP server is a local-first neuro-symbolic reliability layer designed to augment LLM agents with deterministic symbolic reasoning capabilities. It enables Literal Prolog query execution (`query_logic`, `query_rows`) where user intent is expressed conversationally while the underlying Prolog engine validates truth against a structured knowledge base, supporting domains ranging from family relationships and access control permissions to clinical medication triage and project dependency risk analysis. The system features runtime fact assertion and retraction for dynamic chat-driven scenarios, semantic validation before query execution, friendly failure explanations with suggestions, and proof-trace generation—all built on a rich predicate vocabulary that includes both fact-backed examples (like parent, role, permission) and rule-derived predicates (such as ancestor, allowed, blocked_task, safe_candidate). With its core philosophy that &quot;memories are timestamped but facts are not,&quot; this server provides a reliable reasoning layer that can handle complex logical queries across multiple domains while maintaining transparency through detailed explanations of what the system knows and how it arrives at conclusions.</pre></div></section><section class="step-card"><h2>reset</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use ONLY reset_kb. Confirm success in one sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Use ONLY reset_kb. Confirm success in one sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>reset_kb</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;result_type&quot;: &quot;runtime_reset&quot;,
   &quot;message&quot;: &quot;Runtime KB reset to baseline seed state.&quot;,
@@ -661,35 +661,49 @@ The Prolog query `depends_on(beta, alpha).` succeeded with 1 solution. This conf
 SUCCESS - `depends_on(beta, alpha)` is TRUE (1 solution found).
 
 **Detailed Answer:**
-The Prolog query `depends_on(beta, alpha).` succeeded with 1 solution. This confirms that in the knowledge base, there is a fact stating that &quot;beta depends on alpha&quot;. The query was ground (no variables), and it matched exactly one stored fact in the database. The confidence level is 1.0, indicating this is definitively established as true based on the current facts in the system.</pre></div></section><section class="step-card"><h2>nl_query</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use ONLY query_prolog on: What task depends on alpha?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Use ONLY query_prolog on: What task depends on alpha?</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
-  &quot;query&quot;: &quot;What task depends on alpha?&quot;
+The Prolog query `depends_on(beta, alpha).` succeeded with 1 solution. This confirms that in the knowledge base, there is a fact stating that &quot;beta depends on alpha&quot;. The query was ground (no variables), and it matched exactly one stored fact in the database. The confidence level is 1.0, indicating this is definitively established as true based on the current facts in the system.</pre></div></section><section class="step-card"><h2>nl_query</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use ONLY query_rows with this query:
+depends_on(Task, Prereq).
+Return rows and count." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Use ONLY query_rows with this query:
+depends_on(Task, Prereq).
+Return rows and count.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;depends_on(Task, Prereq).&quot;
 }</code></div><details class="tool-output"><summary>output</summary><pre>{
-  &quot;status&quot;: &quot;no_results&quot;,
-  &quot;result_type&quot;: &quot;no_result&quot;,
-  &quot;predicate&quot;: &quot;unknown&quot;,
-  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
-  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
-  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
-  &quot;nl_query&quot;: &quot;What task depends on alpha?&quot;,
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;depends_on&quot;,
+  &quot;prolog_query&quot;: &quot;depends_on(Task, Prereq).&quot;,
+  &quot;variables&quot;: [
+    &quot;Task&quot;,
+    &quot;Prereq&quot;
+  ],
+  &quot;rows&quot;: [
+    {
+      &quot;Task&quot;: &quot;beta&quot;,
+      &quot;Prereq&quot;: &quot;alpha&quot;
+    }
+  ],
+  &quot;num_rows&quot;: 1,
   &quot;reasoning_basis&quot;: {
     &quot;kind&quot;: &quot;fact-backed&quot;,
-    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
+    &quot;note&quot;: &quot;The `depends_on` predicate is typically answered from stored facts, though rules may still participate.&quot;
   }
-}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Based on the query result, **no tasks were found that depend on alpha** in the knowledge base. 
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="## Query Results: depends_on(Task, Prereq)`n
+**Count:** 1 row(s) found
 
-The system couldn&#x27;t find any dependency relationships involving &quot;alpha&quot;. This could mean:
-- There are no facts stored about tasks depending on alpha
-- The entity &quot;alpha&quot; might not exist in the current knowledge base
-- The relationship might be named differently (e.g., &quot;depends_on&quot;, &quot;requires&quot;, etc.)
+### Rows:
+| Task | Prereq |
+|------|--------|
+| beta | alpha  |
 
-Would you like me to try a different query or check what facts currently exist in the system?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Based on the query result, **no tasks were found that depend on alpha** in the knowledge base. 
+The knowledge base contains one dependency relationship: **beta depends on alpha**." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>## Query Results: depends_on(Task, Prereq)`n
+**Count:** 1 row(s) found
 
-The system couldn&#x27;t find any dependency relationships involving &quot;alpha&quot;. This could mean:
-- There are no facts stored about tasks depending on alpha
-- The entity &quot;alpha&quot; might not exist in the current knowledge base
-- The relationship might be named differently (e.g., &quot;depends_on&quot;, &quot;requires&quot;, etc.)
+### Rows:
+| Task | Prereq |
+|------|--------|
+| beta | alpha  |
 
-Would you like me to try a different query or check what facts currently exist in the system?</pre></div></section><section class="step-card"><h2>classify</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use ONLY classify_statement on:
+The knowledge base contains one dependency relationship: **beta depends on alpha**.</pre></div></section><section class="step-card"><h2>classify</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Use ONLY classify_statement on:
 Maybe my mother was Ann.
 Return classification fields only." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Use ONLY classify_statement on:
 Maybe my mother was Ann.

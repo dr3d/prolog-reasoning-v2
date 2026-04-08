@@ -1,4 +1,4 @@
-﻿# Prototype: <name>
+# Prototype: <name>
 
 ## Status
 

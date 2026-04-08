@@ -3,6 +3,7 @@
 - Captured at: 2026-04-07T15:36:02.313518+00:00
 - Model: `qwen3.5-27b@q4_k_m`
 - Integration: `mcp/prolog-reasoning`
+- Normalization: `Normalized to canonical Prolog-only MCP tool surface on 2026-04-08.`
 
 ## Step: preflight
 
@@ -137,25 +138,29 @@ The Prolog query `depends_on(beta, alpha).` succeeded with 1 solution. This conf
 ### User Prompt
 
 ```text
-Use ONLY query_prolog on: What task depends on alpha?
+Use ONLY query_rows with this query:
+depends_on(Task, Prereq).
+Return rows and count.
 ```
 
 ### Tool Calls
 
-- `query_prolog` `{"query": "What task depends on alpha?"}`
+- `query_rows` `{"query": "depends_on(Task, Prereq)."}`
 
 ### Assistant Reply
 
 
 
-Based on the query result, **no tasks were found that depend on alpha** in the knowledge base. 
+## Query Results: `depends_on(Task, Prereq)`
 
-The system couldn't find any dependency relationships involving "alpha". This could mean:
-- There are no facts stored about tasks depending on alpha
-- The entity "alpha" might not exist in the current knowledge base
-- The relationship might be named differently (e.g., "depends_on", "requires", etc.)
+**Count:** 1 row(s) found
 
-Would you like me to try a different query or check what facts currently exist in the system?
+### Rows:
+| Task | Prereq |
+|------|--------|
+| beta | alpha  |
+
+The knowledge base contains one dependency relationship: **beta depends on alpha**.
 
 ## Step: classify
 

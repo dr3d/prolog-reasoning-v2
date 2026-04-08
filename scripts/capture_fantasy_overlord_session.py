@@ -37,15 +37,6 @@ INGEST_EXPECTED_COUNTS = {
 }
 INGEST_EXPECTED_ASSERTED_COUNT = 43
 
-DISPLAY_TOOL_ALIASES = {
-    "query_prolog_raw": "query_logic",
-    "query_prolog_rows_raw": "query_rows",
-    "assert_fact_raw": "assert_fact",
-    "bulk_assert_facts_raw": "bulk_assert_facts",
-    "retract_fact_raw": "retract_fact",
-    "reset_runtime_kb": "reset_kb",
-}
-
 FACTS = [
     "character(aria).",
     "character(borin).",
@@ -187,7 +178,7 @@ def validate_transcript(transcript: dict[str, Any]) -> list[str]:
         if isinstance(ingest_calls, list):
             bulk_call = None
             for call in ingest_calls:
-                if isinstance(call, dict) and call.get("tool") in {"bulk_assert_facts", "bulk_assert_facts_raw"}:
+                if isinstance(call, dict) and call.get("tool") == "bulk_assert_facts":
                     bulk_call = call
                     break
             if bulk_call is None:
@@ -209,7 +200,7 @@ def validate_transcript(transcript: dict[str, Any]) -> list[str]:
             for query, expected_rows in INGEST_EXPECTED_COUNTS.items():
                 matching_call = None
                 for call in ingest_calls:
-                    if not isinstance(call, dict) or call.get("tool") not in {"query_rows", "query_prolog_rows_raw"}:
+                    if not isinstance(call, dict) or call.get("tool") != "query_rows":
                         continue
                     args = call.get("arguments", {})
                     if isinstance(args, dict) and args.get("query") == query:
@@ -332,15 +323,15 @@ def _extract_delta(tool_calls: list[dict[str, Any]]) -> dict[str, list[str]]:
         args = call.get("arguments", {})
         if not isinstance(args, dict):
             continue
-        if tool in {"assert_fact", "assert_fact_raw"}:
+        if tool == "assert_fact":
             fact = str(args.get("fact", "")).strip()
             if fact:
                 added.append(fact if fact.endswith(".") else fact + ".")
-        elif tool in {"retract_fact", "retract_fact_raw"}:
+        elif tool == "retract_fact":
             fact = str(args.get("fact", "")).strip()
             if fact:
                 removed.append(fact if fact.endswith(".") else fact + ".")
-        elif tool in {"bulk_assert_facts", "bulk_assert_facts_raw"}:
+        elif tool == "bulk_assert_facts":
             for fact in args.get("facts", []):
                 text = str(fact).strip()
                 if text:
@@ -359,7 +350,7 @@ def _extract_delta(tool_calls: list[dict[str, Any]]) -> dict[str, list[str]]:
 
 
 def _display_tool_name(name: str) -> str:
-    return DISPLAY_TOOL_ALIASES.get(name, name)
+    return name
 
 
 def _decode_tool_output(raw_output: Any) -> tuple[str, str]:

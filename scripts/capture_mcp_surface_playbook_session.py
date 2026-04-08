@@ -43,7 +43,6 @@ REQUIRED_TOOLS = {
     "assert_fact",
     "query_rows",
     "query_logic",
-    "query_prolog",
     "classify_statement",
     "explain_error",
     "retract_fact",
@@ -103,7 +102,11 @@ def _user_prompt(step: str) -> str:
             "depends_on(beta, alpha).\n"
             "Return short answer and detailed answer."
         ),
-        "nl_query": "Use ONLY query_prolog on: What task depends on alpha?",
+        "nl_query": (
+            "Use ONLY query_logic with this exact query:\n"
+            "depends_on(Task, alpha).\n"
+            "Return short answer, then list matching Task values."
+        ),
         "classify": (
             "Use ONLY classify_statement on:\n"
             "Maybe my mother was Ann.\n"

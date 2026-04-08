@@ -23,9 +23,9 @@ DEFAULT_INTEGRATION = "mcp/prolog-reasoning"
 
 
 PROMPTS = [
-    "Use query_prolog to answer: Who is John's parent?",
-    "Use query_prolog to answer: Is John an ancestor of Bob?",
-    "Use query_prolog to answer: Who is Alice's parent?",
+    "Use query_logic to answer with this exact query: parent(john, X).",
+    "Use query_logic to answer with this exact query: ancestor(john, bob).",
+    "Use query_logic to answer with this exact query: parent(X, alice).",
     "Use classify_statement on: My mother was Ann.",
 ]
 

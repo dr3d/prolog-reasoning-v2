@@ -144,7 +144,7 @@ def summarize_transcript(transcript: dict[str, Any], findings: list[str]) -> dic
     })
 
     nl_step = _find_step(transcript, "nl_query")
-    nl_call = _find_tool_call(nl_step, "query_prolog")
+    nl_call = _find_tool_call(nl_step, "query_logic")
     nl_payload = _extract_tool_output_json(nl_call.get("output") if nl_call else None) or {}
     nl_result_status = nl_payload.get("status")
     nl_result_type = nl_payload.get("result_type")

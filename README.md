@@ -80,7 +80,7 @@ Runtime boundary (important for reviewers):
 What is still simplified or partly mocked:
 
 - some demo and agent paths use stub knowledge-base loading rather than full `.pl` parsing
-- the default semantic grounding path still includes a mock LLM mode
+- the semantic grounding research path still includes a mock LLM mode
 - the write path for durable memory is still a design/early-engineering area rather than a finished subsystem
 - the graphics editor is exploratory and not the mainline product focus
 
@@ -122,7 +122,7 @@ python data/evaluate.py
 ### Use It
 
 - Live docs hub (GitHub Pages): [dr3d.github.io/prolog-reasoning/docs-hub.html](https://dr3d.github.io/prolog-reasoning/docs-hub.html)
-- Ask natural-language questions through MCP tools (`query_prolog`, `query_logic`, `query_rows`)
+- Use Prolog-first MCP tools (`query_logic`, `query_rows`, plus `assert_fact`/`assert_rule` for writes)
 - Run the MCP server for local LLM tools via [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - Run a conversational launch-ops demo via [docs/indie-launch-warroom-mcp-walkthrough.md](docs/indie-launch-warroom-mcp-walkthrough.md)
 - Use the constraint propagation runner via [src/engine/runner.py](src/engine/runner.py)
@@ -133,7 +133,7 @@ python data/evaluate.py
 
 - Docs map: [docs/README.md](docs/README.md)
 - Architecture: [architecture.md](architecture.md)
-- Semantic grounding (legacy reference): [docs/legacy/semantic-grounding.md](docs/legacy/semantic-grounding.md)
+- Semantic grounding reference notes: [docs/legacy/semantic-grounding.md](docs/legacy/semantic-grounding.md)
 - Failure explanations: [docs/failure-explanations.md](docs/failure-explanations.md)
 - LM Studio + MCP guide: [docs/lm-studio-mcp-guide.md](docs/lm-studio-mcp-guide.md)
 - MCP chat playbooks (copy/paste): [docs/mcp-chat-playbooks.md](docs/mcp-chat-playbooks.md)
@@ -155,17 +155,21 @@ python data/evaluate.py
 
 ## Architecture Snapshot
 
-The main execution path is:
+Current MCP default path is Prolog-first:
 
-1. Natural language arrives.
-2. Semantic grounding converts it into structured IR.
-3. Validation checks whether the representation is grounded and coherent.
-4. The symbolic engine resolves the query deterministically.
-5. Explanation and failure layers translate the result back into something an agent or human can use.
+1. A client sends a literal Prolog query (`query_logic`/`query_rows`).
+2. The symbolic engine resolves the query deterministically.
+3. Tool output returns structured rows/proof-oriented detail.
 
-This keeps neural and symbolic responsibilities separate:
+Research/experimental path (not recommended for MCP defaults):
 
-- language models help interpret intent
+1. Natural language is grounded into IR.
+2. Validation checks grounding coherence.
+3. The symbolic engine executes the converted query.
+
+This keeps neural and symbolic responsibilities separate where used:
+
+- language models can assist intent interpretation in research/experimental paths
 - intake logic decides what deserves symbolic treatment
 - symbolic structures hold explicit facts and rules
 - the engine decides truth and consequences

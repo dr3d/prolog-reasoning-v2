@@ -418,7 +418,7 @@ All 55 facts were successfully asserted and all query counts match the expected 
 - waiting_on(Task, Prereq).
 - task_status(Task, Status).
 - delayed_milestone(Milestone, Supplier).
-Do not call query_prolog.
+Use only query_rows.
 " aria-label="Copy user prompt">copy</button>
     </div>
     <pre>Use ONLY query_rows for these exact queries and return markdown tables plus row counts:
@@ -426,7 +426,7 @@ Do not call query_prolog.
 - waiting_on(Task, Prereq).
 - task_status(Task, Status).
 - delayed_milestone(Milestone, Supplier).
-Do not call query_prolog.
+Use only query_rows.
 </pre>
   </div>
   <details class="toolbox tool-expando"><summary><span class="expando-title">tool calls</span><span class="expando-count">4</span></summary><ul><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;safe_to_start(Task).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;waiting_on(Task, Prereq).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;task_status(Task, Status).&quot;}</code></li><li><code>query_rows</code> <code>{&quot;query&quot;: &quot;delayed_milestone(Milestone, Supplier).&quot;}</code></li></ul></details>

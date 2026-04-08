@@ -8,7 +8,7 @@ These playbooks are for direct chat use with MCP enabled in LM Studio.
 Goal: turn on `mcp/prolog-reasoning`, paste prompts, and watch the model call
 deterministic tools.
 
-Preferred tool names in this guide are the clean aliases (`query_rows`, `assert_fact`, `reset_kb`, etc.). Legacy `_raw` names still work for backward compatibility.
+Use the canonical tool names in this guide (`query_logic`, `query_rows`, `assert_fact`, `assert_rule`, `reset_kb`, etc.).
 
 ## Before You Start
 
@@ -379,13 +379,15 @@ depends_on(beta, alpha).
 Return short answer and detailed answer.
 ```
 
-### Step C6: Natural-Language Query
+### Step C6: Additional Logic Query
 
 Paste:
 
 ```text
-Use ONLY query_prolog on:
-What task depends on alpha?
+Use ONLY query_logic with:
+depends_on(Task, alpha).
+
+Return short answer, then list matching Task values.
 ```
 
 ### Step C7: Statement Classification

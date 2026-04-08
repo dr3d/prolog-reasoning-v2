@@ -556,7 +556,7 @@ Keep your responses concise and practical.</pre></div><details class="toolbox to
 }</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;m ready to help with Prolog queries using MCP tools. Here&#x27;s what you can do:
 
 **Available Tools:**
-- `query_prolog` - Natural language questions (e.g., &quot;Who is John&#x27;s parent?&quot;)
+- `query_logic` - Literal Prolog queries (e.g., &quot;parent(john, X).&quot;)
 - `query_logic` - Raw Prolog literals (e.g., `allowed(alice, read).`)
 - `query_rows` - Get all solutions for a query with variables
 - `assert_fact` / `bulk_assert_facts` - Add facts to the KB
@@ -566,7 +566,7 @@ Keep your responses concise and practical.</pre></div><details class="toolbox to
 
 **Example Usage:**
 ```
-&quot;Who is Alice&#x27;s parent?&quot; → query_prolog
+&quot;parent(alice, X).&quot; → query_logic
 &quot;parent(alice, X).&quot; → query_logic  
 &quot;waiting_on(Task, Prereq).&quot; → query_rows
 ```
@@ -574,7 +574,7 @@ Keep your responses concise and practical.</pre></div><details class="toolbox to
 What would you like to query?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;m ready to help with Prolog queries using MCP tools. Here&#x27;s what you can do:
 
 **Available Tools:**
-- `query_prolog` - Natural language questions (e.g., &quot;Who is John&#x27;s parent?&quot;)
+- `query_logic` - Literal Prolog queries (e.g., &quot;parent(john, X).&quot;)
 - `query_logic` - Raw Prolog literals (e.g., `allowed(alice, read).`)
 - `query_rows` - Get all solutions for a query with variables
 - `assert_fact` / `bulk_assert_facts` - Add facts to the KB
@@ -584,7 +584,7 @@ What would you like to query?" data-label="copy" data-success-label="copied" dat
 
 **Example Usage:**
 ```
-&quot;Who is Alice&#x27;s parent?&quot; → query_prolog
+&quot;parent(alice, X).&quot; → query_logic
 &quot;parent(alice, X).&quot; → query_logic  
 &quot;waiting_on(Task, Prereq).&quot; → query_rows
 ```
@@ -719,7 +719,7 @@ Maybe Scott is allergic to shellfish, but I only heard this second-hand.</pre></
       &quot;raw_predicate&quot;: &quot;allergic_to&quot;
     }
   }
-}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_logic</code> <code>{
   &quot;query&quot;: &quot;Who is Scott?&quot;
 }</code></div><details class="tool-output"><summary>output</summary><pre>{
   &quot;status&quot;: &quot;no_results&quot;,

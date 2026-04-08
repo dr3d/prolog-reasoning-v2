@@ -304,7 +304,7 @@ def _user_prompt(step: str) -> str:
             "- waiting_on(Task, Prereq).\n"
             "- task_status(Task, Status).\n"
             "- delayed_milestone(Milestone, Supplier).\n"
-            "Do not call query_prolog.\n"
+            "Use only query_rows.\n"
         ),
         "shock_glass": (
             "Use only these tools in order:\n"

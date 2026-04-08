@@ -8,7 +8,6 @@ These tests cover the behavior LM Studio depends on:
 - response shaping for query/list/error tools
 """
 
-import json
 import sys
 from pathlib import Path
 
@@ -25,10 +24,11 @@ class DummyValidator:
 
 
 class DummyRawPrologSkill:
-    def __init__(self, response, add_fact_result=True, retract_fact_result=True):
+    def __init__(self, response, add_fact_result=True, retract_fact_result=True, add_rule_result=True):
         self._response = response
         self._add_fact_result = add_fact_result
         self._retract_fact_result = retract_fact_result
+        self._add_rule_result = add_rule_result
 
     def query(self, query):
         return {**self._response, "query": query}
@@ -39,15 +39,27 @@ class DummyRawPrologSkill:
     def retract_fact(self, fact):
         return self._retract_fact_result
 
+    def add_rule(self, rule):
+        return self._add_rule_result
+
 
 class DummySkill:
-    def __init__(self, response, entities=None, raw_response=None, add_fact_result=True, retract_fact_result=True):
+    def __init__(
+        self,
+        response,
+        entities=None,
+        raw_response=None,
+        add_fact_result=True,
+        retract_fact_result=True,
+        add_rule_result=True,
+    ):
         self._response = response
         self.validator = DummyValidator(entities)
         self.prolog_skill = DummyRawPrologSkill(
             raw_response if raw_response is not None else response,
             add_fact_result=add_fact_result,
             retract_fact_result=retract_fact_result,
+            add_rule_result=add_rule_result,
         )
 
     def query_nl(self, query):
@@ -85,7 +97,7 @@ class TestMCPServer:
         assert response["result"]["capabilities"]["tools"]["listChanged"] is False
         assert response["result"]["serverInfo"]["name"] == "prolog-reasoning"
 
-    def test_tools_list_hides_legacy_raw_aliases(self):
+    def test_tools_list_exposes_only_canonical_surface(self):
         server = make_server()
 
         response = server.process_request(
@@ -104,7 +116,10 @@ class TestMCPServer:
         assert "assert_fact" in tool_names
         assert "bulk_assert_facts" in tool_names
         assert "retract_fact" in tool_names
+        assert "assert_rule" in tool_names
         assert "reset_kb" in tool_names
+        assert "kb_empty" in tool_names
+        assert "query_prolog" not in tool_names
         assert "query_prolog_raw" not in tool_names
         assert "query_prolog_rows_raw" not in tool_names
         assert "assert_fact_raw" not in tool_names
@@ -112,82 +127,20 @@ class TestMCPServer:
         assert "retract_fact_raw" not in tool_names
         assert "reset_runtime_kb" not in tool_names
 
-    def test_legacy_raw_aliases_remain_callable_via_tools_call(self):
+    def test_tools_call_rejects_removed_tool_name(self):
         server = make_server()
 
-        # Alias to reset_kb (switch to real runtime skill instance)
-        response_reset = server.process_request(
+        response = server.process_request(
             {
                 "jsonrpc": "2.0",
                 "id": 3,
                 "method": "tools/call",
-                "params": {"name": "reset_runtime_kb", "arguments": {}},
+                "params": {"name": "query_prolog", "arguments": {"query": "parent(john, X)."}},
             }
         )
-        assert response_reset["result"]["structuredContent"]["status"] == "success"
-
-        # Alias to assert_fact
-        response_assert = server.process_request(
-            {
-                "jsonrpc": "2.0",
-                "id": 4,
-                "method": "tools/call",
-                "params": {"name": "assert_fact_raw", "arguments": {"fact": "task(foundation)."}},
-            }
-        )
-        assert response_assert["result"]["structuredContent"]["status"] == "success"
-        response_assert_2 = server.process_request(
-            {
-                "jsonrpc": "2.0",
-                "id": 5,
-                "method": "tools/call",
-                "params": {"name": "assert_fact_raw", "arguments": {"fact": "task(structural_frame)."}},
-            }
-        )
-        assert response_assert_2["result"]["structuredContent"]["status"] == "success"
-        response_assert_3 = server.process_request(
-            {
-                "jsonrpc": "2.0",
-                "id": 6,
-                "method": "tools/call",
-                "params": {
-                    "name": "assert_fact_raw",
-                    "arguments": {"fact": "depends_on(structural_frame, foundation)."},
-                },
-            }
-        )
-        assert response_assert_3["result"]["structuredContent"]["status"] == "success"
-
-        # Alias to query_rows
-        response = server.process_request(
-            {
-                "jsonrpc": "2.0",
-                "id": 7,
-                "method": "tools/call",
-                "params": {
-                    "name": "query_prolog_rows_raw",
-                    "arguments": {"query": "depends_on(Task, Prereq)."},
-                },
-            }
-        )
-
         result = response["result"]["structuredContent"]
-        assert result["status"] == "success"
-        assert any(
-            row.get("Task") == "structural_frame" and row.get("Prereq") == "foundation"
-            for row in result.get("rows", [])
-        )
-
-        # Alias to reset_kb remains callable after mutations as well.
-        response_reset_again = server.process_request(
-            {
-                "jsonrpc": "2.0",
-                "id": 8,
-                "method": "tools/call",
-                "params": {"name": "reset_runtime_kb", "arguments": {}},
-            }
-        )
-        assert response_reset_again["result"]["structuredContent"]["status"] == "success"
+        assert result["status"] == "error"
+        assert "Unknown tool: query_prolog" in result["error"]
 
     def test_tools_call_wraps_result_and_makes_it_json_safe(self):
         server = make_server()
@@ -299,150 +252,67 @@ class TestMCPServer:
         assert "predicate" in result["explanation"].lower()
         assert any("supported predicate" in suggestion for suggestion in result["suggestions"])
 
-    def test_query_prolog_shapes_success_response(self):
-        parsed_ir = json.dumps({"predicate": "parent", "args": ["john", "X"]})
-        skill = DummySkill(
-            {
-                "success": True,
-                "explanation": "SUCCESS: Query 'parent(john, X)' succeeded with 1 solution(s).\n  Bindings: X: alice",
-                "proof_trace": [],
-                "bindings": {"X": "alice"},
-                "num_solutions": 1,
-                "validation_confidence": 1.0,
-                "parsing_confidence": 0.9,
-                "domain": "family",
-                "parsed_ir": parsed_ir,
-            }
-        )
-        server = make_server(skill)
-
-        result = server.query_prolog("Who is John's parent?")
-
-        assert result["status"] == "success"
-        assert result["result_type"] == "success"
-        assert result["predicate"] == "parent"
-        assert result["reasoning_basis"]["kind"] == "fact-backed"
-        assert result["metadata"]["bindings"] == {"X": "alice"}
-
-    def test_query_prolog_shapes_validation_error_response(self):
-        parsed_ir = json.dumps({"predicate": "parent", "args": ["charlie", "X"]})
-        skill = DummySkill(
-            {
-                "success": False,
-                "validation_errors": [
-                    {"type": "undefined_entity", "message": "Entity 'charlie' not in KB"}
-                ],
-                "validation_confidence": 0.1,
-                "parsing_confidence": 0.8,
-                "domain": "family",
-                "parsed_ir": parsed_ir,
-            }
-        )
-        server = make_server(skill)
-
-        result = server.query_prolog("Who is Charlie's parent?")
-
-        assert result["status"] == "validation_error"
-        assert result["result_type"] == "validation_error"
-        assert result["error_types"] == ["undefined_entity"]
-        assert result["predicate"] == "parent"
-
-    def test_query_prolog_shapes_no_result_response(self):
-        parsed_ir = json.dumps({"predicate": "ancestor", "args": ["alice", "nobody"]})
-        skill = DummySkill(
-            {
-                "success": False,
-                "why_it_failed": "No ancestor relationship was found.",
-                "what_to_try": "Ask about a known descendant.",
-                "failure_explanation": "No matching derived fact was found.",
-                "validation_confidence": 1.0,
-                "parsing_confidence": 0.85,
-                "domain": "family",
-                "parsed_ir": parsed_ir,
-            }
-        )
-        server = make_server(skill)
-
-        result = server.query_prolog("Is Alice an ancestor of nobody?")
-
-        assert result["status"] == "no_results"
-        assert result["result_type"] == "no_result"
-        assert result["predicate"] == "ancestor"
-        assert result["reasoning_basis"]["kind"] == "rule-derived"
-
-    def test_query_prolog_raw_shapes_success_response(self):
+    def test_query_logic_shapes_success_response(self):
         skill = DummySkill(
             response={},
             raw_response={
                 "success": True,
-                "explanation": "SUCCESS: Query 'allowed(alice, read)' succeeded with 1 solution(s).",
+                "explanation": "SUCCESS: Query 'parent(john, X)' succeeded with 1 solution(s).",
                 "proof_trace": [],
-                "bindings": {},
+                "bindings": {"X": "alice"},
                 "num_solutions": 1,
                 "confidence": 1.0,
             },
         )
         server = make_server(skill)
 
-        result = server.query_prolog_raw("allowed(alice, read).")
+        result = server.query_logic("parent(john, X).")
 
         assert result["status"] == "success"
         assert result["result_type"] == "success"
-        assert result["predicate"] == "allowed"
-        assert result["reasoning_basis"]["kind"] == "rule-derived"
-        assert result["prolog_query"] == "allowed(alice, read)."
+        assert result["predicate"] == "parent"
+        assert result["metadata"]["bindings"] == {"X": "alice"}
+        assert result["prolog_query"] == "parent(john, X)."
 
-    def test_query_prolog_rows_raw_returns_projected_rows(self):
+    def test_query_rows_returns_projected_rows(self):
         server = PrologMCPServer(kb_path="prolog/core.pl")
-        server.reset_runtime_kb()
-        server.assert_fact_raw("task(foundation).")
-        server.assert_fact_raw("task(structural_frame).")
-        server.assert_fact_raw("depends_on(structural_frame, foundation).")
+        server.reset_kb()
+        server.assert_fact("task(foundation).")
+        server.assert_fact("task(structural_frame).")
+        server.assert_fact("depends_on(structural_frame, foundation).")
 
-        result = server.query_prolog_rows_raw("depends_on(Task, Prereq).")
+        result = server.query_rows("depends_on(Task, Prereq).")
 
         assert result["status"] == "success"
         assert result["result_type"] == "table"
         assert result["variables"] == ["Task", "Prereq"]
         assert any(row == {"Task": "structural_frame", "Prereq": "foundation"} for row in result["rows"])
 
-    def test_query_prolog_rows_raw_normalizes_bullet_prefix(self):
+    def test_query_rows_normalizes_bullet_prefix(self):
         server = PrologMCPServer(kb_path="prolog/core.pl")
-        server.reset_runtime_kb()
-        server.assert_fact_raw("task(site_prep).")
+        server.reset_kb()
+        server.assert_fact("task(site_prep).")
 
-        result = server.query_prolog_rows_raw("- task(Task).")
+        result = server.query_rows("- task(Task).")
 
         assert result["status"] == "success"
         assert result["result_type"] == "table"
         assert result["prolog_query"] == "task(Task)."
         assert any(row == {"Task": "site_prep"} for row in result["rows"])
 
-    def test_aliases_match_raw_tools(self):
-        server = PrologMCPServer(kb_path="prolog/core.pl")
-        server.reset_kb()
-        server.assert_fact("task(alias_task).")
-
-        rows_result = server.query_rows("task_status(Task, Status).")
-        raw_result = server.query_prolog_rows_raw("task_status(Task, Status).")
-
-        assert rows_result["status"] == "success"
-        assert raw_result["status"] == "success"
-        assert any(row == {"Task": "alias_task", "Status": "ready"} for row in rows_result["rows"])
-
-    def test_assert_fact_raw_updates_entities(self):
+    def test_assert_fact_updates_entities(self):
         server = make_server(DummySkill({}, {"john"}))
 
-        result = server.assert_fact_raw("task(foundation).")
+        result = server.assert_fact("task(foundation).")
 
         assert result["status"] == "success"
         assert result["result_type"] == "fact_asserted"
         assert "foundation" in server.skill.validator.kb_entities
 
-    def test_bulk_assert_facts_raw_reports_counts(self):
+    def test_bulk_assert_facts_reports_counts(self):
         server = make_server(DummySkill({}, {"john"}))
 
-        result = server.bulk_assert_facts_raw(["task(foundation).", "task(structural_frame)."])
+        result = server.bulk_assert_facts(["task(foundation).", "task(structural_frame)."])
 
         assert result["status"] == "success"
         assert result["result_type"] == "bulk_fact_assertion"
@@ -450,20 +320,61 @@ class TestMCPServer:
         assert result["asserted_count"] == 2
         assert result["failed_count"] == 0
 
-    def test_retract_fact_raw_returns_no_result_when_missing(self):
+    def test_retract_fact_returns_no_result_when_missing(self):
         server = make_server(DummySkill({}, {"john"}, retract_fact_result=False))
 
-        result = server.retract_fact_raw("task(unknown_task).")
+        result = server.retract_fact("task(unknown_task).")
 
         assert result["status"] == "no_results"
         assert result["result_type"] == "no_result"
 
-    def test_reset_runtime_kb_rebuilds_skill(self):
+    def test_reset_kb_rebuilds_skill(self):
         server = PrologMCPServer(kb_path="prolog/core.pl")
         original_skill = server.skill
 
-        result = server.reset_runtime_kb()
+        result = server.reset_kb()
 
         assert result["status"] == "success"
         assert result["result_type"] == "runtime_reset"
         assert server.skill is not original_skill
+
+    def test_assert_rule_enables_derived_query(self):
+        server = PrologMCPServer(kb_path="prolog/core.pl")
+        server.reset_kb()
+
+        rule_result = server.assert_rule(
+            "can_enter(Person, server_room) :- employee(Person), security_clearance(Person, 5)."
+        )
+        assert rule_result["status"] == "success"
+        assert rule_result["result_type"] == "rule_asserted"
+
+        server.assert_fact("employee(alice).")
+        server.assert_fact("security_clearance(alice, 5).")
+        query_result = server.query_logic("can_enter(alice, server_room).")
+
+        assert query_result["status"] == "success"
+        assert query_result["result_type"] == "success"
+
+    def test_kb_empty_clears_runtime_and_reset_kb_restores_baseline(self):
+        server = PrologMCPServer(kb_path="prolog/core.pl")
+
+        baseline = server.query_rows("parent(X, Y).")
+        assert baseline["status"] == "success"
+        assert baseline["num_rows"] > 0
+
+        emptied = server.kb_empty()
+        assert emptied["status"] == "success"
+        assert emptied["result_type"] == "runtime_emptied"
+        assert emptied["remaining_clause_count"] == 0
+
+        after_empty = server.query_rows("parent(X, Y).")
+        assert after_empty["status"] == "no_results"
+        assert after_empty["num_rows"] == 0
+
+        restored = server.reset_kb()
+        assert restored["status"] == "success"
+        assert restored["result_type"] == "runtime_reset"
+
+        after_reset = server.query_rows("parent(X, Y).")
+        assert after_reset["status"] == "success"
+        assert after_reset["num_rows"] > 0

@@ -74,7 +74,6 @@ It is "what follows from explicit facts and rules."
 
 In chat-integrated mode (MCP), useful tools include:
 
-- `query_prolog` for natural-language question routing
 - `query_logic` for literal Prolog query strings
 - `query_rows` for table-shaped deterministic outputs
 - `list_known_facts` for visibility into entities and predicates

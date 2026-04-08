@@ -25,7 +25,7 @@ python scripts/demonstrate_family_tree_agent_mcp.py --model qwen3.5-4b --integra
 
 ## What to Look For
 
-- visible MCP tool calls (`query_prolog`, `classify_statement`)
+- visible MCP tool calls (`query_logic`, `classify_statement`)
 - deterministic tool output feeding final model response
 - clear separation between query answering and candidate-fact typing
 

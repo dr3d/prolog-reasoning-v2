@@ -129,7 +129,7 @@
     },
     {
       "step": "baseline",
-      "prompt": "Use ONLY query_rows for these exact queries and return markdown tables plus row counts:\n- safe_to_start(Task).\n- waiting_on(Task, Prereq).\n- task_status(Task, Status).\n- delayed_milestone(Milestone, Supplier).\nDo not call query_prolog.\n",
+      "prompt": "Use ONLY query_rows for these exact queries and return markdown tables plus row counts:\n- safe_to_start(Task).\n- waiting_on(Task, Prereq).\n- task_status(Task, Status).\n- delayed_milestone(Milestone, Supplier).\nUse only query_rows.\n",
       "tool_calls": [
         {
           "tool": "query_rows",

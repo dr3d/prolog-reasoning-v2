@@ -2,7 +2,7 @@
 """
 Model Context Protocol (MCP) Server for Prolog Reasoning.
 
-Wraps SemanticPrologSkill as an MCP server for use with LM Studio and other MCP clients.
+Exposes deterministic Prolog tooling over MCP for LM Studio and other clients.
 
 Usage:
     python src/mcp_server.py --kb-path prolog/core.pl
@@ -173,27 +173,8 @@ class PrologMCPServer:
         return validator
         
     def get_tools(self) -> list:
-        """Return available tools for MCP.
-
-        Legacy `_raw` aliases remain callable via `tools/call` for backward
-        compatibility, but are intentionally hidden from discovery to reduce
-        tool-list clutter in MCP clients.
-        """
+        """Return available tools for MCP."""
         return [
-            {
-                "name": "query_prolog",
-                "description": "Query the Prolog knowledge base using natural language. The system will parse your question, validate it against the known facts, and return a logical answer with explanation.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "query": {
-                            "type": "string",
-                            "description": "Natural language query (e.g., 'Who is John's parent?' or 'Is Alice allergic to peanuts?')"
-                        }
-                    },
-                    "required": ["query"]
-                }
-            },
             {
                 "name": "query_logic",
                 "description": "Query the Prolog engine with a literal Prolog query string.",
@@ -266,8 +247,30 @@ class PrologMCPServer:
                 }
             },
             {
+                "name": "assert_rule",
+                "description": "Assert a Prolog rule into the runtime KB for this MCP server process.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "rule": {
+                            "type": "string",
+                            "description": "Prolog rule string ending in '.' (e.g., 'can_enter(P, server_room) :- employee(P), security_clearance(P, 5).')"
+                        }
+                    },
+                    "required": ["rule"]
+                }
+            },
+            {
                 "name": "reset_kb",
                 "description": "Reset runtime assertions by reloading the baseline KB into a fresh in-memory skill instance.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                }
+            },
+            {
+                "name": "kb_empty",
+                "description": "Clear the runtime KB to an empty in-memory state (no baseline facts/rules loaded).",
                 "inputSchema": {
                     "type": "object",
                     "properties": {}
@@ -335,35 +338,13 @@ class PrologMCPServer:
                 "message": (
                     "Return classification only. Do not act on the statement. "
                     "This is a routing hint, not a write. Runtime write tools exist "
-                    "(assert/retract/reset), but classify_statement itself performs no mutation, "
+                    "(assert_fact/assert_rule/retract/reset/empty), but classify_statement itself performs no mutation, "
                     "and durable journaled persistence is not implemented yet."
                 ),
                 "proposal_check": proposal_check,
             }
         )
         return result
-
-    def _extract_predicate_name(self, result: Dict[str, Any]) -> Optional[str]:
-        """Best-effort extraction of the predicate being queried."""
-        parsed_ir = result.get("parsed_ir")
-        if isinstance(parsed_ir, str):
-            try:
-                parsed_ir = json.loads(parsed_ir)
-            except json.JSONDecodeError:
-                parsed_ir = None
-
-        if isinstance(parsed_ir, dict):
-            predicate = parsed_ir.get("predicate")
-            if predicate:
-                return predicate
-
-        nl_query = result.get("nl_query", "")
-        pattern = r"\b(" + "|".join(re.escape(name) for name in self.SUPPORTED_PREDICATES) + r")\b"
-        match = re.search(pattern, nl_query)
-        if match:
-            return match.group(1)
-
-        return None
 
     def _extract_predicate_from_prolog_query(self, query: str) -> Optional[str]:
         """Extract predicate name from a raw Prolog query string."""
@@ -404,68 +385,6 @@ class PrologMCPServer:
             "kind": "fact-backed",
             "note": f"The `{predicate}` predicate is typically answered from stored facts, though rules may still participate."
         }
-
-    def _build_answer_short(self, result: Dict[str, Any]) -> str:
-        """Short answer suitable for tool-using models."""
-        explanation = result.get("explanation", "").strip()
-        if explanation:
-            first_line = explanation.splitlines()[0].strip()
-            if first_line:
-                return first_line
-        return "Query succeeded."
-
-    def query_prolog(self, query: str) -> Dict[str, Any]:
-        """Execute a natural language query against the Prolog KB."""
-        result = self.skill.query_nl(query)
-        predicate = self._extract_predicate_name(result)
-        reasoning_basis = self._infer_reasoning_basis(predicate)
-        
-        # Format the response for better readability
-        if result.get("success"):
-            return {
-                "status": "success",
-                "result_type": "success",
-                "predicate": predicate,
-                "answer_short": self._build_answer_short(result),
-                "answer_detailed": result.get("explanation", "Query succeeded"),
-                "confidence": result.get("validation_confidence", 0.0),
-                "parsing_confidence": result.get("parsing_confidence", 0.0),
-                "domain": result.get("domain", "general"),
-                "nl_query": query,
-                "reasoning_basis": reasoning_basis,
-                "metadata": {
-                    "parsed_ir": result.get("parsed_ir"),
-                    "proof_trace": result.get("proof_trace", result.get("explanation", "")),
-                    "bindings": result.get("bindings"),
-                    "num_solutions": result.get("num_solutions")
-                }
-            }
-        else:
-            # Return validation or query failure
-            if result.get("validation_errors"):
-                error_types = [error.get("type") for error in result.get("validation_errors", [])]
-                return {
-                    "status": "validation_error",
-                    "result_type": "validation_error",
-                    "predicate": predicate,
-                    "error_types": error_types,
-                    "errors": result.get("validation_errors", []),
-                    "validation_confidence": result.get("validation_confidence", 0.0),
-                    "parsing_confidence": result.get("parsing_confidence", 0.0),
-                    "nl_query": query,
-                    "message": "The system found validation issues before query execution. See the structured errors for suggestions."
-                }
-            else:
-                return {
-                    "status": "no_results",
-                    "result_type": "no_result",
-                    "predicate": predicate,
-                    "message": result.get("why_it_failed", "No results found for this query"),
-                    "suggestion": result.get("what_to_try", "Try rephrasing your question or adding more facts"),
-                    "failure_explanation": result.get("failure_explanation"),
-                    "nl_query": query,
-                    "reasoning_basis": reasoning_basis
-                }
 
     def query_logic(self, query: str) -> Dict[str, Any]:
         """Execute a literal Prolog query string against the deterministic engine."""
@@ -517,11 +436,6 @@ class PrologMCPServer:
                 "num_solutions": result.get("num_solutions"),
             },
         }
-
-    # Legacy compatibility shims (`*_raw`) for older prompts/clients.
-    def query_prolog_raw(self, query: str) -> Dict[str, Any]:
-        """Legacy alias for query_logic."""
-        return self.query_logic(query)
 
     def _collect_query_variables(self, term: Any) -> List[str]:
         """Collect original variable names from a parsed query term."""
@@ -599,12 +513,15 @@ class PrologMCPServer:
             "reasoning_basis": reasoning_basis,
         }
 
-    def query_prolog_rows_raw(self, query: str) -> Dict[str, Any]:
-        """Legacy alias for query_rows."""
-        return self.query_rows(query)
-
     def reset_kb(self) -> Dict[str, Any]:
-        return self.reset_runtime_kb()
+        """Reset in-memory runtime assertions by recreating the baseline skill."""
+        self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
+        return {
+            "status": "success",
+            "result_type": "runtime_reset",
+            "message": "Runtime KB reset to baseline seed state.",
+            "knowledge_base_path": str(self.kb_path),
+        }
 
     def _extract_entities_from_fact(self, fact: str) -> Set[str]:
         """Extract atom-like entities from a fact's arguments."""
@@ -665,12 +582,8 @@ class PrologMCPServer:
             "result_type": "fact_asserted",
             "fact": normalized,
             "message": "Fact asserted into runtime KB for this server process.",
-            "note": "Use reset_kb to clear runtime changes.",
+            "note": "Use reset_kb (baseline restore) or kb_empty (fully empty runtime) to clear runtime changes.",
         }
-
-    def assert_fact_raw(self, fact: str) -> Dict[str, Any]:
-        """Legacy alias for assert_fact."""
-        return self.assert_fact(fact)
 
     def bulk_assert_facts(self, facts: List[str]) -> Dict[str, Any]:
         """Assert multiple facts in one call."""
@@ -708,10 +621,6 @@ class PrologMCPServer:
             "message": "Bulk assertion complete.",
         }
 
-    def bulk_assert_facts_raw(self, facts: List[str]) -> Dict[str, Any]:
-        """Legacy alias for bulk_assert_facts."""
-        return self.bulk_assert_facts(facts)
-
     def retract_fact(self, fact: str) -> Dict[str, Any]:
         """Retract one runtime fact from the current in-memory KB."""
         normalized = (fact or "").strip()
@@ -740,18 +649,57 @@ class PrologMCPServer:
             "message": "Fact retracted from runtime KB.",
         }
 
-    def retract_fact_raw(self, fact: str) -> Dict[str, Any]:
-        """Legacy alias for retract_fact."""
-        return self.retract_fact(fact)
+    def assert_rule(self, rule: str) -> Dict[str, Any]:
+        """Assert one runtime rule into the current in-memory KB."""
+        normalized = (rule or "").strip()
+        if not normalized:
+            return {
+                "status": "validation_error",
+                "message": "No rule provided.",
+                "rule": rule,
+            }
+        if not normalized.endswith("."):
+            normalized = normalized + "."
 
-    def reset_runtime_kb(self) -> Dict[str, Any]:
-        """Reset in-memory runtime assertions by recreating the semantic skill."""
-        self.skill = SemanticPrologSkill(kb_path=str(self.kb_path))
+        added = self.skill.prolog_skill.add_rule(normalized)
+        if not added:
+            return {
+                "status": "validation_error",
+                "message": "Rule assertion failed. Ensure this is a valid rule with ':-' and non-empty body.",
+                "rule": normalized,
+            }
+
+        if hasattr(self.skill, "validator"):
+            self.skill.validator.kb_entities.update(self._extract_entities_from_fact(normalized))
+
         return {
             "status": "success",
-            "result_type": "runtime_reset",
-            "message": "Runtime KB reset to baseline seed state.",
+            "result_type": "rule_asserted",
+            "rule": normalized,
+            "message": "Rule asserted into runtime KB for this server process.",
+            "note": "Use reset_kb (baseline restore) or kb_empty (fully empty runtime) to clear runtime changes.",
+        }
+
+    def kb_empty(self) -> Dict[str, Any]:
+        """Clear all runtime facts/rules from the in-memory KB."""
+        engine = getattr(self.skill.prolog_skill, "engine", None)
+        if engine is not None and hasattr(engine, "clauses"):
+            engine.clauses.clear()
+
+        validator = getattr(self.skill, "validator", None)
+        if validator is not None and hasattr(validator, "kb_entities"):
+            validator.kb_entities.clear()
+
+        failure_translator = getattr(self.skill, "failure_translator", None)
+        if failure_translator is not None and hasattr(failure_translator, "kb_entities"):
+            failure_translator.kb_entities.clear()
+
+        return {
+            "status": "success",
+            "result_type": "runtime_emptied",
+            "message": "Runtime KB cleared to empty state.",
             "knowledge_base_path": str(self.kb_path),
+            "remaining_clause_count": 0,
         }
     
     def list_known_facts(self) -> Dict[str, Any]:
@@ -788,7 +736,7 @@ class PrologMCPServer:
             "Check spelling of entity names",
             "Verify the relationship type exists",
             "Use 'list_known_facts' to inspect known entities and supported predicates",
-            "Run 'query_prolog' with a simpler question first"
+            "Run 'query_logic' or 'query_rows' with a simpler predicate first"
         ]
 
         entity_match = re.search(r"entity ['\"]?([^'\" ]+)['\"]?", lower)
@@ -833,12 +781,12 @@ class PrologMCPServer:
         elif "ambig" in lower or "unclear" in lower or "could not parse" in lower:
             error_type = "ambiguous_query"
             explanation = (
-                "The query is ambiguous or too unclear for the natural-language grounding layer to map cleanly into logic."
+                "The query is ambiguous or malformed for deterministic Prolog parsing."
             )
             suggestions = [
-                "Use a simpler sentence with one relationship",
-                "Mention the entity and relationship explicitly",
-                "Example: 'Who is John's parent?' or 'Is Alice an ancestor of Bob?'"
+                "Use a single Prolog predicate with explicit arguments",
+                "Check punctuation and variable names",
+                "Example: 'parent(john, X).' or 'ancestor(alice, bob).'"
             ]
 
         return {
@@ -863,7 +811,7 @@ class PrologMCPServer:
             "version": "0.5",
             "description": (
                 "A local-first neuro-symbolic reliability layer for LLM agents. "
-                "Natural language helps express intent; symbolic reasoning decides truth."
+                "Deterministic symbolic reasoning decides truth."
             ),
             "knowledge_base_path": str(self.kb_path),
             "core_idea": "Memories are timestamped. Facts are not.",
@@ -876,11 +824,11 @@ class PrologMCPServer:
                 ),
             },
             "capabilities": [
-                "Natural language query processing",
+                "Literal Prolog query execution (`query_logic`, `query_rows`)",
                 "Statement classification before query or ingestion decisions",
                 "Deterministic knowledge-base reasoning",
-                "Runtime fact assertion/retraction for chat-driven scenarios",
-                "Semantic validation before query execution",
+                "Runtime fact/rule assertion, retraction, and empty-reset for chat-driven scenarios",
+                "Deterministic query and write-path validation",
                 "Friendly failure explanations with suggestions",
                 "Proof-trace generation"
             ],
@@ -892,10 +840,10 @@ class PrologMCPServer:
                 "General knowledge representations"
             ],
             "example_queries": [
-                "Who is John's parent?",
-                "Is Alice an ancestor of Bob?",
-                "Can admin read files?",
-                "What is Bob allergic to?"
+                "parent(john, X).",
+                "ancestor(alice, bob).",
+                "allowed(admin, read).",
+                "allergic_to(bob, Substance)."
             ],
             "learn_more": {
                 "getting_started": "See training/01-llm-memory-magic.md",
@@ -909,19 +857,14 @@ class PrologMCPServer:
     def handle_tool_call(self, tool_name: str, tool_input: Dict[str, Any]) -> Dict[str, Any]:
         """Route tool calls to appropriate handler."""
         handlers = {
-            "query_prolog": lambda: self.query_prolog(tool_input.get("query", "")),
             "query_logic": lambda: self.query_logic(tool_input.get("query", "")),
             "query_rows": lambda: self.query_rows(tool_input.get("query", "")),
             "assert_fact": lambda: self.assert_fact(tool_input.get("fact", "")),
             "bulk_assert_facts": lambda: self.bulk_assert_facts(tool_input.get("facts", [])),
             "retract_fact": lambda: self.retract_fact(tool_input.get("fact", "")),
+            "assert_rule": lambda: self.assert_rule(tool_input.get("rule", "")),
             "reset_kb": lambda: self.reset_kb(),
-            "query_prolog_raw": lambda: self.query_prolog_raw(tool_input.get("query", "")),
-            "query_prolog_rows_raw": lambda: self.query_prolog_rows_raw(tool_input.get("query", "")),
-            "assert_fact_raw": lambda: self.assert_fact_raw(tool_input.get("fact", "")),
-            "bulk_assert_facts_raw": lambda: self.bulk_assert_facts_raw(tool_input.get("facts", [])),
-            "retract_fact_raw": lambda: self.retract_fact_raw(tool_input.get("fact", "")),
-            "reset_runtime_kb": lambda: self.reset_runtime_kb(),
+            "kb_empty": lambda: self.kb_empty(),
             "classify_statement": lambda: self.classify_statement(tool_input.get("text", "")),
             "list_known_facts": lambda: self.list_known_facts(),
             "explain_error": lambda: self.explain_error(tool_input.get("error_message", "")),
@@ -1008,9 +951,9 @@ class PrologMCPServer:
                         "version": "0.5"
                     },
                     "instructions": (
-                        "Use query_prolog for natural-language queries against the "
-                        "deterministic Prolog knowledge base. Use list_known_facts "
-                        "first if you need to inspect available entities."
+                        "Use query_logic/query_rows for deterministic Prolog-native access to "
+                        "the knowledge base. Use list_known_facts first if you need to inspect "
+                        "available entities and predicate vocabulary."
                     ),
                     "clientInfoEcho": client_info
                 }
@@ -1074,7 +1017,7 @@ def main():
         for tool in server.get_tools():
             print(f"  - {tool['name']}: {tool['description']}")
         print("\nExample usage:")
-        print('  query_prolog({"query": "Who is John\'s parent?"})')
+        print('  query_logic({"query": "parent(john, X)."})')
         sys.exit(0)
     
     if args.stdio:
@@ -1127,15 +1070,15 @@ def main():
                     break
                 elif user_input.lower() == "help":
                     print("\nAvailable commands:")
-                    print("  query <natural language>  - Query the knowledge base")
+                    print("  logic <prolog query>      - Query with literal Prolog")
                     print("  list                     - Show known facts")
                     print("  info                     - System information")
                     print("  help                     - Show this help")
                     print("  quit                     - Exit")
                     print()
-                elif user_input.lower().startswith("query "):
+                elif user_input.lower().startswith("logic "):
                     query = user_input[6:].strip()
-                    result = server.query_prolog(query)
+                    result = server.query_logic(query)
                     print(json.dumps(result, indent=2))
                 elif user_input.lower() == "list":
                     result = server.list_known_facts()

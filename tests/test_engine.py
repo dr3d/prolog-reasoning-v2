@@ -71,6 +71,27 @@ class TestSubstitution:
         assert result.name == "john"
 
 
+class TestParser:
+    """Test parser behavior for nested args and list syntax."""
+
+    def test_parse_nested_compound(self):
+        engine = PrologEngine()
+        term = engine.parse_term("f(a, g(b, c))")
+        assert term.name == "f"
+        assert len(term.args) == 2
+        assert term.args[1].name == "g"
+        assert [arg.name for arg in term.args[1].args] == ["b", "c"]
+
+    def test_parse_list_with_tail(self):
+        engine = PrologEngine()
+        term = engine.parse_term("[H|T]")
+        assert term.name == "."
+        assert term.args[0].is_variable
+        assert term.args[0].name == "H"
+        assert term.args[1].is_variable
+        assert term.args[1].name == "T"
+
+
 class TestUnification:
     """Test unification algorithm."""
     
@@ -251,6 +272,33 @@ class TestBuiltins:
         solutions = engine.resolve(query)
         
         assert len(solutions) == 1
+
+    def test_cut_commits_clause(self):
+        """Cut should commit to the selected clause and prevent fallthrough."""
+        engine = PrologEngine()
+
+        # max(X, Y, X) :- X >= Y, !.
+        engine.add_clause(
+            Clause(
+                Term("max", [Term("X", is_variable=True), Term("Y", is_variable=True), Term("X", is_variable=True)]),
+                [
+                    Term(">=", [Term("X", is_variable=True), Term("Y", is_variable=True)]),
+                    Term("!"),
+                ],
+            )
+        )
+        # max(X, Y, Y).
+        engine.add_clause(
+            Clause(
+                Term("max", [Term("X", is_variable=True), Term("Y", is_variable=True), Term("Y", is_variable=True)])
+            )
+        )
+
+        solutions = engine.resolve(
+            Term("max", [Term("5", is_number=True), Term("3", is_number=True), Term("R", is_variable=True)])
+        )
+        assert len(solutions) == 1
+        assert solutions[0].apply(Term("R", is_variable=True)).name == "5"
 
 
 if __name__ == "__main__":

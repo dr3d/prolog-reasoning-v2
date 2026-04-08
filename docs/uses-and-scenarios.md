@@ -55,7 +55,6 @@ The general agent pattern is:
 
 Current practical surfaces:
 
-- `query_prolog`
 - `query_logic`
 - `query_rows`
 - `list_known_facts`
@@ -132,7 +131,7 @@ The agent can then ask:
 Today, this is best modeled as:
 
 - agent authors or selects a family KB
-- agent uses `query_prolog`
+- agent uses `query_logic` or `query_rows`
 - agent reports the result and explanation
 
 Try it now:

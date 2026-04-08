@@ -361,7 +361,7 @@
         </div>
       </div>
     </div>
-    <div class="meta">Captured: 2026-04-07T05:26:09.932185+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning | Initial skin: standard | Rendered: 2026-04-08 00:13:20 UTC</div>
+    <div class="meta">Captured: 2026-04-07T05:26:09.932185+00:00 | Model: qwen/qwen3.5-9b | Integration: mcp/prolog-reasoning | Initial skin: standard | Rendered: 2026-04-08 05:16:03 UTC</div>
     <section class="step-card"><h2>natural_preflight</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Hey, before we start, can you show me system info and what you factually know right now? Keep it short and grounded in the tool output." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Hey, before we start, can you show me system info and what you factually know right now? Keep it short and grounded in the tool output.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">2</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>show_system_info</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;system&quot;: &quot;Prolog Reasoning v2&quot;,
@@ -375,7 +375,7 @@
     &quot;note&quot;: &quot;This key is reserved for future clarification policy tuning. Current write behavior is unchanged.&quot;
   },
   &quot;capabilities&quot;: [
-    &quot;Natural language query processing&quot;,
+    &quot;Literal Prolog query execution (`query_logic`, `query_rows`)&quot;,
     &quot;Statement classification before query or ingestion decisions&quot;,
     &quot;Deterministic knowledge-base reasoning&quot;,
     &quot;Runtime fact assertion/retraction for chat-driven scenarios&quot;,
@@ -681,7 +681,7 @@ completed(launch_trailer_cut).
 completed(press_kit_final).
 milestone(platform_release_slot).
 milestone(embargo_briefing).
-milestone(global_launch).</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">17</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>bulk_assert_facts</code> <code>{
+milestone(global_launch).</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">14</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>bulk_assert_facts</code> <code>{
   &quot;facts&quot;: [
     &quot;task(vertical_slice_lock).&quot;,
     &quot;task(crash_triage_sweep).&quot;,
@@ -966,48 +966,6 @@ milestone(global_launch).</pre></div><details class="toolbox tool-expando"><summ
   &quot;reasoning_basis&quot;: {
     &quot;kind&quot;: &quot;fact-backed&quot;,
     &quot;note&quot;: &quot;The `milestone` predicate is typically answered from stored facts, though rules may still participate.&quot;
-  }
-}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
-  &quot;query&quot;: &quot;How many dependencies exist in the knowledge base?&quot;
-}</code></div><details class="tool-output"><summary>output</summary><pre>{
-  &quot;status&quot;: &quot;no_results&quot;,
-  &quot;result_type&quot;: &quot;no_result&quot;,
-  &quot;predicate&quot;: &quot;unknown&quot;,
-  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
-  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
-  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
-  &quot;nl_query&quot;: &quot;How many dependencies exist in the knowledge base?&quot;,
-  &quot;reasoning_basis&quot;: {
-    &quot;kind&quot;: &quot;fact-backed&quot;,
-    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
-  }
-}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
-  &quot;query&quot;: &quot;How many supplier mappings exist in the knowledge base?&quot;
-}</code></div><details class="tool-output"><summary>output</summary><pre>{
-  &quot;status&quot;: &quot;no_results&quot;,
-  &quot;result_type&quot;: &quot;no_result&quot;,
-  &quot;predicate&quot;: &quot;unknown&quot;,
-  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
-  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
-  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
-  &quot;nl_query&quot;: &quot;How many supplier mappings exist in the knowledge base?&quot;,
-  &quot;reasoning_basis&quot;: {
-    &quot;kind&quot;: &quot;fact-backed&quot;,
-    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
-  }
-}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
-  &quot;query&quot;: &quot;How many supplier statuses exist in the knowledge base?&quot;
-}</code></div><details class="tool-output"><summary>output</summary><pre>{
-  &quot;status&quot;: &quot;no_results&quot;,
-  &quot;result_type&quot;: &quot;no_result&quot;,
-  &quot;predicate&quot;: &quot;unknown&quot;,
-  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
-  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
-  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
-  &quot;nl_query&quot;: &quot;How many supplier statuses exist in the knowledge base?&quot;,
-  &quot;reasoning_basis&quot;: {
-    &quot;kind&quot;: &quot;fact-backed&quot;,
-    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
   }
 }</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_logic</code> <code>{
   &quot;query&quot;: &quot;depends_on(crash_triage_sweep, vertical_slice_lock).&quot;
@@ -3145,7 +3103,7 @@ The **global_launch** milestone is impacted by the cloud vendor delay. Since glo
 - **1 task blocked**: global_launch (waiting on matchmaking_scale_test)
 - **14 milestones impacted**: All downstream milestones that depend on global_launch will experience delays
 
-The cloud support vendor delay creates a cascading effect through the project timeline, with the most significant impact being on the global launch milestone and all its dependent deliverables.</pre></div></section><section class="step-card"><h2>natural_cert_incident</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Now certification looks delayed too. Reflect that status change and tell me the top launch-protection actions." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Now certification looks delayed too. Reflect that status change and tell me the top launch-protection actions.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">16</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>list_known_facts</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+The cloud support vendor delay creates a cascading effect through the project timeline, with the most significant impact being on the global launch milestone and all its dependent deliverables.</pre></div></section><section class="step-card"><h2>natural_cert_incident</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Now certification looks delayed too. Reflect that status change and tell me the top launch-protection actions." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Now certification looks delayed too. Reflect that status change and tell me the top launch-protection actions.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">14</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>list_known_facts</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
   &quot;status&quot;: &quot;success&quot;,
   &quot;known_entities&quot;: [
     &quot;admin&quot;,
@@ -3740,20 +3698,6 @@ The cloud support vendor delay creates a cascading effect through the project ti
     &quot;kind&quot;: &quot;rule-derived&quot;,
     &quot;note&quot;: &quot;The `allowed` predicate is typically computed through rules rather than stored as a single explicit fact.&quot;
   }
-}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
-  &quot;query&quot;: &quot;What are the top launch-protection actions given that certification is now delayed?&quot;
-}</code></div><details class="tool-output"><summary>output</summary><pre>{
-  &quot;status&quot;: &quot;no_results&quot;,
-  &quot;result_type&quot;: &quot;no_result&quot;,
-  &quot;predicate&quot;: &quot;unknown&quot;,
-  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
-  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
-  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
-  &quot;nl_query&quot;: &quot;What are the top launch-protection actions given that certification is now delayed?&quot;,
-  &quot;reasoning_basis&quot;: {
-    &quot;kind&quot;: &quot;fact-backed&quot;,
-    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
-  }
 }</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
   &quot;query&quot;: &quot;waiting_on(X, Y).&quot;
 }</code></div><details class="tool-output"><summary>output</summary><pre>{
@@ -3819,20 +3763,6 @@ The cloud support vendor delay creates a cascading effect through the project ti
   &quot;reasoning_basis&quot;: {
     &quot;kind&quot;: &quot;rule-derived&quot;,
     &quot;note&quot;: &quot;The `delayed_milestone` predicate is typically computed through rules rather than stored as a single explicit fact.&quot;
-  }
-}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
-  &quot;query&quot;: &quot;Given that certification is delayed, which tasks are most critical for the global_launch and what protection measures should be prioritized?&quot;
-}</code></div><details class="tool-output"><summary>output</summary><pre>{
-  &quot;status&quot;: &quot;no_results&quot;,
-  &quot;result_type&quot;: &quot;no_result&quot;,
-  &quot;predicate&quot;: &quot;unknown&quot;,
-  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
-  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
-  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
-  &quot;nl_query&quot;: &quot;Given that certification is delayed, which tasks are most critical for the global_launch and what protection measures should be prioritized?&quot;,
-  &quot;reasoning_basis&quot;: {
-    &quot;kind&quot;: &quot;fact-backed&quot;,
-    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
   }
 }</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Based on the knowledge base and the certification delay status I&#x27;ve just reflected, here are the **top launch-protection actions**:
 
@@ -3952,7 +3882,7 @@ Since this is explicitly marked as tentative and unconfirmed, you should:
 1. **Do NOT assert it as a hard fact** using `assert_fact` - that would violate the &quot;not locked yet&quot; constraint
 2. Consider storing it in a separate metadata field or comment system for tracking
 3. Flag it for future confirmation when the date becomes locked
-4. If you need to track this temporarily, you could use natural language query tools rather than Prolog assertions
+4. If you need to track this temporarily, you could use deterministic query tools rather than Prolog assertions
 
 ---
 
@@ -3988,7 +3918,7 @@ Since this is explicitly marked as tentative and unconfirmed, you should:
 1. **Do NOT assert it as a hard fact** using `assert_fact` - that would violate the &quot;not locked yet&quot; constraint
 2. Consider storing it in a separate metadata field or comment system for tracking
 3. Flag it for future confirmation when the date becomes locked
-4. If you need to track this temporarily, you could use natural language query tools rather than Prolog assertions
+4. If you need to track this temporarily, you could use deterministic query tools rather than Prolog assertions
 
 ---
 

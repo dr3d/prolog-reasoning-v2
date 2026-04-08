@@ -3,6 +3,7 @@
 - Captured at: 2026-04-07T05:26:09.932185+00:00
 - Model: `qwen/qwen3.5-9b`
 - Integration: `mcp/prolog-reasoning`
+- Normalization: `Normalized to canonical Prolog-only MCP tool surface on 2026-04-08.`
 
 ## Tooling Robustness Summary
 
@@ -20,7 +21,7 @@
 
 - `natural_ingest`: **PASS**
   expected: `bulk_assert_facts, query_rows`
-  observed: `bulk_assert_facts, list_known_facts, query_logic, query_prolog, query_rows`
+  observed: `bulk_assert_facts, list_known_facts, query_logic, query_rows`
   missing: `(none)`
 
 - `natural_standup`: **PASS**
@@ -35,7 +36,7 @@
 
 - `natural_cert_incident`: **MISS**
   expected: `assert_fact, query_rows, retract_fact`
-  observed: `assert_fact, list_known_facts, query_prolog, query_rows`
+  observed: `assert_fact, list_known_facts, query_rows`
   missing: `retract_fact`
 
 - `natural_uncertain_note`: **PASS**
@@ -113,7 +114,7 @@ You can proceed with your queries or assertions knowing that no old data will le
 ## Step: natural_ingest
 
 - Expected tools: `bulk_assert_facts, query_rows`
-- Observed tools: `bulk_assert_facts, list_known_facts, query_logic, query_prolog, query_rows`
+- Observed tools: `bulk_assert_facts, list_known_facts, query_logic, query_rows`
 - Missing: `(none)`
 - Step status: `PASS`
 
@@ -187,9 +188,6 @@ milestone(global_launch).
 - `query_rows` `{"query": "supplier_status(_, _)."}`
 - `query_rows` `{"query": "completed(X)."}`
 - `query_rows` `{"query": "milestone(X)."}`
-- `query_prolog` `{"query": "How many dependencies exist in the knowledge base?"}`
-- `query_prolog` `{"query": "How many supplier mappings exist in the knowledge base?"}`
-- `query_prolog` `{"query": "How many supplier statuses exist in the knowledge base?"}`
 - `query_logic` `{"query": "depends_on(crash_triage_sweep, vertical_slice_lock)."}`
 - `query_logic` `{"query": "task_supplier(console_submission, console_cert_vendor)."}`
 - `query_logic` `{"query": "supplier_status(console_cert_vendor, on_time)."}`
@@ -406,7 +404,7 @@ The cloud support vendor delay creates a cascading effect through the project ti
 ## Step: natural_cert_incident
 
 - Expected tools: `assert_fact, query_rows, retract_fact`
-- Observed tools: `assert_fact, list_known_facts, query_prolog, query_rows`
+- Observed tools: `assert_fact, list_known_facts, query_rows`
 - Missing: `retract_fact`
 - Step status: `MISS`
 
@@ -430,10 +428,8 @@ Now certification looks delayed too. Reflect that status change and tell me the 
 - `query_rows` `{"query": "blocked_task(X)."}`
 - `query_rows` `{"query": "unmet_prereq(X, Y)."}`
 - `query_rows` `{"query": "allowed(X, Y)."}`
-- `query_prolog` `{"query": "What are the top launch-protection actions given that certification is now delayed?"}`
 - `query_rows` `{"query": "waiting_on(X, Y)."}`
 - `query_rows` `{"query": "delayed_milestone(X)."}`
-- `query_prolog` `{"query": "Given that certification is delayed, which tasks are most critical for the global_launch and what protection measures should be prioritized?"}`
 
 ### Assistant Reply
 
@@ -511,7 +507,7 @@ Since this is explicitly marked as tentative and unconfirmed, you should:
 1. **Do NOT assert it as a hard fact** using `assert_fact` - that would violate the "not locked yet" constraint
 2. Consider storing it in a separate metadata field or comment system for tracking
 3. Flag it for future confirmation when the date becomes locked
-4. If you need to track this temporarily, you could use natural language query tools rather than Prolog assertions
+4. If you need to track this temporarily, you could use deterministic query tools rather than Prolog assertions
 
 ---
 

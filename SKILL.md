@@ -19,7 +19,7 @@ Agent: "Alice is John's parent."  # answered from model memory or stale context
 Right:
 
 ```text
-Agent: use query_prolog("Who is John's parent?")
+Agent: use query_logic("parent(john, X).")
 Agent: answer from the returned result, or say it is not in the KB
 ```
 
@@ -53,7 +53,6 @@ Core claim:
 ## Current Capability Boundary
 
 The current MCP server is good at:
-- `query_prolog`
 - `query_logic`
 - `query_rows`
 - `classify_statement`
@@ -117,7 +116,7 @@ If a turn mixes these, separate them explicitly before acting.
 For factual questions:
 1. Prefer the symbolic layer over model memory.
 2. Use `list_known_facts` if entity or predicate coverage is unclear.
-3. Use `query_prolog` for the actual question.
+3. Use `query_logic` or `query_rows` for the actual question.
 4. If the query fails, distinguish:
    - validation error,
    - no-result,
@@ -259,7 +258,7 @@ For queries, prefer:
 {
   "mode": "query",
   "source_of_truth": "symbolic_kb",
-  "action": "query_prolog",
+  "action": "query_logic_or_query_rows",
   "fallback": "explain_error"
 }
 ```

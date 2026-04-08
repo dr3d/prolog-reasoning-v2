@@ -34,7 +34,13 @@ DEFAULT_ENV_FILE = ".env.local"
 DEFAULT_OUT_ROOT = ".tmp_fact_ingestion_dialog_battery"
 DEFAULT_LEDGER = "docs/research/fact-ingestion-dialog-battery.md"
 
-WRITE_TOOLS = {"assert_fact", "bulk_assert_facts", "retract_fact", "reset_kb"}
+WRITE_TOOLS = {
+    "assert_fact",
+    "bulk_assert_facts",
+    "retract_fact",
+    "assert_rule",
+    "reset_kb",
+}
 
 
 STEERING_PREFIX = {

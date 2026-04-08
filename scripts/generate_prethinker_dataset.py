@@ -144,7 +144,7 @@ class TemplateBank:
                 StatementKind.INSTRUCTION: [
                     "Use query_rows for this.",
                     "Do not store anything yet.",
-                    "Never call query_prolog for table outputs.",
+                    "Use canonical query tools for table outputs.",
                     "Always verify counts before summary.",
                     "Remember to reset_kb first.",
                 ],
