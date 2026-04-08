@@ -149,6 +149,7 @@ data/__pycache__/
 .tmp/
 .tmp_*/
 .tmp*/
+.tmp*
 
 # Ad-hoc themed transcript preview exports
 docs/examples/*.central.html
