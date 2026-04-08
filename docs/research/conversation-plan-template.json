@@ -1,0 +1,26 @@
+{
+  "title": "Scenario X Prompt Plan",
+  "run_id": "scenario-x",
+  "steps": [
+    {
+      "id": "reset",
+      "prompt": "Reset runtime KB now. Use ONLY reset_kb and confirm."
+    },
+    {
+      "id": "story_ingestion",
+      "prompt": "You are operating with MCP tools enabled. Ingest the scenario narrative and persist only grounded facts/rules.\n\n[PASTE STORY BLOCK HERE]"
+    },
+    {
+      "id": "q01",
+      "prompt": "[Deep analysis prompt 1]"
+    },
+    {
+      "id": "q02",
+      "prompt": "[Deep analysis prompt 2]"
+    },
+    {
+      "id": "s01",
+      "prompt": "[Stress prompt 1]"
+    }
+  ]
+}

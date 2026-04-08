@@ -2,21 +2,24 @@
 
 This folder holds exploratory framing and evaluation notes that inform direction, but are not required to run the core system.
 
-- `lmstudio-classifier-matrix.md`: local model behavior comparisons for classifier/control-plane prompts.
-- `model-scenario-matrix.md`: compact multi-model run ledger for scenario-based MCP tool/ingestion behavior.
-- `fact-ingestion-benchmark-matrix-spec.md`: canonical benchmark spec for scenario matrix design, scoring, gates, and artifacts.
-- `fact-ingestion-dialog-battery.md`: multi-turn natural-language ingestion battery with post-run deterministic KB checks.
-- `fact-ingestion-dialog-battery.html`: themed HTML render of the ingestion battery ledger.
-- `fact-extraction-steering-matrix.html`: themed HTML render of the extraction matrix ledger.
-- `story-run-template.md`: reusable markdown format for single-conversation story ingestion probes.
-- `story-1.md`: Chronos-Vault deep logic trap prompt pack for story-run probing.
-- `story-1-results.md`: saved Qwen3.5-27B run summary and artifact pointers.
-- `prethinker-lora-playbook.md`: practical plan for when to use stateless pre-thinker baselines vs LoRA fine-tuning.
-- `collaboration-map.md`: contribution lanes and open idea prompts for new collaborators.
-- `stretch-logic-scenarios.md`: trimmed appendix of advanced scenario ideas (canonical practical scenarios live in `docs/uses-and-scenarios.md`).
-- `neuro-symbolic-2026-landscape.md`: landscape-style synthesis and cautions.
-- `neuro-symbolic-2026-stack-pitch.md`: implementation-oriented positioning narrative.
-- `lp-lm-comparison.md`: takeaways from LP-LM (2502.09212v1) mapped to this repo's roadmap and MCP workflow.
+## Active Track
+
+- `scenarios/README.md`: scenario authoring contract and runner usage.
+- `scenarios/scenario-1.md`: first scenario narrative (Chronos-Vault).
+- `conversation-plan-template.json`: reusable JSON prompt-plan template for `scripts/run_conversaton.py`.
+- `conversations/README.md`: output layout for generated run artifacts.
+- `model-scenario-matrix.md`: compact multi-model ledger for scenario-based MCP behavior.
+- `fact-ingestion-benchmark-matrix-spec.md`: benchmark spec for ingestion scenario scoring and gates.
+- `fact-ingestion-dialog-battery.md`: multi-turn ingestion battery ledger.
+- `fact-ingestion-dialog-battery.html`: themed HTML render of ingestion battery ledger.
+- `fact-extraction-steering-matrix.md`: extraction steering matrix ledger.
+- `fact-extraction-steering-matrix.html`: themed HTML render of extraction steering matrix.
+- `prethinker-lora-playbook.md`: practical pre-thinker vs LoRA sequence and dataset/eval workflow.
+- `collaboration-map.md`: contribution lanes and open idea prompts for collaborators.
+
+## Archive
+
+- `legacy/README.md`: archived notes, superseded matrixes, and dated run packs.
 
 Render command:
 

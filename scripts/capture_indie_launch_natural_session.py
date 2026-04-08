@@ -19,10 +19,15 @@ import datetime as dt
 import html
 import json
 import os
+import sys
 import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
 
 from render_dialog_helpers import render_transcript_html
 

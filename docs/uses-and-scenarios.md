@@ -404,7 +404,7 @@ That gives the repo two compatible utilities:
 
 For harder moonshot-style domains, see:
 
-- `docs/research/stretch-logic-scenarios.md`
+- `docs/research/legacy/stretch-logic-scenarios.md`
 
 ## 12. Scenario 7: Drug Interaction Triage
 

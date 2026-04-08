@@ -69,7 +69,7 @@ These parts are implemented and working:
 - MCP server for local LLM integration in [src/mcp_server.py](src/mcp_server.py)
 - Statement classification layer in [src/parser/statement_classifier.py](src/parser/statement_classifier.py)
 - Constraint propagation engine in [src/engine/constraint_propagation.py](src/engine/constraint_propagation.py)
-- Test suite currently passing: `107 passed`
+- Test suite currently passing: `108 passed`
 
 Runtime boundary (important for reviewers):
 
@@ -145,9 +145,11 @@ python data/evaluate.py
 - Planned work: [roadmap.md](roadmap.md)
 - Unified intake/memory/write spec: [docs/fact-intake-pipeline.md](docs/fact-intake-pipeline.md)
 - Split-note compatibility stubs: [docs/memory-ingestion-and-revision-notes.md](docs/memory-ingestion-and-revision-notes.md), [docs/write-path-spec.md](docs/write-path-spec.md)
-- LM Studio classifier evaluation: [docs/research/lmstudio-classifier-matrix.md](docs/research/lmstudio-classifier-matrix.md)
+- Scenario library + run contract: [docs/research/scenarios/README.md](docs/research/scenarios/README.md)
 - Model-scenario matrix ledger: [docs/research/model-scenario-matrix.md](docs/research/model-scenario-matrix.md)
 - Fact-ingestion benchmark matrix spec: [docs/research/fact-ingestion-benchmark-matrix-spec.md](docs/research/fact-ingestion-benchmark-matrix-spec.md)
+- Conversation plan template: [docs/research/conversation-plan-template.json](docs/research/conversation-plan-template.json)
+- Conversation captures layout: [docs/research/conversations/README.md](docs/research/conversations/README.md)
 - Pre-thinker LoRA playbook: [docs/research/prethinker-lora-playbook.md](docs/research/prethinker-lora-playbook.md)
 - Collaboration lanes and idea prompts: [docs/research/collaboration-map.md](docs/research/collaboration-map.md)
 - Pre-thinker control plane: [docs/pre-thinker-control-plane.md](docs/pre-thinker-control-plane.md)

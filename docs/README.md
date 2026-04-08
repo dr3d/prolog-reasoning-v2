@@ -58,17 +58,17 @@ GitHub Pages base (for shareable rendered HTML):
 
 ## Research Track (Exploratory)
 
-- [research/lmstudio-classifier-matrix.md](research/lmstudio-classifier-matrix.md): local-model classifier matrix findings.
 - [research/model-scenario-matrix.md](research/model-scenario-matrix.md): compact multi-model ledger for scenario-based MCP behavior and logic-ingestion signals.
 - [research/fact-ingestion-benchmark-matrix-spec.md](research/fact-ingestion-benchmark-matrix-spec.md): benchmark matrix spec for fact-recognition scenarios, scoring, and pass/fail gates.
 - [research/fact-ingestion-dialog-battery.md](research/fact-ingestion-dialog-battery.md): multi-turn natural-language ingestion battery with deterministic post-run KB checks.
 - [research/fact-ingestion-dialog-battery.html](https://dr3d.github.io/prolog-reasoning/research/fact-ingestion-dialog-battery.html): themed HTML render of the ingestion battery ledger.
 - [research/fact-extraction-steering-matrix.html](https://dr3d.github.io/prolog-reasoning/research/fact-extraction-steering-matrix.html): themed HTML render of the extraction matrix ledger.
+- [research/scenarios/README.md](research/scenarios/README.md): scenario authoring contract and runner usage.
+- [research/conversation-plan-template.json](research/conversation-plan-template.json): reusable JSON prompt-plan template for scenario runs.
+- [research/conversations/README.md](research/conversations/README.md): output layout for generated conversation captures.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
 - [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
-- [research/stretch-logic-scenarios.md](research/stretch-logic-scenarios.md): larger and more ambitious scenario ideas.
-- [research/neuro-symbolic-2026-landscape.md](research/neuro-symbolic-2026-landscape.md): landscape review framing.
-- [research/neuro-symbolic-2026-stack-pitch.md](research/neuro-symbolic-2026-stack-pitch.md): implementation pitch framing.
+- [research/legacy/README.md](research/legacy/README.md): archived research notes and dated run packs.
 
 ## Secondary Track (Optional)
 
