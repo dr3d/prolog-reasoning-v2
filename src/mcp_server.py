@@ -22,6 +22,9 @@ import json
 import sys
 import argparse
 import re
+import os
+import urllib.error
+import urllib.request
 from typing import Any, Dict, List, Optional, Set
 from pathlib import Path
 
@@ -74,6 +77,30 @@ class PrologMCPServer:
     }
     DEFAULT_CONTROL_PLANE_POLICY = {
         "clarification_eagerness": 0.0
+    }
+    DEFAULT_PRETHINKER_BASE_URL = "http://127.0.0.1:1234"
+    DEFAULT_PRETHINKER_MODEL = "qwen3.5-4b"
+    DEFAULT_PRETHINKER_TEMPERATURE = 0.0
+    DEFAULT_PRETHINKER_CONTEXT_LENGTH = 4000
+    DEFAULT_PRETHINKER_TIMEOUT_SECONDS = 120
+    PRETHINKER_KINDS = {
+        "query",
+        "hard_fact",
+        "tentative_fact",
+        "correction",
+        "preference",
+        "session_context",
+        "instruction",
+        "unknown",
+    }
+    PRETHINKER_OPERATIONS = {
+        "query",
+        "store_fact",
+        "store_tentative",
+        "revise_memory",
+        "store_preference",
+        "store_context",
+        "ignore",
     }
     SUPPORTED_PREDICATES = [
         "parent",
@@ -147,6 +174,25 @@ class PrologMCPServer:
         # Reserved policy surface for future routing/clarification behavior.
         # This is intentionally a no-op in current runtime logic.
         self.control_plane_policy = dict(self.DEFAULT_CONTROL_PLANE_POLICY)
+        self.prethinker_base_url = (
+            os.environ.get("PRETHINKER_BASE_URL", "").strip()
+            or os.environ.get("LMSTUDIO_BASE_URL", "").strip()
+            or self.DEFAULT_PRETHINKER_BASE_URL
+        )
+        self.prethinker_model = (
+            os.environ.get("PRETHINKER_MODEL", "").strip()
+            or self.DEFAULT_PRETHINKER_MODEL
+        )
+        prethinker_api_key = (
+            os.environ.get("PRETHINKER_API_KEY", "").strip()
+            or os.environ.get("LMSTUDIO_API_KEY", "").strip()
+            or os.environ.get("OPENAI_API_KEY", "").strip()
+        )
+        self.prethinker_api_key = prethinker_api_key or None
+        self.prethinker_timeout_seconds = self._coerce_positive_int(
+            os.environ.get("PRETHINKER_TIMEOUT_SECONDS"),
+            fallback=self.DEFAULT_PRETHINKER_TIMEOUT_SECONDS,
+        )
         self._request_id = 0
 
     def _resolve_kb_path(self, kb_path: str) -> Path:
@@ -171,6 +217,469 @@ class PrologMCPServer:
             validator = self._build_proposal_validator()
             self.proposal_validator = validator
         return validator
+
+    def _coerce_positive_int(self, value: Any, fallback: int) -> int:
+        """Parse a positive int from env/input, falling back when invalid."""
+        try:
+            parsed = int(value)
+        except (TypeError, ValueError):
+            return fallback
+        return parsed if parsed > 0 else fallback
+
+    def _coerce_float(
+        self,
+        value: Any,
+        fallback: float,
+        *,
+        minimum: Optional[float] = None,
+        maximum: Optional[float] = None,
+    ) -> float:
+        """Parse float with optional bounds and fallback."""
+        try:
+            parsed = float(value)
+        except (TypeError, ValueError):
+            parsed = fallback
+        if minimum is not None and parsed < minimum:
+            parsed = minimum
+        if maximum is not None and parsed > maximum:
+            parsed = maximum
+        return parsed
+
+    def _coerce_bool(self, value: Any, fallback: bool = False) -> bool:
+        """Parse booleans robustly from model-ish values."""
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, (int, float)):
+            return bool(value)
+        if isinstance(value, str):
+            lowered = value.strip().lower()
+            if lowered in {"true", "1", "yes", "y"}:
+                return True
+            if lowered in {"false", "0", "no", "n"}:
+                return False
+        return fallback
+
+    def _get_prethinker_base_url(self) -> str:
+        return (
+            getattr(self, "prethinker_base_url", "").strip()
+            or self.DEFAULT_PRETHINKER_BASE_URL
+        )
+
+    def _get_prethinker_model(self) -> str:
+        return (
+            getattr(self, "prethinker_model", "").strip()
+            or self.DEFAULT_PRETHINKER_MODEL
+        )
+
+    def _get_prethinker_api_key(self) -> Optional[str]:
+        api_key = getattr(self, "prethinker_api_key", None)
+        if isinstance(api_key, str):
+            api_key = api_key.strip() or None
+        return api_key
+
+    def _get_prethinker_timeout_seconds(self) -> int:
+        return self._coerce_positive_int(
+            getattr(self, "prethinker_timeout_seconds", None),
+            fallback=self.DEFAULT_PRETHINKER_TIMEOUT_SECONDS,
+        )
+
+    def _post_json(
+        self,
+        *,
+        url: str,
+        payload: Dict[str, Any],
+        api_key: Optional[str],
+        timeout_seconds: int,
+    ) -> Dict[str, Any]:
+        """POST JSON to LM Studio-like endpoints with optional bearer auth."""
+        body = json.dumps(payload).encode("utf-8")
+        request = urllib.request.Request(url=url, data=body, method="POST")
+        request.add_header("Content-Type", "application/json")
+        if api_key:
+            request.add_header("Authorization", f"Bearer {api_key}")
+
+        try:
+            with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            raw = error.read().decode("utf-8", errors="replace")
+            if error.code == 401:
+                raise RuntimeError(
+                    "HTTP 401 from pre-thinker model endpoint. Set PRETHINKER_API_KEY "
+                    "or LMSTUDIO_API_KEY."
+                ) from error
+            raise RuntimeError(f"HTTP {error.code}: {raw}") from error
+        except urllib.error.URLError as error:
+            raise RuntimeError(f"Connection error: {error}") from error
+
+    def _extract_message_text(self, response: Dict[str, Any]) -> str:
+        """Extract assistant text from LM Studio /api/v1/chat output payload."""
+        items = response.get("output", [])
+        if not isinstance(items, list):
+            return ""
+
+        parts: List[str] = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            if item.get("type") != "message":
+                continue
+            content = item.get("content")
+            if isinstance(content, str) and content.strip():
+                parts.append(content.strip())
+        return "\n\n".join(parts).strip()
+
+    def _build_prethinker_input(self, *, text: str, narrative_context: str) -> str:
+        """Build structured prompt for pre-thinker JSON assessment."""
+        schema = (
+            "{"
+            "\"kind\":\"query|hard_fact|tentative_fact|correction|preference|session_context|instruction|unknown\","
+            "\"confidence\":0.0,"
+            "\"needs_clarification\":false,"
+            "\"can_persist_now\":false,"
+            "\"suggested_operation\":\"query|store_fact|store_tentative|revise_memory|store_preference|store_context|ignore\","
+            "\"rationale\":\"short reason\""
+            "}"
+        )
+        context_block = narrative_context.strip()
+        if not context_block:
+            context_block = "(none)"
+        return (
+            "You are a pre-thinker for neuro-symbolic ingestion routing.\n"
+            "Assess the utterance and return ONLY a single JSON object.\n"
+            "No markdown, no code fences, no prose outside JSON.\n"
+            "JSON schema:\n"
+            f"{schema}\n\n"
+            "Rules:\n"
+            "- Use tentative_fact for uncertain/hedged claims.\n"
+            "- Use hard_fact only when claim is assertive and grounded enough to persist.\n"
+            "- Use query for questions.\n"
+            "- Use correction for explicit revisions of prior claims.\n"
+            "- Set can_persist_now=false whenever needs_clarification=true.\n\n"
+            f"Narrative context:\n{context_block}\n\n"
+            f"Utterance:\n{text}"
+        )
+
+    def _extract_first_json_object(self, text: str) -> Optional[Dict[str, Any]]:
+        """Extract first JSON object found in possibly noisy model output."""
+        blob = (text or "").strip()
+        if not blob:
+            return None
+        decoder = json.JSONDecoder()
+        for idx, char in enumerate(blob):
+            if char != "{":
+                continue
+            try:
+                candidate, _ = decoder.raw_decode(blob[idx:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(candidate, dict):
+                return candidate
+        return None
+
+    def _validate_prethinker_assessment(self, assessment: Optional[Dict[str, Any]]) -> List[str]:
+        """Validate structured pre-thinker JSON contract."""
+        if not isinstance(assessment, dict):
+            return ["Missing JSON object assessment."]
+
+        errors: List[str] = []
+        required = [
+            "kind",
+            "confidence",
+            "needs_clarification",
+            "can_persist_now",
+            "suggested_operation",
+            "rationale",
+        ]
+        for key in required:
+            if key not in assessment:
+                errors.append(f"Missing required key: {key}")
+
+        kind = assessment.get("kind")
+        if kind not in self.PRETHINKER_KINDS:
+            errors.append(f"Invalid kind: {kind}")
+
+        operation = assessment.get("suggested_operation")
+        if operation not in self.PRETHINKER_OPERATIONS:
+            errors.append(f"Invalid suggested_operation: {operation}")
+
+        confidence = assessment.get("confidence")
+        if not isinstance(confidence, (int, float)):
+            errors.append("confidence must be numeric.")
+        else:
+            confidence_float = float(confidence)
+            if confidence_float < 0.0 or confidence_float > 1.0:
+                errors.append("confidence must be between 0.0 and 1.0.")
+
+        for bool_key in ("needs_clarification", "can_persist_now"):
+            if not isinstance(assessment.get(bool_key), bool):
+                errors.append(f"{bool_key} must be boolean.")
+
+        rationale = assessment.get("rationale")
+        if not isinstance(rationale, str) or not rationale.strip():
+            errors.append("rationale must be a non-empty string.")
+
+        if (
+            isinstance(assessment.get("needs_clarification"), bool)
+            and isinstance(assessment.get("can_persist_now"), bool)
+            and assessment.get("needs_clarification") is True
+            and assessment.get("can_persist_now") is True
+        ):
+            errors.append("can_persist_now must be false when needs_clarification is true.")
+
+        return errors
+
+    def _normalize_prethinker_kind(self, value: Any) -> str:
+        """Normalize model-provided kind labels into canonical taxonomy."""
+        raw = str(value or "").strip().lower()
+        mapping = {
+            "question": "query",
+            "fact": "hard_fact",
+            "hard": "hard_fact",
+            "tentative": "tentative_fact",
+            "uncertain_fact": "tentative_fact",
+            "preference_note": "preference",
+            "context": "session_context",
+            "session": "session_context",
+            "command": "instruction",
+            "none": "unknown",
+        }
+        return mapping.get(raw, raw)
+
+    def _normalize_prethinker_operation(self, value: Any) -> str:
+        """Normalize model operation variants into canonical routing operations."""
+        raw = str(value or "").strip().lower()
+        mapping = {
+            "ask": "query",
+            "query_user": "query",
+            "store_tentative_fact": "store_tentative",
+            "store_tentative_claim": "store_tentative",
+            "tentative_store": "store_tentative",
+            "store_session_context": "store_context",
+            "save_context": "store_context",
+            "store_preference_note": "store_preference",
+            "revise_fact": "revise_memory",
+            "correct_memory": "revise_memory",
+            "noop": "ignore",
+            "none": "ignore",
+            "no_action": "ignore",
+        }
+        return mapping.get(raw, raw)
+
+    def _normalize_prethinker_assessment(
+        self, assessment: Optional[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Normalize loose model JSON into canonical pre-thinker assessment keys."""
+        if not isinstance(assessment, dict):
+            return {}
+
+        kind = self._normalize_prethinker_kind(assessment.get("kind", ""))
+        operation = self._normalize_prethinker_operation(
+            assessment.get("suggested_operation", "")
+        )
+        confidence = self._coerce_float(
+            assessment.get("confidence"),
+            fallback=0.0,
+            minimum=0.0,
+            maximum=1.0,
+        )
+        needs_clarification = self._coerce_bool(
+            assessment.get("needs_clarification", False),
+            fallback=False,
+        )
+        can_persist_now = self._coerce_bool(
+            assessment.get("can_persist_now", False),
+            fallback=False,
+        )
+        rationale = str(assessment.get("rationale", "")).strip()
+
+        normalized = {
+            "kind": kind,
+            "confidence": confidence,
+            "needs_clarification": needs_clarification,
+            "can_persist_now": can_persist_now,
+            "suggested_operation": operation,
+            "rationale": rationale,
+        }
+        return normalized
+
+    def _map_classifier_operation(self, operation: str) -> str:
+        """Map deterministic classifier operations into pre-thinker operation set."""
+        mapping = {
+            "query": "query",
+            "store_fact": "store_fact",
+            "store_tentative_fact": "store_tentative",
+            "revise_memory": "revise_memory",
+            "store_preference": "store_preference",
+            "store_session_context": "store_context",
+            "follow_instruction": "ignore",
+            "none": "ignore",
+        }
+        return mapping.get(operation, "ignore")
+
+    def _is_write_operation(self, operation: str) -> bool:
+        """Return whether operation implies a write-path attempt."""
+        return operation in {"store_fact", "store_tentative", "revise_memory"}
+
+    def _build_baseline_prethink_assessment(self, text: str) -> Dict[str, Any]:
+        """Build deterministic baseline assessment from classifier + proposal validator."""
+        classification = self.statement_classifier.classify(text)
+        class_dict = classification.to_dict()
+        proposal = self._get_proposal_validator().evaluate(
+            text,
+            kind=class_dict.get("kind", "unknown"),
+            needs_speaker_resolution=bool(class_dict.get("needs_speaker_resolution", False)),
+        )
+
+        kind = str(class_dict.get("kind", "unknown"))
+        confidence = self._coerce_float(
+            class_dict.get("confidence"),
+            fallback=0.0,
+            minimum=0.0,
+            maximum=1.0,
+        )
+        suggested_operation = self._map_classifier_operation(
+            str(class_dict.get("suggested_operation", "none"))
+        )
+        needs_clarification = bool(class_dict.get("needs_speaker_resolution", False))
+        can_persist_now = bool(class_dict.get("can_persist_now", False))
+        proposal_status = str(proposal.get("status", "reject"))
+
+        if proposal_status in {"needs_clarification", "reject"}:
+            can_persist_now = False
+        if proposal_status == "needs_clarification":
+            needs_clarification = True
+
+        reasons = class_dict.get("reasons", [])
+        reason_text = ", ".join(str(item) for item in reasons) if isinstance(reasons, list) else ""
+        rationale = (
+            f"classifier={kind}; proposal={proposal_status}"
+            + (f"; reasons={reason_text}" if reason_text else "")
+        )
+
+        return {
+            "kind": kind,
+            "confidence": confidence,
+            "needs_clarification": needs_clarification,
+            "can_persist_now": can_persist_now,
+            "suggested_operation": suggested_operation,
+            "rationale": rationale,
+        }
+
+    def _project_write_path(
+        self,
+        *,
+        text: str,
+        assessment: Optional[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """Project whether a pre-thinker assessment would clear deterministic write-path gates."""
+        if not isinstance(assessment, dict):
+            assessment = {}
+
+        kind = str(assessment.get("kind", "unknown"))
+        operation = str(assessment.get("suggested_operation", "ignore"))
+        needs_clarification = self._coerce_bool(
+            assessment.get("needs_clarification"),
+            fallback=False,
+        )
+        can_persist_now = self._coerce_bool(
+            assessment.get("can_persist_now"),
+            fallback=False,
+        )
+        should_attempt_write = self._is_write_operation(operation)
+
+        proposal_check = self._get_proposal_validator().evaluate(
+            text,
+            kind=kind,
+            needs_speaker_resolution=needs_clarification,
+        )
+        proposal_status = str(proposal_check.get("status", "reject"))
+        write_path_allows = proposal_status == "valid"
+        can_write_now = (
+            should_attempt_write
+            and can_persist_now
+            and (not needs_clarification)
+            and write_path_allows
+        )
+
+        blocking_reasons: List[str] = []
+        if not should_attempt_write:
+            blocking_reasons.append("operation_not_write_like")
+        if not can_persist_now:
+            blocking_reasons.append("assessment_can_persist_now_false")
+        if needs_clarification:
+            blocking_reasons.append("assessment_needs_clarification_true")
+        if not write_path_allows:
+            blocking_reasons.append(f"proposal_status_{proposal_status}")
+
+        return {
+            "kind": kind,
+            "suggested_operation": operation,
+            "should_attempt_write": should_attempt_write,
+            "write_path_allows": write_path_allows,
+            "can_write_now": can_write_now,
+            "proposal_status": proposal_status,
+            "proposal_check": proposal_check,
+            "blocking_reasons": blocking_reasons,
+        }
+
+    def _assessment_agreement(
+        self,
+        baseline: Dict[str, Any],
+        model_assessment: Optional[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        """Compute key-field agreement between model output and deterministic baseline."""
+        if not isinstance(model_assessment, dict) or not model_assessment:
+            return {
+                "kind": None,
+                "can_persist_now": None,
+                "needs_clarification": None,
+                "suggested_operation": None,
+                "all_core_fields_match": None,
+            }
+
+        agreement = {
+            "kind": baseline.get("kind") == model_assessment.get("kind"),
+            "can_persist_now": baseline.get("can_persist_now") == model_assessment.get("can_persist_now"),
+            "needs_clarification": baseline.get("needs_clarification") == model_assessment.get("needs_clarification"),
+            "suggested_operation": baseline.get("suggested_operation") == model_assessment.get("suggested_operation"),
+        }
+        agreement["all_core_fields_match"] = all(
+            bool(agreement[field]) for field in ("kind", "can_persist_now", "needs_clarification", "suggested_operation")
+        )
+        return agreement
+
+    def _call_prethinker(
+        self,
+        *,
+        text: str,
+        model: str,
+        temperature: float,
+        context_length: int,
+        narrative_context: str,
+    ) -> Dict[str, Any]:
+        """Forward utterance to pre-thinker model endpoint and return raw payload."""
+        endpoint = f"{self._get_prethinker_base_url().rstrip('/')}/api/v1/chat"
+        prompt_input = self._build_prethinker_input(
+            text=text,
+            narrative_context=narrative_context,
+        )
+        payload = {
+            "model": model,
+            "input": prompt_input,
+            "temperature": temperature,
+            "context_length": context_length,
+        }
+        raw_response = self._post_json(
+            url=endpoint,
+            payload=payload,
+            api_key=self._get_prethinker_api_key(),
+            timeout_seconds=self._get_prethinker_timeout_seconds(),
+        )
+        return {
+            "assistant_message": self._extract_message_text(raw_response),
+            "raw_response": raw_response,
+        }
         
     def get_tools(self) -> list:
         """Return available tools for MCP."""
@@ -291,6 +800,70 @@ class PrologMCPServer:
                 }
             },
             {
+                "name": "prethink_utterance",
+                "description": "Forward an incoming utterance to a configured pre-thinker model, validate the structured assessment, and project deterministic write readiness. This call does not mutate the KB.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": "Incoming utterance to forward to the pre-thinker model."
+                        },
+                        "narrative_context": {
+                            "type": "string",
+                            "description": "Optional preceding narrative/context block for the utterance."
+                        },
+                        "model": {
+                            "type": "string",
+                            "description": "Optional model override. Defaults to PRETHINKER_MODEL or a server default."
+                        },
+                        "temperature": {
+                            "type": "number",
+                            "description": "Optional sampling temperature override (default 0.0)."
+                        },
+                        "context_length": {
+                            "type": "integer",
+                            "description": "Optional context length override for the pre-thinker request."
+                        }
+                    },
+                    "required": ["text"]
+                }
+            },
+            {
+                "name": "prethink_batch",
+                "description": "Run pre-thinker assessment over multiple utterances and aggregate fallback/write-readiness metrics. This call does not mutate the KB.",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "items": {
+                            "type": "array",
+                            "description": "Array of utterance items. Each item may include text and optional narrative_context.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "text": {"type": "string"},
+                                    "narrative_context": {"type": "string"}
+                                },
+                                "required": ["text"]
+                            }
+                        },
+                        "model": {
+                            "type": "string",
+                            "description": "Optional model override for all items."
+                        },
+                        "temperature": {
+                            "type": "number",
+                            "description": "Optional temperature override for all items."
+                        },
+                        "context_length": {
+                            "type": "integer",
+                            "description": "Optional context length override for all items."
+                        }
+                    },
+                    "required": ["items"]
+                }
+            },
+            {
                 "name": "list_known_facts",
                 "description": "Show all known entities and relationships in the knowledge base. Useful for understanding what the system knows about.",
                 "inputSchema": {
@@ -345,6 +918,194 @@ class PrologMCPServer:
             }
         )
         return result
+
+    def prethink_utterance(
+        self,
+        text: str,
+        narrative_context: Optional[str] = None,
+        model: Optional[str] = None,
+        temperature: Optional[float] = None,
+        context_length: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """
+        Forward text to pre-thinker LLM, validate output, and project write readiness.
+
+        This method does not mutate KB state. It returns routing and write-path
+        projections to support pre-thinker research/automation loops.
+        """
+        utterance = (text or "").strip()
+        if not utterance:
+            return {
+                "status": "validation_error",
+                "message": "Missing required field: text",
+                "tool": "prethink_utterance",
+            }
+
+        resolved_model = (model or "").strip() or self._get_prethinker_model()
+        resolved_temperature = self._coerce_float(
+            temperature,
+            fallback=self.DEFAULT_PRETHINKER_TEMPERATURE,
+            minimum=0.0,
+            maximum=2.0,
+        )
+        resolved_narrative_context = (narrative_context or "").strip()
+        resolved_context_length = self._coerce_positive_int(
+            context_length,
+            fallback=self.DEFAULT_PRETHINKER_CONTEXT_LENGTH,
+        )
+
+        result = self._call_prethinker(
+            text=utterance,
+            model=resolved_model,
+            temperature=resolved_temperature,
+            context_length=resolved_context_length,
+            narrative_context=resolved_narrative_context,
+        )
+        assistant_message = result.get("assistant_message", "")
+        parsed_assessment = self._extract_first_json_object(assistant_message)
+        model_assessment = self._normalize_prethinker_assessment(parsed_assessment)
+        validation_errors = self._validate_prethinker_assessment(model_assessment)
+        assessment_valid = len(validation_errors) == 0
+        baseline_assessment = self._build_baseline_prethink_assessment(utterance)
+        fallback_used = not assessment_valid
+        final_assessment = model_assessment if assessment_valid else baseline_assessment
+        agreement_with_baseline = self._assessment_agreement(
+            baseline_assessment,
+            model_assessment,
+        )
+        model_kb_projection = self._project_write_path(
+            text=utterance,
+            assessment=model_assessment,
+        )
+        baseline_kb_projection = self._project_write_path(
+            text=utterance,
+            assessment=baseline_assessment,
+        )
+        kb_projection = model_kb_projection if assessment_valid else baseline_kb_projection
+        return {
+            "status": "success",
+            "result_type": "prethink_assessment",
+            "text": utterance,
+            "narrative_context": resolved_narrative_context,
+            "prethinker_model": resolved_model,
+            "prethinker_base_url": self._get_prethinker_base_url(),
+            "temperature": resolved_temperature,
+            "context_length": resolved_context_length,
+            "assistant_message": assistant_message,
+            "assessment": final_assessment,
+            "model_assessment": model_assessment,
+            "baseline_assessment": baseline_assessment,
+            "assessment_valid": assessment_valid,
+            "assessment_source": "model" if assessment_valid else "baseline_fallback",
+            "fallback_used": fallback_used,
+            "validation_errors": validation_errors,
+            "agreement_with_baseline": agreement_with_baseline,
+            "kb_projection": kb_projection,
+            "model_kb_projection": model_kb_projection,
+            "baseline_kb_projection": baseline_kb_projection,
+            "raw_response": result.get("raw_response", {}),
+            "note": (
+                "This tool forwards utterance text (plus optional narrative context) "
+                "to the pre-thinker model, validates structured assessment output, and "
+                "falls back to deterministic baseline assessment when model output is invalid. "
+                "It also reports deterministic write-path projection (`can_write_now`) and "
+                "performs no KB mutation."
+            ),
+        }
+
+    def prethink_batch(
+        self,
+        items: Any,
+        model: Optional[str] = None,
+        temperature: Optional[float] = None,
+        context_length: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """Run pre-thinker assessment across multiple utterances."""
+        if not isinstance(items, list):
+            return {
+                "status": "validation_error",
+                "message": "Missing required field: items (array).",
+                "tool": "prethink_batch",
+            }
+
+        results: List[Dict[str, Any]] = []
+        for index, item in enumerate(items):
+            if isinstance(item, dict):
+                text = item.get("text", "")
+                narrative_context = item.get("narrative_context")
+            elif isinstance(item, str):
+                text = item
+                narrative_context = None
+            else:
+                text = ""
+                narrative_context = None
+
+            assessment = self.prethink_utterance(
+                text=text,
+                narrative_context=narrative_context,
+                model=model,
+                temperature=temperature,
+                context_length=context_length,
+            )
+            results.append(
+                {
+                    "index": index,
+                    "input": item,
+                    "result": assessment,
+                }
+            )
+
+        processed_count = len(results)
+        success_count = sum(
+            1
+            for row in results
+            if isinstance(row.get("result"), dict) and row["result"].get("status") == "success"
+        )
+        assessment_valid_count = sum(
+            1
+            for row in results
+            if isinstance(row.get("result"), dict) and row["result"].get("assessment_valid") is True
+        )
+        fallback_count = sum(
+            1
+            for row in results
+            if isinstance(row.get("result"), dict) and row["result"].get("fallback_used") is True
+        )
+        write_candidate_count = sum(
+            1
+            for row in results
+            if (
+                isinstance(row.get("result"), dict)
+                and isinstance(row["result"].get("kb_projection"), dict)
+                and row["result"]["kb_projection"].get("should_attempt_write") is True
+            )
+        )
+        write_ready_count = sum(
+            1
+            for row in results
+            if (
+                isinstance(row.get("result"), dict)
+                and isinstance(row["result"].get("kb_projection"), dict)
+                and row["result"]["kb_projection"].get("can_write_now") is True
+            )
+        )
+
+        return {
+            "status": "success",
+            "result_type": "prethink_batch",
+            "requested_count": len(items),
+            "processed_count": processed_count,
+            "success_count": success_count,
+            "assessment_valid_count": assessment_valid_count,
+            "fallback_count": fallback_count,
+            "write_candidate_count": write_candidate_count,
+            "write_ready_count": write_ready_count,
+            "items": results,
+            "note": (
+                "Batch pre-thinker analysis with deterministic write-path projection. "
+                "No KB mutation performed."
+            ),
+        }
 
     def _extract_predicate_from_prolog_query(self, query: str) -> Optional[str]:
         """Extract predicate name from a raw Prolog query string."""
@@ -826,6 +1587,9 @@ class PrologMCPServer:
             "capabilities": [
                 "Literal Prolog query execution (`query_logic`, `query_rows`)",
                 "Statement classification before query or ingestion decisions",
+                "Pre-thinker utterance forwarding (`prethink_utterance`)",
+                "Pre-thinker batch analysis (`prethink_batch`)",
+                "Deterministic pre-thinker write-path projection (`kb_projection.can_write_now`)",
                 "Deterministic knowledge-base reasoning",
                 "Runtime fact/rule assertion, retraction, and empty-reset for chat-driven scenarios",
                 "Deterministic query and write-path validation",
@@ -866,6 +1630,19 @@ class PrologMCPServer:
             "reset_kb": lambda: self.reset_kb(),
             "kb_empty": lambda: self.kb_empty(),
             "classify_statement": lambda: self.classify_statement(tool_input.get("text", "")),
+            "prethink_utterance": lambda: self.prethink_utterance(
+                tool_input.get("text", ""),
+                narrative_context=tool_input.get("narrative_context"),
+                model=tool_input.get("model"),
+                temperature=tool_input.get("temperature"),
+                context_length=tool_input.get("context_length"),
+            ),
+            "prethink_batch": lambda: self.prethink_batch(
+                tool_input.get("items"),
+                model=tool_input.get("model"),
+                temperature=tool_input.get("temperature"),
+                context_length=tool_input.get("context_length"),
+            ),
             "list_known_facts": lambda: self.list_known_facts(),
             "explain_error": lambda: self.explain_error(tool_input.get("error_message", "")),
             "show_system_info": lambda: self.show_system_info()

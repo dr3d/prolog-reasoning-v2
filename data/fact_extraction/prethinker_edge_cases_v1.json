@@ -1,0 +1,118 @@
+{
+  "name": "prethinker_edge_cases_v1",
+  "description": "Starter edge-case battery for pre-thinker phrasing behavior.",
+  "cases": [
+    {
+      "id": "q_plain",
+      "text": "Who is John's parent?",
+      "expected": {
+        "kind": "query",
+        "can_persist_now": false,
+        "needs_clarification": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "q_symbolic",
+      "text": "parent(john, X).",
+      "expected": {
+        "kind": "query",
+        "can_persist_now": false,
+        "needs_clarification": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "fact_assertive",
+      "text": "John is Bob's parent.",
+      "expected": {
+        "kind": "hard_fact",
+        "can_persist_now": true,
+        "can_write_now": true
+      }
+    },
+    {
+      "id": "fact_hedged",
+      "text": "I think John might be Bob's parent.",
+      "expected": {
+        "kind": "tentative_fact",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "fact_first_person",
+      "text": "My mother was Ann.",
+      "expected": {
+        "kind": "hard_fact",
+        "can_persist_now": false,
+        "needs_clarification": true,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "correction_explicit",
+      "text": "Actually, correction: John's parent is Alice, not Bob.",
+      "expected": {
+        "kind": "correction",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "preference",
+      "text": "I prefer dark mode for this project.",
+      "expected": {
+        "kind": "preference",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "session_context",
+      "text": "For this session, call me Captain.",
+      "expected": {
+        "kind": "session_context",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "instruction",
+      "text": "Summarize the unresolved tasks and blockers.",
+      "expected": {
+        "kind": "instruction",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "unknown_noise",
+      "text": "Blue ideas sleep quickly under glass ladders.",
+      "expected": {
+        "kind": "unknown",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "context_sensitive_correction",
+      "narrative_context": "Earlier accepted fact: parent(scott, ann).",
+      "text": "Correction: use parent(scott, bob) instead.",
+      "expected": {
+        "kind": "correction",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    },
+    {
+      "id": "uncertain_quote",
+      "text": "Someone said Bob may be allergic to penicillin.",
+      "expected": {
+        "kind": "tentative_fact",
+        "can_persist_now": false,
+        "can_write_now": false
+      }
+    }
+  ]
+}

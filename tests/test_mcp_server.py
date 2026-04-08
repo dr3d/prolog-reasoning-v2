@@ -119,6 +119,8 @@ class TestMCPServer:
         assert "assert_rule" in tool_names
         assert "reset_kb" in tool_names
         assert "kb_empty" in tool_names
+        assert "prethink_utterance" in tool_names
+        assert "prethink_batch" in tool_names
         assert "query_prolog" not in tool_names
         assert "query_prolog_raw" not in tool_names
         assert "query_prolog_rows_raw" not in tool_names
@@ -233,6 +235,243 @@ class TestMCPServer:
         assert "proposal_check" in result
         assert result["proposal_check"]["status"] == "valid"
         assert result["proposal_check"]["candidate"]["canonical_predicate"] == "parent"
+
+    def test_prethink_utterance_validation_requires_text(self):
+        server = make_server()
+
+        result = server.prethink_utterance("")
+
+        assert result["status"] == "validation_error"
+        assert "text" in result["message"].lower()
+
+    def test_prethink_utterance_forwards_text_to_prethinker_model(self):
+        server = make_server()
+        captured = {}
+
+        def fake_call_prethinker(*, text, model, temperature, context_length, narrative_context):
+            captured["text"] = text
+            captured["model"] = model
+            captured["temperature"] = temperature
+            captured["context_length"] = context_length
+            captured["narrative_context"] = narrative_context
+            return {
+                "assistant_message": (
+                    '{"kind":"tentative_fact","confidence":0.72,"needs_clarification":true,'
+                    '"can_persist_now":false,"suggested_operation":"store_tentative",'
+                    '"rationale":"Hedged language."}'
+                ),
+                "raw_response": {
+                    "output": [
+                        {
+                            "type": "message",
+                            "content": (
+                                '{"kind":"tentative_fact","confidence":0.72,"needs_clarification":true,'
+                                '"can_persist_now":false,"suggested_operation":"store_tentative",'
+                                '"rationale":"Hedged language."}'
+                            ),
+                        }
+                    ]
+                },
+            }
+
+        server._call_prethinker = fake_call_prethinker
+
+        result = server.prethink_utterance(
+            "My mother was Ann.",
+            narrative_context="Speaker identity unresolved.",
+            model="qwen3.5-4b",
+            temperature=0.1,
+            context_length=2048,
+        )
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "prethink_assessment"
+        assert result["assessment_valid"] is True
+        assert result["assessment_source"] == "model"
+        assert result["fallback_used"] is False
+        assert result["assessment"]["kind"] == "tentative_fact"
+        assert result["model_assessment"]["kind"] == "tentative_fact"
+        assert "baseline_assessment" in result
+        assert "kb_projection" in result
+        assert result["kb_projection"]["should_attempt_write"] is True
+        assert result["kb_projection"]["can_write_now"] is False
+        assert result["agreement_with_baseline"]["kind"] in {True, False}
+        assert captured["text"] == "My mother was Ann."
+        assert captured["narrative_context"] == "Speaker identity unresolved."
+        assert captured["model"] == "qwen3.5-4b"
+        assert captured["temperature"] == 0.1
+        assert captured["context_length"] == 2048
+        assert "no kb mutation" in result["note"].lower()
+
+    def test_prethink_utterance_marks_invalid_json_assessment(self):
+        server = make_server()
+
+        def fake_call_prethinker(*, text, model, temperature, context_length, narrative_context):
+            return {
+                "assistant_message": "Likely tentative_fact; needs clarification.",
+                "raw_response": {"output": [{"type": "message", "content": "Likely tentative_fact; needs clarification."}]},
+            }
+
+        server._call_prethinker = fake_call_prethinker
+        result = server.prethink_utterance("Maybe John is Bob's parent.")
+
+        assert result["status"] == "success"
+        assert result["assessment_valid"] is False
+        assert result["assessment_source"] == "baseline_fallback"
+        assert result["fallback_used"] is True
+        assert result["validation_errors"]
+        assert result["model_assessment"] == {}
+        assert result["assessment"]
+        assert "kb_projection" in result
+        assert result["kb_projection"]["can_write_now"] is False
+        assert result["assessment"]["kind"] in {
+            "query",
+            "hard_fact",
+            "tentative_fact",
+            "correction",
+            "preference",
+            "session_context",
+            "instruction",
+            "unknown",
+        }
+
+    def test_tools_call_routes_prethink_utterance(self):
+        server = make_server()
+
+        def fake_call_prethinker(*, text, model, temperature, context_length, narrative_context):
+            return {
+                "assistant_message": (
+                    '{"kind":"query","confidence":0.94,"needs_clarification":false,'
+                    '"can_persist_now":false,"suggested_operation":"query","rationale":"Question form."}'
+                ),
+                "raw_response": {
+                    "output": [
+                        {
+                            "type": "message",
+                            "content": (
+                                '{"kind":"query","confidence":0.94,"needs_clarification":false,'
+                                '"can_persist_now":false,"suggested_operation":"query","rationale":"Question form."}'
+                            ),
+                        }
+                    ]
+                },
+            }
+
+        server._call_prethinker = fake_call_prethinker
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 42,
+                "method": "tools/call",
+                "params": {"name": "prethink_utterance", "arguments": {"text": "Who is John's parent?"}},
+            }
+        )
+
+        structured = response["result"]["structuredContent"]
+        assert structured["status"] == "success"
+        assert structured["result_type"] == "prethink_assessment"
+        assert structured["assessment_valid"] is True
+        assert structured["assessment"]["kind"] == "query"
+        assert "kb_projection" in structured
+
+    def test_prethink_utterance_normalizes_string_booleans_and_aliases(self):
+        server = make_server()
+
+        def fake_call_prethinker(*, text, model, temperature, context_length, narrative_context):
+            return {
+                "assistant_message": (
+                    '{"kind":"question","confidence":"0.8","needs_clarification":"false",'
+                    '"can_persist_now":"false","suggested_operation":"ask","rationale":"Looks like a query."}'
+                ),
+                "raw_response": {
+                    "output": [
+                        {
+                            "type": "message",
+                            "content": (
+                                '{"kind":"question","confidence":"0.8","needs_clarification":"false",'
+                                '"can_persist_now":"false","suggested_operation":"ask","rationale":"Looks like a query."}'
+                            ),
+                        }
+                    ]
+                },
+            }
+
+        server._call_prethinker = fake_call_prethinker
+        result = server.prethink_utterance("Who is John's parent?")
+
+        assert result["status"] == "success"
+        assert result["assessment_valid"] is True
+        assert result["assessment_source"] == "model"
+        assert result["assessment"]["kind"] == "query"
+        assert result["assessment"]["suggested_operation"] == "query"
+        assert result["assessment"]["needs_clarification"] is False
+        assert result["assessment"]["can_persist_now"] is False
+
+    def test_prethink_batch_aggregates_results(self):
+        server = make_server()
+
+        def fake_prethink_utterance(text, narrative_context=None, model=None, temperature=None, context_length=None):
+            return {
+                "status": "success",
+                "assessment_valid": text.strip().endswith("?"),
+                "fallback_used": not text.strip().endswith("?"),
+                "assessment": {"kind": "query" if text.strip().endswith("?") else "unknown"},
+                "kb_projection": {
+                    "should_attempt_write": not text.strip().endswith("?"),
+                    "can_write_now": False,
+                },
+            }
+
+        server.prethink_utterance = fake_prethink_utterance
+        result = server.prethink_batch(
+            [{"text": "Who is John's parent?"}, {"text": "Blue ideas sleep quickly."}]
+        )
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "prethink_batch"
+        assert result["requested_count"] == 2
+        assert result["processed_count"] == 2
+        assert result["success_count"] == 2
+        assert result["assessment_valid_count"] == 1
+        assert result["fallback_count"] == 1
+        assert result["write_candidate_count"] == 1
+        assert result["write_ready_count"] == 0
+        assert len(result["items"]) == 2
+
+    def test_tools_call_routes_prethink_batch(self):
+        server = make_server()
+
+        def fake_prethink_batch(items, model=None, temperature=None, context_length=None):
+            return {
+                "status": "success",
+                "result_type": "prethink_batch",
+                "requested_count": len(items),
+                "processed_count": len(items),
+                "success_count": len(items),
+                "assessment_valid_count": len(items),
+                "fallback_count": 0,
+                "write_candidate_count": 0,
+                "write_ready_count": 0,
+                "items": [{"index": 0, "input": items[0], "result": {"status": "success"}}],
+            }
+
+        server.prethink_batch = fake_prethink_batch
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 43,
+                "method": "tools/call",
+                "params": {
+                    "name": "prethink_batch",
+                    "arguments": {"items": [{"text": "Who is John's parent?"}]},
+                },
+            }
+        )
+
+        structured = response["result"]["structuredContent"]
+        assert structured["status"] == "success"
+        assert structured["result_type"] == "prethink_batch"
+        assert structured["requested_count"] == 1
 
     def test_explain_error_classifies_undefined_entity(self):
         server = make_server()
