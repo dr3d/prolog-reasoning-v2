@@ -7,6 +7,11 @@ This folder stores narrative scenario source files.
 - Scenario files are narrative-first and should stay compact.
 - Keep reusable process guidance in README/docs, not embedded in each scenario file.
 
+Current scenario files:
+
+- `scenario-1.md` (Chronos-Vault baseline)
+- `scenario-2.md` (current pre-thinker restructuring pressure test)
+
 ## Scenario File Contract
 
 When creating `scenario-N.md`, use this shape:
@@ -31,7 +36,7 @@ When creating `scenario-N.md`, use this shape:
 
 Primary runner:
 
-- `python scripts/run_conversaton.py --conversation-file docs/research/scenarios/scenario-1.md`
+- `python scripts/run_conversaton.py --conversation-file docs/research/scenarios/scenario-2.md`
 
 Default behavior:
 
@@ -42,11 +47,11 @@ Default behavior:
 
 Single-model override:
 
-- `python scripts/run_conversaton.py --conversation-file docs/research/scenarios/scenario-1.md --model qwen3.5-27b@q4_k_m`
+- `python scripts/run_conversaton.py --conversation-file docs/research/scenarios/scenario-2.md --model qwen3.5-27b@q4_k_m`
 
 Custom battery override:
 
-- `python scripts/run_conversaton.py --conversation-file docs/research/scenarios/scenario-1.md --models qwen3.5-4b qwen/qwen3.5-9b qwen3.5-27b@q4_k_m`
+- `python scripts/run_conversaton.py --conversation-file docs/research/scenarios/scenario-2.md --models qwen3.5-4b qwen/qwen3.5-9b qwen3.5-27b@q4_k_m`
 
 JSON plan mode example:
 

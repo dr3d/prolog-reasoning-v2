@@ -37,6 +37,22 @@ The hardest problem is deciding what language should become symbolic state.
 
 ![Pre-Thinker architecture: language intake to auditable symbolic state](infographics/03-pre-thinker.png)
 
+![Pre-Thinker memory/inference map (latest)](infographics/04-pre-thinker.png)
+
+## Latest Pre-Thinker Drop (April 2026)
+
+- Scenario narrative: [docs/research/scenarios/scenario-2.md](docs/research/scenarios/scenario-2.md)
+- Edge-case dataset: [data/fact_extraction/prethinker_edge_cases_v1.json](data/fact_extraction/prethinker_edge_cases_v1.json)
+- Edge runner: [scripts/run_prethinker_edge_matrix.py](scripts/run_prethinker_edge_matrix.py)
+- Forward plan: [docs/research/pre-thinker.md](docs/research/pre-thinker.md)
+- Published docs map: [docs/README.md](docs/README.md), [docs/docs-hub.html](docs/docs-hub.html)
+
+Run the edge battery:
+
+```bash
+python scripts/run_prethinker_edge_matrix.py --dataset data/fact_extraction/prethinker_edge_cases_v1.json
+```
+
 Component roles:
 
 - **Pre-thinker (emerging):** classifies utterances, proposes symbolic candidates, and flags uncertainty.

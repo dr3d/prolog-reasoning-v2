@@ -31,6 +31,11 @@ MANIFEST
 sessions/
 docs/sessions/
 
+# Generated conversation run artifacts (keep index README tracked)
+docs/research/conversations/**
+!docs/research/conversations/
+!docs/research/conversations/README.md
+
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.

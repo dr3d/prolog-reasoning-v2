@@ -64,11 +64,15 @@ GitHub Pages base (for shareable rendered HTML):
 - [research/fact-ingestion-dialog-battery.html](https://dr3d.github.io/prolog-reasoning/research/fact-ingestion-dialog-battery.html): themed HTML render of the ingestion battery ledger.
 - [research/fact-extraction-steering-matrix.html](https://dr3d.github.io/prolog-reasoning/research/fact-extraction-steering-matrix.html): themed HTML render of the extraction matrix ledger.
 - [research/scenarios/README.md](research/scenarios/README.md): scenario authoring contract and runner usage.
+- [research/scenarios/scenario-2.md](research/scenarios/scenario-2.md): current scenario narrative used for recent run batches.
+- [research/pre-thinker.md](research/pre-thinker.md): forward plan for automating pre-thinker engineering and evaluation.
 - [research/conversation-plan-template.json](research/conversation-plan-template.json): reusable JSON prompt-plan template for scenario runs.
 - [research/conversations/README.md](research/conversations/README.md): output layout for generated conversation captures.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
 - [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
 - [research/legacy/README.md](research/legacy/README.md): archived research notes and dated run packs.
+- [../scripts/run_prethinker_edge_matrix.py](../scripts/run_prethinker_edge_matrix.py): automation harness for pre-thinker edge-case runs.
+- [../data/fact_extraction/prethinker_edge_cases_v1.json](../data/fact_extraction/prethinker_edge_cases_v1.json): starter edge-case dataset for pre-thinker phrasing checks.
 
 ## Secondary Track (Optional)
 
