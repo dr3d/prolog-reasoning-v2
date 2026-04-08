@@ -21,6 +21,16 @@ GitHub Pages base (for shareable rendered HTML):
 - [fantasy-overlord-session.md](fantasy-overlord-session.md): markdown version of the fantasy transcript.
 - [examples/](examples/): canonical captured transcript JSON/MD/HTML artifacts.
 
+## Conversation Rendering (Core Tooling)
+
+- [../scripts/render_dialog_json_html.py](../scripts/render_dialog_json_html.py): centralized `json -> themed html` renderer with reusable conversation template and CSS skins.
+- [../scripts/render_examples_sessions_html.py](../scripts/render_examples_sessions_html.py): one-command re-render for `docs/examples/*-session.json` into canonical HTML.
+- [../scripts/render_dialog_helpers.py](../scripts/render_dialog_helpers.py): bridge helper used by capture scripts so they all render via the centralized pipeline.
+- [../scripts/templates/dialog-session-page.template.html](../scripts/templates/dialog-session-page.template.html): shared transcript page template (topbar, theme toggle, copy buttons, tool-call expandos).
+- [../scripts/templates/dialog-themes/standard.css](../scripts/templates/dialog-themes/standard.css): house transcript skin.
+- [../scripts/templates/dialog-themes/telegram.css](../scripts/templates/dialog-themes/telegram.css): Telegram-style skin.
+- [../scripts/templates/dialog-themes/imessage.css](../scripts/templates/dialog-themes/imessage.css): iMessage-style skin.
+
 ## Walkthroughs (Core)
 
 - [walkthrough-ladder.md](walkthrough-ladder.md): canonical level-by-level demo index.
@@ -51,6 +61,9 @@ GitHub Pages base (for shareable rendered HTML):
 - [research/lmstudio-classifier-matrix.md](research/lmstudio-classifier-matrix.md): local-model classifier matrix findings.
 - [research/model-scenario-matrix.md](research/model-scenario-matrix.md): compact multi-model ledger for scenario-based MCP behavior and logic-ingestion signals.
 - [research/fact-ingestion-benchmark-matrix-spec.md](research/fact-ingestion-benchmark-matrix-spec.md): benchmark matrix spec for fact-recognition scenarios, scoring, and pass/fail gates.
+- [research/fact-ingestion-dialog-battery.md](research/fact-ingestion-dialog-battery.md): multi-turn natural-language ingestion battery with deterministic post-run KB checks.
+- [research/fact-ingestion-dialog-battery.html](https://dr3d.github.io/prolog-reasoning/research/fact-ingestion-dialog-battery.html): themed HTML render of the ingestion battery ledger.
+- [research/fact-extraction-steering-matrix.html](https://dr3d.github.io/prolog-reasoning/research/fact-extraction-steering-matrix.html): themed HTML render of the extraction matrix ledger.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
 - [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
 - [research/stretch-logic-scenarios.md](research/stretch-logic-scenarios.md): larger and more ambitious scenario ideas.

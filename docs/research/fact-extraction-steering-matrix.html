@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fact Extraction Steering Matrix</title>
+  <meta name="description" content="Rendered ledger from fact-extraction-steering-matrix.md." />
+  <style>
+    :root {
+      --bg: #e3ddd2;
+      --panel: #ece7de;
+      --ink: #201f1b;
+      --muted: #59544d;
+      --border: #c2b9aa;
+      --code-bg: #f5f0e6;
+      --code-border: #cdbba1;
+      --code-block-bg: #161d26;
+      --code-block-ink: #edf4fa;
+      --code-block-border: #334252;
+      --table-head-bg: #e6dfd1;
+      --table-row-alt: #f6f2ea;
+      --link: #1e5e98;
+      --link-hover: #157487;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --border: #3b4652;
+      --code-bg: #293240;
+      --code-border: #435368;
+      --code-block-bg: #10161d;
+      --code-block-ink: #edf4fa;
+      --code-block-border: #2e3d4f;
+      --table-head-bg: #27303a;
+      --table-row-alt: #1b222a;
+      --link: #8fc9ff;
+      --link-hover: #a9ecff;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.38;
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    a:hover {
+      color: var(--link-hover);
+    }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }
+
+    .topbar-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      filter: brightness(1.06);
+    }
+
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+
+    .theme-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .meta {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .doc-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 18px 18px 22px;
+    }
+
+    h2 {
+      margin: 18px 0 10px 0;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 14px 0 8px 0;
+      font-size: 20px;
+    }
+
+    h4, h5, h6 {
+      margin: 12px 0 8px 0;
+      font-size: 17px;
+    }
+
+    p {
+      margin: 8px 0 12px 0;
+      color: var(--muted);
+    }
+
+    ul, ol {
+      margin: 8px 0 12px 0;
+      padding-left: 24px;
+      color: var(--muted);
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    code {
+      font-family: "Courier New", monospace;
+      font-size: 0.95em;
+      border: 1px solid var(--code-border);
+      border-radius: 6px;
+      padding: 0 4px;
+      background: var(--code-bg);
+      color: var(--ink);
+    }
+
+    pre {
+      margin: 10px 0 14px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      border-radius: 12px;
+      border: 1px solid var(--code-block-border);
+      background: var(--code-block-bg);
+      color: var(--code-block-ink);
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    pre code {
+      border: none;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 860px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-family: "Courier New", monospace;
+    }
+
+    th {
+      background: var(--table-head-bg);
+      color: var(--ink);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:nth-child(even) {
+      background: color-mix(in srgb, var(--table-row-alt) 82%, transparent);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        padding: 16px;
+      }
+      .topbar {
+        flex-direction: column;
+      }
+      .topbar-right {
+        width: 100%;
+        align-items: flex-start;
+      }
+      .nav-links {
+        justify-content: flex-start;
+      }
+      h1 {
+        font-size: 30px;
+      }
+      .doc-card {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>Fact Extraction Steering Matrix</h1>
+      <div class="topbar-right">
+        <div class="nav-links">
+          <a class="nav-link" href="README.md">Research Index</a>
+          <a class="nav-link" href="../docs-hub.html">Back to Docs Hub</a>
+          <a class="nav-link" href="https://github.com/dr3d/prolog-reasoning">View Repo</a>
+        </div>
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+      </div>
+    </div>
+    <div class="meta">Source: fact-extraction-steering-matrix.md | Rendered: 2026-04-07 23:55:28 UTC</div>
+    <section class="doc-card">
+<p>Tracks local LM Studio runs for buried-fact extraction quality.</p>
+<p>Each run compares models and prompt sets on one synthetic corpus.</p>
+<h2>Run 2026-04-07 21:48:50 UTC</h2>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>model</th>
+<th>prompt set</th>
+<th>docs</th>
+<th>precision</th>
+<th>recall</th>
+<th>f1</th>
+<th>uncertainty acc</th>
+<th>uncertain recall</th>
+<th>evidence support</th>
+<th>invalid predicate</th>
+<th>invalid arity</th>
+<th>parse failures</th>
+<th>overconfident</th>
+<th>notes</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>qwen/qwen3.5-9b</td>
+<td>strict_v1</td>
+<td>2</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>ok</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2>Run 2026-04-07 21:51:04 UTC</h2>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>model</th>
+<th>prompt set</th>
+<th>docs</th>
+<th>precision</th>
+<th>recall</th>
+<th>f1</th>
+<th>uncertainty acc</th>
+<th>uncertain recall</th>
+<th>evidence support</th>
+<th>invalid predicate</th>
+<th>invalid arity</th>
+<th>parse failures</th>
+<th>overconfident</th>
+<th>notes</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>qwen/qwen3.5-9b</td>
+<td>strict_v1</td>
+<td>2</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0.0%</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2>Run 2026-04-07 22:12:24 UTC</h2>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>model</th>
+<th>prompt set</th>
+<th>docs</th>
+<th>precision</th>
+<th>recall</th>
+<th>f1</th>
+<th>uncertainty acc</th>
+<th>uncertain recall</th>
+<th>evidence support</th>
+<th>invalid predicate</th>
+<th>invalid arity</th>
+<th>parse failures</th>
+<th>overconfident</th>
+<th>notes</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>qwen/qwen3.5-9b</td>
+<td>strict_v1</td>
+<td>2</td>
+<td>100.0%</td>
+<td>50.0%</td>
+<td>66.7%</td>
+<td>50.0%</td>
+<td>50.0%</td>
+<td>50.0%</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2>Run 2026-04-07 22:21:46 UTC</h2>
+<div class="table-wrap">
+<table>
+<thead><tr>
+<th>model</th>
+<th>prompt set</th>
+<th>docs</th>
+<th>precision</th>
+<th>recall</th>
+<th>f1</th>
+<th>uncertainty acc</th>
+<th>uncertain recall</th>
+<th>evidence support</th>
+<th>invalid predicate</th>
+<th>invalid arity</th>
+<th>parse failures</th>
+<th>overconfident</th>
+<th>notes</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>qwen3.5-4b</td>
+<td>baseline_v1</td>
+<td>8</td>
+<td>100.0%</td>
+<td>44.4%</td>
+<td>61.5%</td>
+<td>50.0%</td>
+<td>37.5%</td>
+<td>50.0%</td>
+<td>0</td>
+<td>0</td>
+<td>4</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+<tr>
+<td>qwen3.5-4b</td>
+<td>strict_v1</td>
+<td>8</td>
+<td>100.0%</td>
+<td>44.4%</td>
+<td>61.5%</td>
+<td>37.5%</td>
+<td>25.0%</td>
+<td>37.5%</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+<tr>
+<td>qwen/qwen3.5-9b</td>
+<td>baseline_v1</td>
+<td>8</td>
+<td>100.0%</td>
+<td>55.6%</td>
+<td>71.4%</td>
+<td>62.5%</td>
+<td>50.0%</td>
+<td>62.5%</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+<tr>
+<td>qwen/qwen3.5-9b</td>
+<td>strict_v1</td>
+<td>8</td>
+<td>100.0%</td>
+<td>66.7%</td>
+<td>80.0%</td>
+<td>62.5%</td>
+<td>37.5%</td>
+<td>62.5%</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+<tr>
+<td>qwen3.5-27b@q4_k_m</td>
+<td>baseline_v1</td>
+<td>8</td>
+<td>100.0%</td>
+<td>66.7%</td>
+<td>80.0%</td>
+<td>54.2%</td>
+<td>12.5%</td>
+<td>62.5%</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>2</td>
+<td>parse_failures_present</td>
+</tr>
+<tr>
+<td>qwen3.5-27b@q4_k_m</td>
+<td>strict_v1</td>
+<td>8</td>
+<td>100.0%</td>
+<td>77.8%</td>
+<td>87.5%</td>
+<td>75.0%</td>
+<td>50.0%</td>
+<td>75.0%</td>
+<td>0</td>
+<td>0</td>
+<td>2</td>
+<td>0</td>
+<td>parse_failures_present</td>
+</tr>
+</tbody>
+</table>
+</div>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("theme-toggle");
+      const storageKey = "research_ledger_theme_fact-extraction-steering-matrix";
+
+      const setTheme = (theme) => {
+        root.setAttribute("data-theme", theme);
+        if (themeToggle) {
+          themeToggle.textContent = theme === "dark" ? "theme: dark" : "theme: light";
+        }
+      };
+
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === "dark" || stored === "light") {
+        setTheme(stored);
+      } else {
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setTheme(prefersDark ? "dark" : "light");
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          setTheme(next);
+          window.localStorage.setItem(storageKey, next);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

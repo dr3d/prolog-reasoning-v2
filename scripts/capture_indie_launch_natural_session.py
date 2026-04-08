@@ -24,6 +24,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+from render_dialog_helpers import render_transcript_html
+
 
 DEFAULT_BASE_URL = "http://127.0.0.1:1234"
 DEFAULT_MODEL = "qwen/qwen3.5-9b"
@@ -716,7 +718,11 @@ def _write_outputs(transcript: dict[str, Any], out_dir: Path) -> dict[str, str]:
 
     json_path.write_text(json.dumps(transcript, indent=2), encoding="utf-8")
     md_path.write_text(_render_markdown(transcript), encoding="utf-8")
-    html_path.write_text(_render_html(transcript), encoding="utf-8")
+    render_transcript_html(
+        json_path=json_path,
+        html_path=html_path,
+        title="Indie Launch Natural-Language Tooling Showcase",
+    )
     return {"json": str(json_path), "markdown": str(md_path), "html": str(html_path)}
 
 

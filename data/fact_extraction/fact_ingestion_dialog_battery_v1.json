@@ -1,0 +1,168 @@
+{
+  "battery_id": "fact_ingestion_dialog_battery_v1",
+  "version": "2026-04-07",
+  "description": "Natural multi-turn ingestion scenarios with deterministic post-run KB checks.",
+  "scenarios": [
+    {
+      "id": "S01_family_uncertain_allergy",
+      "description": "Certain family facts should persist; hedged allergy claim should remain non-persistent.",
+      "turns": [
+        {
+          "id": "seed_family",
+          "turn_type": "certain",
+          "prompt": "Please store these facts: Ann is Scott's mother. Bob is Scott's father.",
+          "expected_any_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ],
+          "forbidden_tools": []
+        },
+        {
+          "id": "hedged_allergy",
+          "turn_type": "uncertain",
+          "prompt": "I think Scott might be allergic to peanuts, but this is not confirmed yet.",
+          "expected_any_tools": [
+            "classify_statement"
+          ],
+          "forbidden_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ]
+        },
+        {
+          "id": "instruction_noise",
+          "turn_type": "non_fact",
+          "prompt": "Keep your responses concise and practical.",
+          "expected_any_tools": [],
+          "forbidden_tools": [
+            "assert_fact",
+            "bulk_assert_facts",
+            "retract_fact"
+          ]
+        }
+      ],
+      "assert_present_queries": [
+        "parent(ann, scott).",
+        "parent(bob, scott)."
+      ],
+      "assert_absent_queries": [
+        "allergic_to(scott, peanuts)."
+      ]
+    },
+    {
+      "id": "S02_literal_and_tentative",
+      "description": "Literal facts should persist while tentative add-on should not.",
+      "turns": [
+        {
+          "id": "seed_literals",
+          "turn_type": "certain",
+          "prompt": "Ingest exactly these facts: parent(ann, scott). completed(certification).",
+          "expected_any_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ],
+          "forbidden_tools": []
+        },
+        {
+          "id": "tentative_allergy",
+          "turn_type": "uncertain",
+          "prompt": "Maybe Scott is allergic to shellfish, but I only heard this second-hand.",
+          "expected_any_tools": [
+            "classify_statement"
+          ],
+          "forbidden_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ]
+        }
+      ],
+      "assert_present_queries": [
+        "parent(ann, scott).",
+        "completed(certification)."
+      ],
+      "assert_absent_queries": [
+        "allergic_to(scott, shellfish)."
+      ]
+    },
+    {
+      "id": "S03_speaker_resolution",
+      "description": "First-person unresolved parent claims should not be persisted; grounded location should persist.",
+      "turns": [
+        {
+          "id": "speaker_parent_claims",
+          "turn_type": "uncertain",
+          "prompt": "My mother is Ann and my father is Bob.",
+          "expected_any_tools": [
+            "classify_statement"
+          ],
+          "forbidden_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ]
+        },
+        {
+          "id": "grounded_location",
+          "turn_type": "certain",
+          "prompt": "Store this grounded fact: Sam is at hq_north.",
+          "expected_any_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ],
+          "forbidden_tools": []
+        }
+      ],
+      "assert_present_queries": [
+        "at(sam, hq_north)."
+      ],
+      "assert_absent_queries": [
+        "parent(ann, X).",
+        "parent(bob, X)."
+      ]
+    },
+    {
+      "id": "S04_alias_dependency_with_uncertain_extension",
+      "description": "Known alias dependency should persist; unverified extension should not persist.",
+      "turns": [
+        {
+          "id": "known_alias_dependency",
+          "turn_type": "certain",
+          "prompt": "Please store that beta_release requires certification.",
+          "expected_any_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ],
+          "forbidden_tools": []
+        },
+        {
+          "id": "done_marker",
+          "turn_type": "certain",
+          "prompt": "Also store that certification is done.",
+          "expected_any_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ],
+          "forbidden_tools": []
+        },
+        {
+          "id": "uncertain_extension",
+          "turn_type": "uncertain",
+          "prompt": "I think marketing_push might depend on beta_release, but we have no ticket yet.",
+          "expected_any_tools": [
+            "classify_statement"
+          ],
+          "forbidden_tools": [
+            "assert_fact",
+            "bulk_assert_facts"
+          ]
+        }
+      ],
+      "assert_present_queries": [
+        "depends_on(beta_release, certification).",
+        "completed(certification)."
+      ],
+      "assert_absent_queries": [
+        "depends_on(marketing_push, beta_release)."
+      ]
+    }
+  ]
+}

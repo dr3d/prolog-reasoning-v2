@@ -1,0 +1,348 @@
+{
+  "dataset_id": "buried_facts_corpus_v1",
+  "spec_version": "2026-04-07",
+  "description": "Synthetic natural-language passages with embedded symbolic facts, uncertainty cues, and distractor prose for local LM steering experiments.",
+  "documents": [
+    {
+      "id": "D01_family_update",
+      "text": "Quick family update for the intake sheet: Ann is Scott's mother and Bob is Scott's father. There is a rumor that Lea might be Scott's guardian, but nobody has confirmed that yet. Also, remind me to call the dentist tomorrow.",
+      "expected_facts": [
+        {
+          "predicate": "parent",
+          "arguments": [
+            "ann",
+            "scott"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Ann is Scott's mother"
+        },
+        {
+          "predicate": "parent",
+          "arguments": [
+            "bob",
+            "scott"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Bob is Scott's father"
+        },
+        {
+          "predicate": "parent",
+          "arguments": [
+            "lea",
+            "scott"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "rumor_not_confirmed",
+          "evidence_hint": "might be Scott's guardian"
+        }
+      ]
+    },
+    {
+      "id": "D02_allergy_chart",
+      "text": "From today's clinic chart: Alice is allergic to peanuts, and she is allergic to penicillin according to prior records. A roommate note says she could be allergic to shellfish, but that has not been validated.",
+      "expected_facts": [
+        {
+          "predicate": "allergic_to",
+          "arguments": [
+            "alice",
+            "peanuts"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "allergic to peanuts"
+        },
+        {
+          "predicate": "allergic_to",
+          "arguments": [
+            "alice",
+            "penicillin"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "allergic to penicillin"
+        },
+        {
+          "predicate": "allergic_to",
+          "arguments": [
+            "alice",
+            "shellfish"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "unverified_source",
+          "evidence_hint": "could be allergic to shellfish"
+        }
+      ]
+    },
+    {
+      "id": "D03_roles_permissions",
+      "text": "During incident setup, Ravi has role incident_commander and Mia has role analyst. The incident_commander role has permission approve_hotfix. Someone in chat asked if Mia can deploy prod, but that question was never answered.",
+      "expected_facts": [
+        {
+          "predicate": "role",
+          "arguments": [
+            "ravi",
+            "incident_commander"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Ravi has role incident_commander"
+        },
+        {
+          "predicate": "role",
+          "arguments": [
+            "mia",
+            "analyst"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Mia has role analyst"
+        },
+        {
+          "predicate": "permission",
+          "arguments": [
+            "incident_commander",
+            "approve_hotfix"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "incident_commander role has permission approve_hotfix"
+        }
+      ]
+    },
+    {
+      "id": "D04_dependency_board",
+      "text": "Launch board notes: beta_release requires certification, and marketing_push depends on beta_release. We are tracking task beta_release, task certification, and task marketing_push. certification is done.",
+      "expected_facts": [
+        {
+          "predicate": "task",
+          "arguments": [
+            "beta_release"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "task beta_release"
+        },
+        {
+          "predicate": "task",
+          "arguments": [
+            "certification"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "task certification"
+        },
+        {
+          "predicate": "task",
+          "arguments": [
+            "marketing_push"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "task marketing_push"
+        },
+        {
+          "predicate": "depends_on",
+          "arguments": [
+            "beta_release",
+            "certification"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "beta_release requires certification"
+        },
+        {
+          "predicate": "depends_on",
+          "arguments": [
+            "marketing_push",
+            "beta_release"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "marketing_push depends on beta_release"
+        },
+        {
+          "predicate": "completed",
+          "arguments": [
+            "certification"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "certification is done"
+        }
+      ]
+    },
+    {
+      "id": "D05_supplier_signals",
+      "text": "Vendor pulse: cloud_vendor status is delayed, while localization_vendor status is on_time. There was hallway gossip that payment_vendor might be blocked, but no ticket exists.",
+      "expected_facts": [
+        {
+          "predicate": "supplier_status",
+          "arguments": [
+            "cloud_vendor",
+            "delayed"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "cloud_vendor status is delayed"
+        },
+        {
+          "predicate": "supplier_status",
+          "arguments": [
+            "localization_vendor",
+            "on_time"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "localization_vendor status is on_time"
+        },
+        {
+          "predicate": "supplier_status",
+          "arguments": [
+            "payment_vendor",
+            "blocked"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "gossip_without_ticket",
+          "evidence_hint": "might be blocked"
+        }
+      ]
+    },
+    {
+      "id": "D06_inventory_note",
+      "text": "Warehouse note: Nora is at warehouse_7 and has item scanner_3. I think she also has item badge_17, but the photo was blurry and I am not certain.",
+      "expected_facts": [
+        {
+          "predicate": "at",
+          "arguments": [
+            "nora",
+            "warehouse_7"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Nora is at warehouse_7"
+        },
+        {
+          "predicate": "has_item",
+          "arguments": [
+            "nora",
+            "scanner_3"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "has item scanner_3"
+        },
+        {
+          "predicate": "has_item",
+          "arguments": [
+            "nora",
+            "badge_17"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "observer_uncertain",
+          "evidence_hint": "I think she also has item badge_17"
+        }
+      ]
+    },
+    {
+      "id": "D07_alias_and_noise",
+      "text": "Project handoff says Ann is mom of Scott and Scott has role reviewer. Keep all future responses concise and friendly. Also, maybe Ann is at office_west, but this came from an unsourced chat snippet.",
+      "expected_facts": [
+        {
+          "predicate": "parent",
+          "arguments": [
+            "ann",
+            "scott"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Ann is mom of Scott"
+        },
+        {
+          "predicate": "role",
+          "arguments": [
+            "scott",
+            "reviewer"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Scott has role reviewer"
+        },
+        {
+          "predicate": "at",
+          "arguments": [
+            "ann",
+            "office_west"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "unsourced_chat_snippet",
+          "evidence_hint": "maybe Ann is at office_west"
+        }
+      ]
+    },
+    {
+      "id": "D08_speaker_resolution",
+      "text": "Meeting transcript quote: 'My mother is Ann and my father is Bob.' The speaker identity was not captured in this export. Later note: Sam is at hq_north.",
+      "expected_facts": [
+        {
+          "predicate": "parent",
+          "arguments": [
+            "ann",
+            "<speaker>"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "speaker_unresolved",
+          "evidence_hint": "My mother is Ann"
+        },
+        {
+          "predicate": "parent",
+          "arguments": [
+            "bob",
+            "<speaker>"
+          ],
+          "certainty": "uncertain",
+          "needs_clarification": true,
+          "clarification_reason": "speaker_unresolved",
+          "evidence_hint": "my father is Bob"
+        },
+        {
+          "predicate": "at",
+          "arguments": [
+            "sam",
+            "hq_north"
+          ],
+          "certainty": "certain",
+          "needs_clarification": false,
+          "clarification_reason": "",
+          "evidence_hint": "Sam is at hq_north"
+        }
+      ]
+    }
+  ]
+}

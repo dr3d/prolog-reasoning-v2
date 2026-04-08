@@ -146,6 +146,14 @@ desktop.ini
 data/results/
 data/evaluation_report.json
 data/__pycache__/
+.tmp/
+.tmp_*/
+.tmp*/
+
+# Ad-hoc themed transcript preview exports
+docs/examples/*.central.html
+docs/examples/*.telegram.html
+docs/examples/*.imessage.html
 
 # CODEX handoff files (exclude for now)
 CODEX*

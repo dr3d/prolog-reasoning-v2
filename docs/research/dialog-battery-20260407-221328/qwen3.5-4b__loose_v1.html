@@ -1,0 +1,1633 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>qwen3.5 4b loose v1</title>
+  <meta name="description" content="Themed session transcript rendered from qwen3.5-4b__loose_v1.json." />
+  <style>
+    :root {
+      --bg: #e3ddd2;
+      --panel: #ece7de;
+      --ink: #201f1b;
+      --muted: #59544d;
+      --user: #decfba;
+      --assistant: #cedbe6;
+      --tool: #d9dfd3;
+      --border: #c2b9aa;
+      --code: #232b34;
+      --code-bg: #f7f1e6;
+      --copy-bg: #fff4df;
+      --copy-border: #b7a990;
+      --copy-ink: #3e3a31;
+      --copy-done-bg: #e5f0dd;
+      --copy-done-border: #7e9e73;
+      --copy-done-ink: #2f5130;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --user: #3b2f23;
+      --assistant: #21394d;
+      --tool: #293229;
+      --border: #3b4652;
+      --code: #ebf3ff;
+      --code-bg: #2a3441;
+      --copy-bg: #303944;
+      --copy-border: #4d5e71;
+      --copy-ink: #e6f1ff;
+      --copy-done-bg: #2f4a35;
+      --copy-done-border: #5f8a67;
+      --copy-done-ink: #e5f8e8;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.35;
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topbar-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      filter: brightness(1.06);
+    }
+
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .skin-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .skin-label {
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .skin-select {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 8px;
+      cursor: pointer;
+    }
+
+    .theme-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .meta {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 6px 0 24px;
+    }
+
+    .step-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      margin: 0 0 12px 0;
+      font-size: 22px;
+      text-transform: none;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-height: 1.28;
+    }
+
+    .bubble {
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .bubble.user {
+      background: var(--user);
+    }
+
+    .bubble.assistant {
+      background: var(--assistant);
+    }
+
+    .bubble-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .label {
+      font-size: 11px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-family: "Courier New", monospace;
+    }
+
+    .copy-btn {
+      border: 1px solid var(--copy-border);
+      background: var(--copy-bg);
+      border-radius: 8px;
+      color: var(--copy-ink);
+      font-family: "Courier New", monospace;
+      font-size: 11px;
+      line-height: 1;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      filter: brightness(1.05);
+    }
+
+    .copy-btn.copied {
+      border-color: var(--copy-done-border);
+      background: var(--copy-done-bg);
+      color: var(--copy-done-ink);
+    }
+
+    .toolbox {
+      background: var(--tool);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+
+    .tool-expando {
+      padding: 0;
+    }
+
+    .tool-expando summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 8px 10px;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .tool-expando summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .expando-count {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 1px 7px;
+      font-size: 11px;
+      letter-spacing: 0;
+      text-transform: none;
+      color: var(--ink);
+      background: var(--panel);
+    }
+
+    .tool-list {
+      margin: 0;
+      padding: 0 10px 10px 20px;
+    }
+
+    .tool-item {
+      margin-bottom: 10px;
+    }
+
+    .tool-line {
+      margin-bottom: 4px;
+    }
+
+    .tool-output {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--tool) 88%, var(--panel));
+      overflow: hidden;
+    }
+
+    .tool-output > summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 6px 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+
+    .tool-output > summary::-webkit-details-marker {
+      display: none;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: var(--ink);
+    }
+
+    .bubble pre {
+      margin: 0;
+    }
+
+    .tool-output pre {
+      padding: 8px;
+      border-top: 1px solid var(--border);
+      background: color-mix(in srgb, var(--panel) 80%, var(--tool));
+    }
+
+    code {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--code);
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1px 4px;
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        flex-direction: column;
+      }
+      .topbar-right {
+        width: 100%;
+        align-items: flex-start;
+      }
+      .nav-links {
+        justify-content: flex-start;
+      }
+      .skin-controls {
+        justify-content: flex-start;
+      }
+    }
+
+  </style>
+</head>
+<body data-skin="standard">
+  <div class="wrap">
+    <div class="topbar">
+      <h1>qwen3.5 4b loose v1</h1>
+      <div class="topbar-right">
+        <div class="nav-links">
+          <a class="nav-link" href="https://dr3d.github.io/prolog-reasoning/docs-hub.html">Back to Docs Hub</a>
+          <a class="nav-link" href="https://github.com/dr3d/prolog-reasoning">View Repo</a>
+          <button id="appearance-toggle" class="theme-btn" aria-label="Switch transcript appearance">appearance</button>
+        </div>
+      </div>
+    </div>
+    <div class="meta">Captured: 2026-04-07 22:13:28 UTC | Model: qwen3.5-4b | Integration: unknown | Initial skin: standard | Rendered: 2026-04-08 00:03:28 UTC</div>
+    <section class="step-card"><h2>s01 / reset</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Reset runtime KB now. Use ONLY reset_kb and confirm." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Reset runtime KB now. Use ONLY reset_kb and confirm.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>reset_kb</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;runtime_reset&quot;,
+  &quot;message&quot;: &quot;Runtime KB reset to baseline seed state.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance.</pre></div></section><section class="step-card"><h2>s01 / seed family</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Please store these facts: Ann is Scott&#x27;s mother. Bob is Scott&#x27;s father." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Please store these facts: Ann is Scott&#x27;s mother. Bob is Scott&#x27;s father.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>bulk_assert_facts</code> <code>{
+  &quot;facts&quot;: [
+    &quot;mother(ann, scott).&quot;,
+    &quot;father(bob, scott).&quot;
+  ]
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;bulk_fact_assertion&quot;,
+  &quot;requested_count&quot;: 2,
+  &quot;asserted_count&quot;: 2,
+  &quot;failed_count&quot;: 0,
+  &quot;asserted_facts&quot;: [
+    &quot;mother(ann, scott).&quot;,
+    &quot;father(bob, scott).&quot;
+  ],
+  &quot;failed_facts&quot;: [],
+  &quot;message&quot;: &quot;Bulk assertion complete.&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;ve successfully stored both facts in the Prolog knowledge base:
+
+- Ann is Scott&#x27;s mother (mother(ann, scott).)
+- Bob is Scott&#x27;s father (father(bob, scott).)
+
+Both facts have been added and are now available for querying." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;ve successfully stored both facts in the Prolog knowledge base:
+
+- Ann is Scott&#x27;s mother (mother(ann, scott).)
+- Bob is Scott&#x27;s father (father(bob, scott).)
+
+Both facts have been added and are now available for querying.</pre></div></section><section class="step-card"><h2>s01 / hedged allergy</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+I think Scott might be allergic to peanuts, but this is not confirmed yet." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+I think Scott might be allergic to peanuts, but this is not confirmed yet.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>classify_statement</code> <code>{
+  &quot;text&quot;: &quot;I think Scott might be allergic to peanuts, but this is not confirmed yet.&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;kind&quot;: &quot;tentative_fact&quot;,
+  &quot;confidence&quot;: 0.76,
+  &quot;needs_speaker_resolution&quot;: false,
+  &quot;can_query_now&quot;: false,
+  &quot;can_persist_now&quot;: false,
+  &quot;suggested_operation&quot;: &quot;store_tentative_fact&quot;,
+  &quot;reasons&quot;: [
+    &quot;tentative language detected&quot;
+  ],
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;text&quot;: &quot;I think Scott might be allergic to peanuts, but this is not confirmed yet.&quot;,
+  &quot;message&quot;: &quot;Return classification only. Do not act on the statement. This is a routing hint, not a write. Runtime write tools exist (assert/retract/reset), but classify_statement itself performs no mutation, and durable journaled persistence is not implemented yet.&quot;,
+  &quot;proposal_check&quot;: {
+    &quot;status&quot;: &quot;needs_clarification&quot;,
+    &quot;issues&quot;: [
+      &quot;could not parse a deterministic candidate fact from text&quot;
+    ],
+    &quot;reasoning&quot;: [
+      &quot;parser currently handles a small controlled subset of fact patterns&quot;
+    ]
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="This appears to be a tentative observation from you rather than a confirmed fact. Since this isn&#x27;t stated as a definitive claim, I won&#x27;t add it to the knowledge base yet.
+
+If you&#x27;d like me to check whether there&#x27;s any existing information about Scott or peanut allergies in our system, I can help with that. Alternatively, if you have other questions about relationships, permissions, or facts in the database, feel free to ask!" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>This appears to be a tentative observation from you rather than a confirmed fact. Since this isn&#x27;t stated as a definitive claim, I won&#x27;t add it to the knowledge base yet.
+
+If you&#x27;d like me to check whether there&#x27;s any existing information about Scott or peanut allergies in our system, I can help with that. Alternatively, if you have other questions about relationships, permissions, or facts in the database, feel free to ask!</pre></div></section><section class="step-card"><h2>s01 / instruction noise</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Keep your responses concise and practical." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Keep your responses concise and practical.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>list_known_facts</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;known_entities&quot;: [
+    &quot;admin&quot;,
+    &quot;alice&quot;,
+    &quot;ann&quot;,
+    &quot;bob&quot;,
+    &quot;john&quot;,
+    &quot;read&quot;,
+    &quot;scott&quot;,
+    &quot;write&quot;
+  ],
+  &quot;supported_predicates&quot;: [
+    &quot;parent&quot;,
+    &quot;sibling&quot;,
+    &quot;ancestor&quot;,
+    &quot;child&quot;,
+    &quot;allergic_to&quot;,
+    &quot;takes_medication&quot;,
+    &quot;user&quot;,
+    &quot;role&quot;,
+    &quot;permission&quot;,
+    &quot;access_level&quot;,
+    &quot;can_access&quot;,
+    &quot;granted_permission&quot;,
+    &quot;allowed&quot;,
+    &quot;patient&quot;,
+    &quot;renal_risk&quot;,
+    &quot;candidate_drug&quot;,
+    &quot;interaction&quot;,
+    &quot;drug_class&quot;,
+    &quot;interacts&quot;,
+    &quot;triage&quot;,
+    &quot;safe_candidate&quot;,
+    &quot;task&quot;,
+    &quot;depends_on&quot;,
+    &quot;duration_days&quot;,
+    &quot;task_supplier&quot;,
+    &quot;supplier_status&quot;,
+    &quot;completed&quot;,
+    &quot;milestone&quot;,
+    &quot;downstream&quot;,
+    &quot;blocked_task&quot;,
+    &quot;unmet_prereq&quot;,
+    &quot;task_status&quot;,
+    &quot;safe_to_start&quot;,
+    &quot;waiting_on&quot;,
+    &quot;impacts_milestone&quot;,
+    &quot;delayed_milestone&quot;,
+    &quot;character&quot;,
+    &quot;location&quot;,
+    &quot;connected&quot;,
+    &quot;at&quot;,
+    &quot;faction&quot;,
+    &quot;has_item&quot;,
+    &quot;hp&quot;,
+    &quot;status&quot;,
+    &quot;weather&quot;,
+    &quot;time_of_day&quot;,
+    &quot;insomnia&quot;,
+    &quot;charmed&quot;,
+    &quot;quest_active&quot;,
+    &quot;asleep&quot;,
+    &quot;awake&quot;,
+    &quot;co_located&quot;,
+    &quot;can_move&quot;,
+    &quot;exposed&quot;,
+    &quot;needs_rest&quot;,
+    &quot;vulnerable&quot;,
+    &quot;threatened&quot;,
+    &quot;high_risk&quot;,
+    &quot;can_trade&quot;,
+    &quot;can_cast_charm&quot;
+  ],
+  &quot;predicate_notes&quot;: {
+    &quot;fact_backed_examples&quot;: [
+      &quot;parent&quot;,
+      &quot;role&quot;,
+      &quot;permission&quot;,
+      &quot;allergic_to&quot;
+    ],
+    &quot;typically_rule_derived&quot;: [
+      &quot;allowed&quot;,
+      &quot;ancestor&quot;,
+      &quot;asleep&quot;,
+      &quot;awake&quot;,
+      &quot;blocked_task&quot;,
+      &quot;can_access&quot;,
+      &quot;can_cast_charm&quot;,
+      &quot;can_move&quot;,
+      &quot;can_trade&quot;,
+      &quot;child&quot;,
+      &quot;co_located&quot;,
+      &quot;delayed_milestone&quot;,
+      &quot;downstream&quot;,
+      &quot;exposed&quot;,
+      &quot;high_risk&quot;,
+      &quot;impacts_milestone&quot;,
+      &quot;interacts&quot;,
+      &quot;needs_rest&quot;,
+      &quot;safe_candidate&quot;,
+      &quot;safe_to_start&quot;,
+      &quot;sibling&quot;,
+      &quot;task_status&quot;,
+      &quot;threatened&quot;,
+      &quot;triage&quot;,
+      &quot;unmet_prereq&quot;,
+      &quot;vulnerable&quot;,
+      &quot;waiting_on&quot;
+    ]
+  },
+  &quot;note&quot;: &quot;This is a summary view of currently known entities plus the predicate vocabulary the skill knows how to talk about. It is not a full dump of every stored fact, and a supported predicate does not imply facts exist for every entity.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;m ready to help with Prolog queries using MCP tools. Here&#x27;s what you can do:
+
+**Available Tools:**
+- `query_prolog` - Natural language questions (e.g., &quot;Who is John&#x27;s parent?&quot;)
+- `query_logic` - Raw Prolog literals (e.g., `allowed(alice, read).`)
+- `query_rows` - Get all solutions for a query with variables
+- `assert_fact` / `bulk_assert_facts` - Add facts to the KB
+- `retract_fact` - Remove facts
+
+**Known Entities:** admin, alice, ann, bob, john, scott, read, write (and more)
+
+**Example Usage:**
+```
+&quot;Who is Alice&#x27;s parent?&quot; → query_prolog
+&quot;parent(alice, X).&quot; → query_logic  
+&quot;waiting_on(Task, Prereq).&quot; → query_rows
+```
+
+What would you like to query?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;m ready to help with Prolog queries using MCP tools. Here&#x27;s what you can do:
+
+**Available Tools:**
+- `query_prolog` - Natural language questions (e.g., &quot;Who is John&#x27;s parent?&quot;)
+- `query_logic` - Raw Prolog literals (e.g., `allowed(alice, read).`)
+- `query_rows` - Get all solutions for a query with variables
+- `assert_fact` / `bulk_assert_facts` - Add facts to the KB
+- `retract_fact` - Remove facts
+
+**Known Entities:** admin, alice, ann, bob, john, scott, read, write (and more)
+
+**Example Usage:**
+```
+&quot;Who is Alice&#x27;s parent?&quot; → query_prolog
+&quot;parent(alice, X).&quot; → query_logic  
+&quot;waiting_on(Task, Prereq).&quot; → query_rows
+```
+
+What would you like to query?</pre></div></section><section class="step-card"><h2>s01 / verify present 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(ann, scott).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(ann, scott).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;parent(ann, scott).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;prolog_query&quot;: &quot;parent(ann, scott).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="There are no facts indicating that Ann is Scott&#x27;s parent in the current knowledge base." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>There are no facts indicating that Ann is Scott&#x27;s parent in the current knowledge base.</pre></div></section><section class="step-card"><h2>s01 / verify present 2</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(bob, scott).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(bob, scott).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;parent(bob, scott).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;prolog_query&quot;: &quot;parent(bob, scott).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="There are no facts indicating that Bob is the parent of Scott in the current knowledge base." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>There are no facts indicating that Bob is the parent of Scott in the current knowledge base.</pre></div></section><section class="step-card"><h2>s01 / verify absent 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+allergic_to(scott, peanuts).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+allergic_to(scott, peanuts).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;allergic_to(scott, peanuts).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;allergic_to&quot;,
+  &quot;prolog_query&quot;: &quot;allergic_to(scott, peanuts).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `allergic_to` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Scott is not listed as being allergic to peanuts in the knowledge base." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Scott is not listed as being allergic to peanuts in the knowledge base.</pre></div></section><section class="step-card"><h2>s02 / reset</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Reset runtime KB now. Use ONLY reset_kb and confirm." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Reset runtime KB now. Use ONLY reset_kb and confirm.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>reset_kb</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;runtime_reset&quot;,
+  &quot;message&quot;: &quot;Runtime KB reset to baseline seed state.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance.</pre></div></section><section class="step-card"><h2>s02 / seed literals</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Ingest exactly these facts: parent(ann, scott). completed(certification)." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Ingest exactly these facts: parent(ann, scott). completed(certification).</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>bulk_assert_facts</code> <code>{
+  &quot;facts&quot;: [
+    &quot;parent(ann, scott).&quot;,
+    &quot;completed(certification).&quot;
+  ]
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;bulk_fact_assertion&quot;,
+  &quot;requested_count&quot;: 2,
+  &quot;asserted_count&quot;: 2,
+  &quot;failed_count&quot;: 0,
+  &quot;asserted_facts&quot;: [
+    &quot;parent(ann, scott).&quot;,
+    &quot;completed(certification).&quot;
+  ],
+  &quot;failed_facts&quot;: [],
+  &quot;message&quot;: &quot;Bulk assertion complete.&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Both facts have been successfully ingested into the knowledge base:
+
+1. **parent(ann, scott).** - Ann is a parent of Scott
+2. **completed(certification).** - The certification has been completed
+
+All 2 requested facts were asserted with no failures." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Both facts have been successfully ingested into the knowledge base:
+
+1. **parent(ann, scott).** - Ann is a parent of Scott
+2. **completed(certification).** - The certification has been completed
+
+All 2 requested facts were asserted with no failures.</pre></div></section><section class="step-card"><h2>s02 / tentative allergy</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Maybe Scott is allergic to shellfish, but I only heard this second-hand." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Maybe Scott is allergic to shellfish, but I only heard this second-hand.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">4</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>classify_statement</code> <code>{
+  &quot;text&quot;: &quot;Maybe Scott is allergic to shellfish, but I only heard this second-hand.&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;kind&quot;: &quot;tentative_fact&quot;,
+  &quot;confidence&quot;: 0.76,
+  &quot;needs_speaker_resolution&quot;: false,
+  &quot;can_query_now&quot;: false,
+  &quot;can_persist_now&quot;: false,
+  &quot;suggested_operation&quot;: &quot;store_tentative_fact&quot;,
+  &quot;reasons&quot;: [
+    &quot;tentative language detected&quot;
+  ],
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;text&quot;: &quot;Maybe Scott is allergic to shellfish, but I only heard this second-hand.&quot;,
+  &quot;message&quot;: &quot;Return classification only. Do not act on the statement. This is a routing hint, not a write. Runtime write tools exist (assert/retract/reset), but classify_statement itself performs no mutation, and durable journaled persistence is not implemented yet.&quot;,
+  &quot;proposal_check&quot;: {
+    &quot;status&quot;: &quot;valid&quot;,
+    &quot;issues&quot;: [],
+    &quot;reasoning&quot;: [
+      &quot;predicate and arity validated against deterministic registry&quot;
+    ],
+    &quot;candidate&quot;: {
+      &quot;canonical_predicate&quot;: &quot;allergic_to&quot;,
+      &quot;arguments&quot;: [
+        &quot;scott&quot;,
+        &quot;shellfish_but_i_only_heard_this_second_hand&quot;
+      ],
+      &quot;normalized_fact&quot;: &quot;allergic_to(scott, shellfish_but_i_only_heard_this_second_hand).&quot;,
+      &quot;source&quot;: &quot;text:clinical&quot;,
+      &quot;raw_predicate&quot;: &quot;allergic_to&quot;
+    }
+  }
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_prolog</code> <code>{
+  &quot;query&quot;: &quot;Who is Scott?&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;unknown&quot;,
+  &quot;message&quot;: &quot;The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.&quot;,
+  &quot;suggestion&quot;: &quot;Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.&quot;,
+  &quot;failure_explanation&quot;: &quot;\n❌ No answer found for: unknown(X).\n\n📝 Why: The system couldn&#x27;t find any &#x27;unknown&#x27; relationships that match. Either the relationship doesn&#x27;t exist, or you asked about the wrong entities.\n\n💡 Try: Check that all the names used exist in the system. Make sure you&#x27;ve told the system all necessary facts. Try a simpler question first.\n&quot;,
+  &quot;nl_query&quot;: &quot;Who is Scott?&quot;,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `unknown` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>list_known_facts</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;known_entities&quot;: [
+    &quot;admin&quot;,
+    &quot;alice&quot;,
+    &quot;ann&quot;,
+    &quot;bob&quot;,
+    &quot;certification&quot;,
+    &quot;john&quot;,
+    &quot;read&quot;,
+    &quot;scott&quot;,
+    &quot;write&quot;
+  ],
+  &quot;supported_predicates&quot;: [
+    &quot;parent&quot;,
+    &quot;sibling&quot;,
+    &quot;ancestor&quot;,
+    &quot;child&quot;,
+    &quot;allergic_to&quot;,
+    &quot;takes_medication&quot;,
+    &quot;user&quot;,
+    &quot;role&quot;,
+    &quot;permission&quot;,
+    &quot;access_level&quot;,
+    &quot;can_access&quot;,
+    &quot;granted_permission&quot;,
+    &quot;allowed&quot;,
+    &quot;patient&quot;,
+    &quot;renal_risk&quot;,
+    &quot;candidate_drug&quot;,
+    &quot;interaction&quot;,
+    &quot;drug_class&quot;,
+    &quot;interacts&quot;,
+    &quot;triage&quot;,
+    &quot;safe_candidate&quot;,
+    &quot;task&quot;,
+    &quot;depends_on&quot;,
+    &quot;duration_days&quot;,
+    &quot;task_supplier&quot;,
+    &quot;supplier_status&quot;,
+    &quot;completed&quot;,
+    &quot;milestone&quot;,
+    &quot;downstream&quot;,
+    &quot;blocked_task&quot;,
+    &quot;unmet_prereq&quot;,
+    &quot;task_status&quot;,
+    &quot;safe_to_start&quot;,
+    &quot;waiting_on&quot;,
+    &quot;impacts_milestone&quot;,
+    &quot;delayed_milestone&quot;,
+    &quot;character&quot;,
+    &quot;location&quot;,
+    &quot;connected&quot;,
+    &quot;at&quot;,
+    &quot;faction&quot;,
+    &quot;has_item&quot;,
+    &quot;hp&quot;,
+    &quot;status&quot;,
+    &quot;weather&quot;,
+    &quot;time_of_day&quot;,
+    &quot;insomnia&quot;,
+    &quot;charmed&quot;,
+    &quot;quest_active&quot;,
+    &quot;asleep&quot;,
+    &quot;awake&quot;,
+    &quot;co_located&quot;,
+    &quot;can_move&quot;,
+    &quot;exposed&quot;,
+    &quot;needs_rest&quot;,
+    &quot;vulnerable&quot;,
+    &quot;threatened&quot;,
+    &quot;high_risk&quot;,
+    &quot;can_trade&quot;,
+    &quot;can_cast_charm&quot;
+  ],
+  &quot;predicate_notes&quot;: {
+    &quot;fact_backed_examples&quot;: [
+      &quot;parent&quot;,
+      &quot;role&quot;,
+      &quot;permission&quot;,
+      &quot;allergic_to&quot;
+    ],
+    &quot;typically_rule_derived&quot;: [
+      &quot;allowed&quot;,
+      &quot;ancestor&quot;,
+      &quot;asleep&quot;,
+      &quot;awake&quot;,
+      &quot;blocked_task&quot;,
+      &quot;can_access&quot;,
+      &quot;can_cast_charm&quot;,
+      &quot;can_move&quot;,
+      &quot;can_trade&quot;,
+      &quot;child&quot;,
+      &quot;co_located&quot;,
+      &quot;delayed_milestone&quot;,
+      &quot;downstream&quot;,
+      &quot;exposed&quot;,
+      &quot;high_risk&quot;,
+      &quot;impacts_milestone&quot;,
+      &quot;interacts&quot;,
+      &quot;needs_rest&quot;,
+      &quot;safe_candidate&quot;,
+      &quot;safe_to_start&quot;,
+      &quot;sibling&quot;,
+      &quot;task_status&quot;,
+      &quot;threatened&quot;,
+      &quot;triage&quot;,
+      &quot;unmet_prereq&quot;,
+      &quot;vulnerable&quot;,
+      &quot;waiting_on&quot;
+    ]
+  },
+  &quot;note&quot;: &quot;This is a summary view of currently known entities plus the predicate vocabulary the skill knows how to talk about. It is not a full dump of every stored fact, and a supported predicate does not imply facts exist for every entity.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;allergic_to(X, Y).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;allergic_to&quot;,
+  &quot;prolog_query&quot;: &quot;allergic_to(X, Y).&quot;,
+  &quot;variables&quot;: [
+    &quot;X&quot;,
+    &quot;Y&quot;
+  ],
+  &quot;rows&quot;: [
+    {
+      &quot;X&quot;: &quot;alice&quot;,
+      &quot;Y&quot;: &quot;penicillin&quot;
+    }
+  ],
+  &quot;num_rows&quot;: 1,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `allergic_to` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Based on my search of the knowledge base, I found only one existing allergy record: Alice is allergic to penicillin. There is currently no information stored about Scott being allergic to shellfish.
+
+You mentioned this is second-hand information that you&#x27;re not entirely certain about. Since this appears to be tentative/unverified data rather than confirmed facts, I won&#x27;t add it to the knowledge base at this time. 
+
+Would you like me to:
+1. Verify if there&#x27;s any other information about Scott in the system?
+2. Wait until you have more confirmation before adding this allergy record?
+3. Or is there something else you&#x27;d like to know or check?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Based on my search of the knowledge base, I found only one existing allergy record: Alice is allergic to penicillin. There is currently no information stored about Scott being allergic to shellfish.
+
+You mentioned this is second-hand information that you&#x27;re not entirely certain about. Since this appears to be tentative/unverified data rather than confirmed facts, I won&#x27;t add it to the knowledge base at this time. 
+
+Would you like me to:
+1. Verify if there&#x27;s any other information about Scott in the system?
+2. Wait until you have more confirmation before adding this allergy record?
+3. Or is there something else you&#x27;d like to know or check?</pre></div></section><section class="step-card"><h2>s02 / verify present 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(ann, scott).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(ann, scott).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;parent(ann, scott).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;prolog_query&quot;: &quot;parent(ann, scott).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [
+    {}
+  ],
+  &quot;num_rows&quot;: 1,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="The Prolog database confirms that Ann is Scott&#x27;s parent." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>The Prolog database confirms that Ann is Scott&#x27;s parent.</pre></div></section><section class="step-card"><h2>s02 / verify present 2</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+completed(certification).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+completed(certification).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;completed(certification).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;completed&quot;,
+  &quot;prolog_query&quot;: &quot;completed(certification).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [
+    {}
+  ],
+  &quot;num_rows&quot;: 1,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `completed` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="The Prolog database contains exactly one record confirming that certification has been completed." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>The Prolog database contains exactly one record confirming that certification has been completed.</pre></div></section><section class="step-card"><h2>s02 / verify absent 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+allergic_to(scott, shellfish).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+allergic_to(scott, shellfish).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;allergic_to(scott, shellfish).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;allergic_to&quot;,
+  &quot;prolog_query&quot;: &quot;allergic_to(scott, shellfish).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `allergic_to` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Scott is not listed as being allergic to shellfish in the knowledge base." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Scott is not listed as being allergic to shellfish in the knowledge base.</pre></div></section><section class="step-card"><h2>s03 / reset</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Reset runtime KB now. Use ONLY reset_kb and confirm." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Reset runtime KB now. Use ONLY reset_kb and confirm.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>reset_kb</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;runtime_reset&quot;,
+  &quot;message&quot;: &quot;Runtime KB reset to baseline seed state.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance.</pre></div></section><section class="step-card"><h2>s03 / speaker parent claims</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+My mother is Ann and my father is Bob." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+My mother is Ann and my father is Bob.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">6</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>classify_statement</code> <code>{
+  &quot;text&quot;: &quot;My mother is Ann and my father is Bob.&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;kind&quot;: &quot;hard_fact&quot;,
+  &quot;confidence&quot;: 0.81,
+  &quot;needs_speaker_resolution&quot;: true,
+  &quot;can_query_now&quot;: false,
+  &quot;can_persist_now&quot;: false,
+  &quot;suggested_operation&quot;: &quot;store_fact&quot;,
+  &quot;reasons&quot;: [
+    &quot;declarative relation pattern detected&quot;
+  ],
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;text&quot;: &quot;My mother is Ann and my father is Bob.&quot;,
+  &quot;message&quot;: &quot;Return classification only. Do not act on the statement. This is a routing hint, not a write. Runtime write tools exist (assert/retract/reset), but classify_statement itself performs no mutation, and durable journaled persistence is not implemented yet.&quot;,
+  &quot;proposal_check&quot;: {
+    &quot;status&quot;: &quot;needs_clarification&quot;,
+    &quot;issues&quot;: [
+      &quot;speaker identity is unresolved&quot;
+    ],
+    &quot;reasoning&quot;: [
+      &quot;predicate and arity validated against deterministic registry&quot;,
+      &quot;candidate contains &lt;speaker&gt; and requires explicit grounding before persistence&quot;
+    ],
+    &quot;candidate&quot;: {
+      &quot;canonical_predicate&quot;: &quot;parent&quot;,
+      &quot;arguments&quot;: [
+        &quot;ann_and_my_father_is_bob&quot;,
+        &quot;&lt;speaker&gt;&quot;
+      ],
+      &quot;normalized_fact&quot;: &quot;parent(ann_and_my_father_is_bob, &lt;speaker&gt;).&quot;,
+      &quot;source&quot;: &quot;text:family&quot;,
+      &quot;raw_predicate&quot;: &quot;parent&quot;
+    }
+  }
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>list_known_facts</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;known_entities&quot;: [
+    &quot;admin&quot;,
+    &quot;alice&quot;,
+    &quot;bob&quot;,
+    &quot;john&quot;,
+    &quot;read&quot;,
+    &quot;write&quot;
+  ],
+  &quot;supported_predicates&quot;: [
+    &quot;parent&quot;,
+    &quot;sibling&quot;,
+    &quot;ancestor&quot;,
+    &quot;child&quot;,
+    &quot;allergic_to&quot;,
+    &quot;takes_medication&quot;,
+    &quot;user&quot;,
+    &quot;role&quot;,
+    &quot;permission&quot;,
+    &quot;access_level&quot;,
+    &quot;can_access&quot;,
+    &quot;granted_permission&quot;,
+    &quot;allowed&quot;,
+    &quot;patient&quot;,
+    &quot;renal_risk&quot;,
+    &quot;candidate_drug&quot;,
+    &quot;interaction&quot;,
+    &quot;drug_class&quot;,
+    &quot;interacts&quot;,
+    &quot;triage&quot;,
+    &quot;safe_candidate&quot;,
+    &quot;task&quot;,
+    &quot;depends_on&quot;,
+    &quot;duration_days&quot;,
+    &quot;task_supplier&quot;,
+    &quot;supplier_status&quot;,
+    &quot;completed&quot;,
+    &quot;milestone&quot;,
+    &quot;downstream&quot;,
+    &quot;blocked_task&quot;,
+    &quot;unmet_prereq&quot;,
+    &quot;task_status&quot;,
+    &quot;safe_to_start&quot;,
+    &quot;waiting_on&quot;,
+    &quot;impacts_milestone&quot;,
+    &quot;delayed_milestone&quot;,
+    &quot;character&quot;,
+    &quot;location&quot;,
+    &quot;connected&quot;,
+    &quot;at&quot;,
+    &quot;faction&quot;,
+    &quot;has_item&quot;,
+    &quot;hp&quot;,
+    &quot;status&quot;,
+    &quot;weather&quot;,
+    &quot;time_of_day&quot;,
+    &quot;insomnia&quot;,
+    &quot;charmed&quot;,
+    &quot;quest_active&quot;,
+    &quot;asleep&quot;,
+    &quot;awake&quot;,
+    &quot;co_located&quot;,
+    &quot;can_move&quot;,
+    &quot;exposed&quot;,
+    &quot;needs_rest&quot;,
+    &quot;vulnerable&quot;,
+    &quot;threatened&quot;,
+    &quot;high_risk&quot;,
+    &quot;can_trade&quot;,
+    &quot;can_cast_charm&quot;
+  ],
+  &quot;predicate_notes&quot;: {
+    &quot;fact_backed_examples&quot;: [
+      &quot;parent&quot;,
+      &quot;role&quot;,
+      &quot;permission&quot;,
+      &quot;allergic_to&quot;
+    ],
+    &quot;typically_rule_derived&quot;: [
+      &quot;allowed&quot;,
+      &quot;ancestor&quot;,
+      &quot;asleep&quot;,
+      &quot;awake&quot;,
+      &quot;blocked_task&quot;,
+      &quot;can_access&quot;,
+      &quot;can_cast_charm&quot;,
+      &quot;can_move&quot;,
+      &quot;can_trade&quot;,
+      &quot;child&quot;,
+      &quot;co_located&quot;,
+      &quot;delayed_milestone&quot;,
+      &quot;downstream&quot;,
+      &quot;exposed&quot;,
+      &quot;high_risk&quot;,
+      &quot;impacts_milestone&quot;,
+      &quot;interacts&quot;,
+      &quot;needs_rest&quot;,
+      &quot;safe_candidate&quot;,
+      &quot;safe_to_start&quot;,
+      &quot;sibling&quot;,
+      &quot;task_status&quot;,
+      &quot;threatened&quot;,
+      &quot;triage&quot;,
+      &quot;unmet_prereq&quot;,
+      &quot;vulnerable&quot;,
+      &quot;waiting_on&quot;
+    ]
+  },
+  &quot;note&quot;: &quot;This is a summary view of currently known entities plus the predicate vocabulary the skill knows how to talk about. It is not a full dump of every stored fact, and a supported predicate does not imply facts exist for every entity.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>bulk_assert_facts</code> <code>{
+  &quot;facts&quot;: [
+    &quot;parent(ann, user).&quot;,
+    &quot;parent(bob, user).&quot;
+  ]
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;bulk_fact_assertion&quot;,
+  &quot;requested_count&quot;: 2,
+  &quot;asserted_count&quot;: 2,
+  &quot;failed_count&quot;: 0,
+  &quot;asserted_facts&quot;: [
+    &quot;parent(ann, user).&quot;,
+    &quot;parent(bob, user).&quot;
+  ],
+  &quot;failed_facts&quot;: [],
+  &quot;message&quot;: &quot;Bulk assertion complete.&quot;
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_logic</code> <code>{
+  &quot;query&quot;: &quot;parent(X, user).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;success&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;answer_short&quot;: &quot;SUCCESS: Query &#x27;parent(X, user)&#x27; succeeded with 2 solution(s).&quot;,
+  &quot;answer_detailed&quot;: &quot;SUCCESS: Query &#x27;parent(X, user)&#x27; succeeded with 2 solution(s).&quot;,
+  &quot;confidence&quot;: 0.8,
+  &quot;prolog_query&quot;: &quot;parent(X, user).&quot;,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  },
+  &quot;metadata&quot;: {
+    &quot;proof_trace&quot;: [],
+    &quot;bindings&quot;: {
+      &quot;X&quot;: &quot;ann&quot;
+    },
+    &quot;num_solutions&quot;: 2
+  }
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_logic</code> <code>{
+  &quot;query&quot;: &quot;parent(ann, user).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;success&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;answer_short&quot;: &quot;SUCCESS: Query &#x27;parent(ann, user)&#x27; succeeded with 1 solution(s).&quot;,
+  &quot;answer_detailed&quot;: &quot;SUCCESS: Query &#x27;parent(ann, user)&#x27; succeeded with 1 solution(s).\n  (Ground query confirmed)&quot;,
+  &quot;confidence&quot;: 1.0,
+  &quot;prolog_query&quot;: &quot;parent(ann, user).&quot;,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  },
+  &quot;metadata&quot;: {
+    &quot;proof_trace&quot;: [],
+    &quot;bindings&quot;: [],
+    &quot;num_solutions&quot;: 1
+  }
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_logic</code> <code>{
+  &quot;query&quot;: &quot;parent(bob, user).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;success&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;answer_short&quot;: &quot;SUCCESS: Query &#x27;parent(bob, user)&#x27; succeeded with 1 solution(s).&quot;,
+  &quot;answer_detailed&quot;: &quot;SUCCESS: Query &#x27;parent(bob, user)&#x27; succeeded with 1 solution(s).\n  (Ground query confirmed)&quot;,
+  &quot;confidence&quot;: 1.0,
+  &quot;prolog_query&quot;: &quot;parent(bob, user).&quot;,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  },
+  &quot;metadata&quot;: {
+    &quot;proof_trace&quot;: [],
+    &quot;bindings&quot;: [],
+    &quot;num_solutions&quot;: 1
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;ve successfully stored your family information in the knowledge base:
+
+- **Ann** is your mother (parent(ann, user))
+- **Bob** is your father (parent(bob, user))
+
+These facts are now available for future queries about your relationships and family connections." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;ve successfully stored your family information in the knowledge base:
+
+- **Ann** is your mother (parent(ann, user))
+- **Bob** is your father (parent(bob, user))
+
+These facts are now available for future queries about your relationships and family connections.</pre></div></section><section class="step-card"><h2>s03 / grounded location</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Store this grounded fact: Sam is at hq_north." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Store this grounded fact: Sam is at hq_north.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>assert_fact</code> <code>{
+  &quot;fact&quot;: &quot;at(sam, hq_north).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;fact_asserted&quot;,
+  &quot;fact&quot;: &quot;at(sam, hq_north).&quot;,
+  &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;ve successfully stored the grounded fact that Sam is at hq_north into the Prolog knowledge base as `at(sam, hq_north).`. This fact has been added to the runtime KB for this server process." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;ve successfully stored the grounded fact that Sam is at hq_north into the Prolog knowledge base as `at(sam, hq_north).`. This fact has been added to the runtime KB for this server process.</pre></div></section><section class="step-card"><h2>s03 / verify present 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+at(sam, hq_north).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+at(sam, hq_north).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;at(sam, hq_north).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;at&quot;,
+  &quot;prolog_query&quot;: &quot;at(sam, hq_north).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [
+    {}
+  ],
+  &quot;num_rows&quot;: 1,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `at` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Sam is located at hq_north according to the Prolog facts." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Sam is located at hq_north according to the Prolog facts.</pre></div></section><section class="step-card"><h2>s03 / verify absent 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(ann, X).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(ann, X).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;parent(ann, X).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;prolog_query&quot;: &quot;parent(ann, X).&quot;,
+  &quot;variables&quot;: [
+    &quot;X&quot;
+  ],
+  &quot;rows&quot;: [
+    {
+      &quot;X&quot;: &quot;user&quot;
+    }
+  ],
+  &quot;num_rows&quot;: 1,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Ann&#x27;s parent is user." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Ann&#x27;s parent is user.</pre></div></section><section class="step-card"><h2>s03 / verify absent 2</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(bob, X).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+parent(bob, X).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;parent(bob, X).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;table&quot;,
+  &quot;predicate&quot;: &quot;parent&quot;,
+  &quot;prolog_query&quot;: &quot;parent(bob, X).&quot;,
+  &quot;variables&quot;: [
+    &quot;X&quot;
+  ],
+  &quot;rows&quot;: [
+    {
+      &quot;X&quot;: &quot;user&quot;
+    }
+  ],
+  &quot;num_rows&quot;: 1,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `parent` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Bob&#x27;s parent is user." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Bob&#x27;s parent is user.</pre></div></section><section class="step-card"><h2>s04 / reset</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Reset runtime KB now. Use ONLY reset_kb and confirm." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Reset runtime KB now. Use ONLY reset_kb and confirm.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>reset_kb</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;runtime_reset&quot;,
+  &quot;message&quot;: &quot;Runtime KB reset to baseline seed state.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Runtime KB has been successfully reset to the baseline seed state. The system has reloaded the core knowledge base from D:\_PROJECTS\prolog-reasoning\prolog\core.pl into a fresh in-memory skill instance.</pre></div></section><section class="step-card"><h2>s04 / known alias dependency</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Please store that beta_release requires certification." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Please store that beta_release requires certification.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>assert_fact</code> <code>{
+  &quot;fact&quot;: &quot;requires_certification(beta_release).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;result_type&quot;: &quot;fact_asserted&quot;,
+  &quot;fact&quot;: &quot;requires_certification(beta_release).&quot;,
+  &quot;message&quot;: &quot;Fact asserted into runtime KB for this server process.&quot;,
+  &quot;note&quot;: &quot;Use reset_kb to clear runtime changes.&quot;
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;ve successfully stored that fact into the knowledge base: `requires_certification(beta_release).` This means beta_release now requires certification according to your Prolog system." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;ve successfully stored that fact into the knowledge base: `requires_certification(beta_release).` This means beta_release now requires certification according to your Prolog system.</pre></div></section><section class="step-card"><h2>s04 / done marker</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Also store that certification is done." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+Also store that certification is done.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">2</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>list_known_facts</code> <code>{}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;known_entities&quot;: [
+    &quot;admin&quot;,
+    &quot;alice&quot;,
+    &quot;beta_release&quot;,
+    &quot;bob&quot;,
+    &quot;john&quot;,
+    &quot;read&quot;,
+    &quot;write&quot;
+  ],
+  &quot;supported_predicates&quot;: [
+    &quot;parent&quot;,
+    &quot;sibling&quot;,
+    &quot;ancestor&quot;,
+    &quot;child&quot;,
+    &quot;allergic_to&quot;,
+    &quot;takes_medication&quot;,
+    &quot;user&quot;,
+    &quot;role&quot;,
+    &quot;permission&quot;,
+    &quot;access_level&quot;,
+    &quot;can_access&quot;,
+    &quot;granted_permission&quot;,
+    &quot;allowed&quot;,
+    &quot;patient&quot;,
+    &quot;renal_risk&quot;,
+    &quot;candidate_drug&quot;,
+    &quot;interaction&quot;,
+    &quot;drug_class&quot;,
+    &quot;interacts&quot;,
+    &quot;triage&quot;,
+    &quot;safe_candidate&quot;,
+    &quot;task&quot;,
+    &quot;depends_on&quot;,
+    &quot;duration_days&quot;,
+    &quot;task_supplier&quot;,
+    &quot;supplier_status&quot;,
+    &quot;completed&quot;,
+    &quot;milestone&quot;,
+    &quot;downstream&quot;,
+    &quot;blocked_task&quot;,
+    &quot;unmet_prereq&quot;,
+    &quot;task_status&quot;,
+    &quot;safe_to_start&quot;,
+    &quot;waiting_on&quot;,
+    &quot;impacts_milestone&quot;,
+    &quot;delayed_milestone&quot;,
+    &quot;character&quot;,
+    &quot;location&quot;,
+    &quot;connected&quot;,
+    &quot;at&quot;,
+    &quot;faction&quot;,
+    &quot;has_item&quot;,
+    &quot;hp&quot;,
+    &quot;status&quot;,
+    &quot;weather&quot;,
+    &quot;time_of_day&quot;,
+    &quot;insomnia&quot;,
+    &quot;charmed&quot;,
+    &quot;quest_active&quot;,
+    &quot;asleep&quot;,
+    &quot;awake&quot;,
+    &quot;co_located&quot;,
+    &quot;can_move&quot;,
+    &quot;exposed&quot;,
+    &quot;needs_rest&quot;,
+    &quot;vulnerable&quot;,
+    &quot;threatened&quot;,
+    &quot;high_risk&quot;,
+    &quot;can_trade&quot;,
+    &quot;can_cast_charm&quot;
+  ],
+  &quot;predicate_notes&quot;: {
+    &quot;fact_backed_examples&quot;: [
+      &quot;parent&quot;,
+      &quot;role&quot;,
+      &quot;permission&quot;,
+      &quot;allergic_to&quot;
+    ],
+    &quot;typically_rule_derived&quot;: [
+      &quot;allowed&quot;,
+      &quot;ancestor&quot;,
+      &quot;asleep&quot;,
+      &quot;awake&quot;,
+      &quot;blocked_task&quot;,
+      &quot;can_access&quot;,
+      &quot;can_cast_charm&quot;,
+      &quot;can_move&quot;,
+      &quot;can_trade&quot;,
+      &quot;child&quot;,
+      &quot;co_located&quot;,
+      &quot;delayed_milestone&quot;,
+      &quot;downstream&quot;,
+      &quot;exposed&quot;,
+      &quot;high_risk&quot;,
+      &quot;impacts_milestone&quot;,
+      &quot;interacts&quot;,
+      &quot;needs_rest&quot;,
+      &quot;safe_candidate&quot;,
+      &quot;safe_to_start&quot;,
+      &quot;sibling&quot;,
+      &quot;task_status&quot;,
+      &quot;threatened&quot;,
+      &quot;triage&quot;,
+      &quot;unmet_prereq&quot;,
+      &quot;vulnerable&quot;,
+      &quot;waiting_on&quot;
+    ]
+  },
+  &quot;note&quot;: &quot;This is a summary view of currently known entities plus the predicate vocabulary the skill knows how to talk about. It is not a full dump of every stored fact, and a supported predicate does not imply facts exist for every entity.&quot;,
+  &quot;knowledge_base_path&quot;: &quot;D:\\_PROJECTS\\prolog-reasoning\\prolog\\core.pl&quot;
+}</pre></details></li><li class="tool-item"><div class="tool-line"><code>query_logic</code> <code>{
+  &quot;query&quot;: &quot;completed(X).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;completed&quot;,
+  &quot;prolog_query&quot;: &quot;completed(X).&quot;,
+  &quot;message&quot;: &quot;FAIL: Query &#x27;completed(X)&#x27; failed. No solutions found.&quot;,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `completed` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  },
+  &quot;metadata&quot;: {
+    &quot;proof_trace&quot;: [],
+    &quot;bindings&quot;: [],
+    &quot;num_solutions&quot;: 0
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="I&#x27;d be happy to help you store that certification is done in the knowledge base. However, I need some additional details to add this fact correctly:
+
+1. **Who** has completed the certification? (e.g., alice, john, admin)
+2. **What type of certification**? Is it related to beta_release or another entity?
+
+Could you provide these specifics so I can store the appropriate fact?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>I&#x27;d be happy to help you store that certification is done in the knowledge base. However, I need some additional details to add this fact correctly:
+
+1. **Who** has completed the certification? (e.g., alice, john, admin)
+2. **What type of certification**? Is it related to beta_release or another entity?
+
+Could you provide these specifics so I can store the appropriate fact?</pre></div></section><section class="step-card"><h2>s04 / uncertain extension</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+I think marketing_push might depend on beta_release, but we have no ticket yet." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>You are operating with MCP tools enabled. Use tools when useful, keep answers grounded, and avoid inventing facts.
+
+User turn:
+I think marketing_push might depend on beta_release, but we have no ticket yet.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>classify_statement</code> <code>{
+  &quot;text&quot;: &quot;I think marketing_push might depend on beta_release, but we have no ticket yet.&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;kind&quot;: &quot;tentative_fact&quot;,
+  &quot;confidence&quot;: 0.76,
+  &quot;needs_speaker_resolution&quot;: true,
+  &quot;can_query_now&quot;: false,
+  &quot;can_persist_now&quot;: false,
+  &quot;suggested_operation&quot;: &quot;store_tentative_fact&quot;,
+  &quot;reasons&quot;: [
+    &quot;tentative language detected&quot;
+  ],
+  &quot;status&quot;: &quot;success&quot;,
+  &quot;text&quot;: &quot;I think marketing_push might depend on beta_release, but we have no ticket yet.&quot;,
+  &quot;message&quot;: &quot;Return classification only. Do not act on the statement. This is a routing hint, not a write. Runtime write tools exist (assert/retract/reset), but classify_statement itself performs no mutation, and durable journaled persistence is not implemented yet.&quot;,
+  &quot;proposal_check&quot;: {
+    &quot;status&quot;: &quot;needs_clarification&quot;,
+    &quot;issues&quot;: [
+      &quot;could not parse a deterministic candidate fact from text&quot;
+    ],
+    &quot;reasoning&quot;: [
+      &quot;parser currently handles a small controlled subset of fact patterns&quot;
+    ]
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="This appears to be a tentative proposition about a dependency relationship between `marketing_push` and `beta_release`. The uncertain language (&quot;might&quot;, &quot;think&quot;) means it couldn&#x27;t be parsed as a deterministic fact yet, so I can&#x27;t store or query this relationship at this time.
+
+To proceed with adding this dependency to the knowledge base, you would need to:
+1. Create a ticket for this relationship (as you mentioned)
+2. Provide more definitive information about the `depends_on` relationship between these entities
+
+Would you like me to help you formulate a clearer fact statement once you have confirmation of this dependency?" data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>This appears to be a tentative proposition about a dependency relationship between `marketing_push` and `beta_release`. The uncertain language (&quot;might&quot;, &quot;think&quot;) means it couldn&#x27;t be parsed as a deterministic fact yet, so I can&#x27;t store or query this relationship at this time.
+
+To proceed with adding this dependency to the knowledge base, you would need to:
+1. Create a ticket for this relationship (as you mentioned)
+2. Provide more definitive information about the `depends_on` relationship between these entities
+
+Would you like me to help you formulate a clearer fact statement once you have confirmation of this dependency?</pre></div></section><section class="step-card"><h2>s04 / verify present 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+depends_on(beta_release, certification).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+depends_on(beta_release, certification).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;depends_on(beta_release, certification).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;depends_on&quot;,
+  &quot;prolog_query&quot;: &quot;depends_on(beta_release, certification).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `depends_on` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="No results found for the depends_on relationship between beta_release and certification in the knowledge base." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>No results found for the depends_on relationship between beta_release and certification in the knowledge base.</pre></div></section><section class="step-card"><h2>s04 / verify present 2</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+completed(certification).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+completed(certification).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;completed(certification).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;completed&quot;,
+  &quot;prolog_query&quot;: &quot;completed(certification).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `completed` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="No certification completion records were found in the database." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>No certification completion records were found in the database.</pre></div></section><section class="step-card"><h2>s04 / verify absent 1</h2><div class="bubble user"><div class="bubble-head"><div class="label">User</div><button class="copy-btn" data-copy="Verification step. Use ONLY query_rows with this exact query and no other tools:
+depends_on(marketing_push, beta_release).
+Then return one short sentence." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>Verification step. Use ONLY query_rows with this exact query and no other tools:
+depends_on(marketing_push, beta_release).
+Then return one short sentence.</pre></div><details class="toolbox tool-expando"><summary><span>tool calls</span><span class="expando-count">1</span></summary><ul class="tool-list"><li class="tool-item"><div class="tool-line"><code>query_rows</code> <code>{
+  &quot;query&quot;: &quot;depends_on(marketing_push, beta_release).&quot;
+}</code></div><details class="tool-output"><summary>output</summary><pre>{
+  &quot;status&quot;: &quot;no_results&quot;,
+  &quot;result_type&quot;: &quot;no_result&quot;,
+  &quot;predicate&quot;: &quot;depends_on&quot;,
+  &quot;prolog_query&quot;: &quot;depends_on(marketing_push, beta_release).&quot;,
+  &quot;variables&quot;: [],
+  &quot;rows&quot;: [],
+  &quot;num_rows&quot;: 0,
+  &quot;reasoning_basis&quot;: {
+    &quot;kind&quot;: &quot;fact-backed&quot;,
+    &quot;note&quot;: &quot;The `depends_on` predicate is typically answered from stored facts, though rules may still participate.&quot;
+  }
+}</pre></details></li></ul></details><div class="bubble assistant"><div class="bubble-head"><div class="label">Assistant</div><button class="copy-btn" data-copy="There is no record in the knowledge base indicating that marketing_push depends on beta_release." data-label="copy" data-success-label="copied" data-failure-label="copy-failed">copy</button></div><pre>There is no record in the knowledge base indicating that marketing_push depends on beta_release.</pre></div></section>
+  </div>
+  <script id="skin-css-map" type="application/json">{"standard": "    :root {\n      --bg: #e3ddd2;\n      --panel: #ece7de;\n      --ink: #201f1b;\n      --muted: #59544d;\n      --user: #decfba;\n      --assistant: #cedbe6;\n      --tool: #d9dfd3;\n      --border: #c2b9aa;\n      --code: #232b34;\n      --code-bg: #f7f1e6;\n      --copy-bg: #fff4df;\n      --copy-border: #b7a990;\n      --copy-ink: #3e3a31;\n      --copy-done-bg: #e5f0dd;\n      --copy-done-border: #7e9e73;\n      --copy-done-ink: #2f5130;\n    }\n\n    html[data-theme=\"dark\"] {\n      --bg: #171a1f;\n      --panel: #1f252d;\n      --ink: #e8edf2;\n      --muted: #b7c1cc;\n      --user: #3b2f23;\n      --assistant: #21394d;\n      --tool: #293229;\n      --border: #3b4652;\n      --code: #ebf3ff;\n      --code-bg: #2a3441;\n      --copy-bg: #303944;\n      --copy-border: #4d5e71;\n      --copy-ink: #e6f1ff;\n      --copy-done-bg: #2f4a35;\n      --copy-done-border: #5f8a67;\n      --copy-done-ink: #e5f8e8;\n    }\n\n    body {\n      margin: 0;\n      font-family: Georgia, \"Times New Roman\", serif;\n      background: var(--bg);\n      color: var(--ink);\n      line-height: 1.35;\n    }\n\n    .wrap {\n      max-width: 1080px;\n      margin: 0 auto;\n      padding: 24px;\n    }\n\n    h1 {\n      margin: 0 0 12px 0;\n      font-size: 34px;\n    }\n\n    .topbar {\n      display: flex;\n      align-items: flex-start;\n      justify-content: space-between;\n      gap: 12px;\n    }\n\n    .topbar-right {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-end;\n      gap: 8px;\n    }\n\n    .nav-links {\n      display: flex;\n      align-items: center;\n      gap: 8px;\n      flex-wrap: wrap;\n      justify-content: flex-end;\n    }\n\n    .nav-link {\n      border: 1px solid var(--border);\n      background: var(--panel);\n      border-radius: 9px;\n      color: var(--ink);\n      font-family: \"Courier New\", monospace;\n      font-size: 12px;\n      line-height: 1;\n      padding: 7px 10px;\n      text-decoration: none;\n      white-space: nowrap;\n    }\n\n    .nav-link:hover {\n      filter: brightness(1.06);\n    }\n\n    .theme-btn {\n      border: 1px solid var(--border);\n      background: var(--panel);\n      border-radius: 9px;\n      color: var(--ink);\n      font-family: \"Courier New\", monospace;\n      font-size: 12px;\n      line-height: 1;\n      padding: 7px 10px;\n      cursor: pointer;\n      white-space: nowrap;\n    }\n\n    .skin-controls {\n      display: flex;\n      align-items: center;\n      gap: 6px;\n      flex-wrap: wrap;\n      justify-content: flex-end;\n    }\n\n    .skin-label {\n      font-family: \"Courier New\", monospace;\n      font-size: 11px;\n      letter-spacing: .08em;\n      text-transform: uppercase;\n      color: var(--muted);\n    }\n\n    .skin-select {\n      border: 1px solid var(--border);\n      background: var(--panel);\n      border-radius: 10px;\n      color: var(--ink);\n      font-family: \"Courier New\", monospace;\n      font-size: 12px;\n      line-height: 1;\n      padding: 7px 8px;\n      cursor: pointer;\n    }\n\n    .theme-btn:hover {\n      filter: brightness(1.06);\n    }\n\n    .meta {\n      font-family: \"Courier New\", monospace;\n      font-size: 13px;\n      color: var(--muted);\n      margin: 6px 0 24px;\n    }\n\n    .step-card {\n      background: var(--panel);\n      border: 1px solid var(--border);\n      border-radius: 16px;\n      box-shadow: 0 1px 2px rgba(0,0,0,.04);\n      padding: 16px;\n      margin-bottom: 16px;\n    }\n\n    h2 {\n      margin: 0 0 12px 0;\n      font-size: 22px;\n      text-transform: none;\n      overflow-wrap: anywhere;\n      word-break: break-word;\n      line-height: 1.28;\n    }\n\n    .bubble {\n      border-radius: 14px;\n      padding: 12px;\n      margin-bottom: 12px;\n      border: 1px solid var(--border);\n    }\n\n    .bubble.user {\n      background: var(--user);\n    }\n\n    .bubble.assistant {\n      background: var(--assistant);\n    }\n\n    .bubble-head {\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      gap: 8px;\n      margin-bottom: 8px;\n    }\n\n    .label {\n      font-size: 11px;\n      letter-spacing: .08em;\n      text-transform: uppercase;\n      color: var(--muted);\n      font-family: \"Courier New\", monospace;\n    }\n\n    .copy-btn {\n      border: 1px solid var(--copy-border);\n      background: var(--copy-bg);\n      border-radius: 8px;\n      color: var(--copy-ink);\n      font-family: \"Courier New\", monospace;\n      font-size: 11px;\n      line-height: 1;\n      padding: 4px 6px;\n      cursor: pointer;\n    }\n\n    .copy-btn:hover {\n      filter: brightness(1.05);\n    }\n\n    .copy-btn.copied {\n      border-color: var(--copy-done-border);\n      background: var(--copy-done-bg);\n      color: var(--copy-done-ink);\n    }\n\n    .toolbox {\n      background: var(--tool);\n      border-radius: 14px;\n      margin-bottom: 12px;\n      border: 1px solid var(--border);\n      font-family: \"Courier New\", monospace;\n      font-size: 13px;\n    }\n\n    .tool-expando {\n      padding: 0;\n    }\n\n    .tool-expando summary {\n      cursor: pointer;\n      list-style: none;\n      padding: 8px 10px;\n      font-family: \"Courier New\", monospace;\n      font-size: 12px;\n      color: var(--muted);\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      gap: 8px;\n      text-transform: uppercase;\n      letter-spacing: .08em;\n    }\n\n    .tool-expando summary::-webkit-details-marker {\n      display: none;\n    }\n\n    .expando-count {\n      border: 1px solid var(--border);\n      border-radius: 999px;\n      padding: 1px 7px;\n      font-size: 11px;\n      letter-spacing: 0;\n      text-transform: none;\n      color: var(--ink);\n      background: var(--panel);\n    }\n\n    .tool-list {\n      margin: 0;\n      padding: 0 10px 10px 20px;\n    }\n\n    .tool-item {\n      margin-bottom: 10px;\n    }\n\n    .tool-line {\n      margin-bottom: 4px;\n    }\n\n    .tool-output {\n      border: 1px solid var(--border);\n      border-radius: 10px;\n      background: color-mix(in srgb, var(--tool) 88%, var(--panel));\n      overflow: hidden;\n    }\n\n    .tool-output > summary {\n      cursor: pointer;\n      list-style: none;\n      padding: 6px 8px;\n      font-size: 11px;\n      text-transform: uppercase;\n      letter-spacing: .08em;\n      color: var(--muted);\n    }\n\n    .tool-output > summary::-webkit-details-marker {\n      display: none;\n    }\n\n    pre {\n      margin: 0;\n      white-space: pre-wrap;\n      word-break: break-word;\n      font-family: \"Courier New\", monospace;\n      font-size: 13px;\n      color: var(--ink);\n    }\n\n    .bubble pre {\n      margin: 0;\n    }\n\n    .tool-output pre {\n      padding: 8px;\n      border-top: 1px solid var(--border);\n      background: color-mix(in srgb, var(--panel) 80%, var(--tool));\n    }\n\n    code {\n      font-family: \"Courier New\", monospace;\n      font-size: 12px;\n      color: var(--code);\n      background: var(--code-bg);\n      border: 1px solid var(--border);\n      border-radius: 6px;\n      padding: 1px 4px;\n    }\n\n    @media (max-width: 760px) {\n      .topbar {\n        flex-direction: column;\n      }\n      .topbar-right {\n        width: 100%;\n        align-items: flex-start;\n      }\n      .nav-links {\n        justify-content: flex-start;\n      }\n      .skin-controls {\n        justify-content: flex-start;\n      }\n    }\n", "telegram": "    :root {\n      --bg: #dce7ee;\n      --panel: #f6fafc;\n      --ink: #15232f;\n      --muted: #5a6b78;\n      --user: #d9f1ff;\n      --assistant: #ffffff;\n      --tool: #e9f0f4;\n      --border: #c4d1da;\n      --code: #183e60;\n      --code-bg: #e7f1fb;\n      --copy-bg: #f7fbff;\n      --copy-border: #b4c5d3;\n      --copy-ink: #25485f;\n      --copy-done-bg: #d7efe0;\n      --copy-done-border: #79a98d;\n      --copy-done-ink: #245139;\n      --bubble-shadow: 0 2px 4px rgba(0, 0, 0, .08);\n    }\n\n    html[data-theme=\"dark\"] {\n      --bg: #0d1a22;\n      --panel: #122331;\n      --ink: #e6f3ff;\n      --muted: #9db1c2;\n      --user: #194567;\n      --assistant: #1d2e3c;\n      --tool: #1a313d;\n      --border: #2f4758;\n      --code: #bce2ff;\n      --code-bg: #1e3c50;\n      --copy-bg: #203543;\n      --copy-border: #365469;\n      --copy-ink: #d6edff;\n      --copy-done-bg: #214336;\n      --copy-done-border: #4e7e67;\n      --copy-done-ink: #daf6e7;\n      --bubble-shadow: 0 2px 5px rgba(0, 0, 0, .4);\n    }\n\n    body {\n      margin: 0;\n      font-family: \"Segoe UI\", Tahoma, sans-serif;\n      background:\n        radial-gradient(1200px 700px at -10% -20%, rgba(255, 255, 255, .35), transparent),\n        radial-gradient(900px 500px at 120% -10%, rgba(70, 153, 198, .25), transparent),\n        var(--bg);\n      color: var(--ink);\n      line-height: 1.35;\n    }\n\n    .wrap {\n      max-width: 1040px;\n      margin: 0 auto;\n      padding: 20px;\n    }\n\n    h1 {\n      margin: 0 0 10px 0;\n      font-size: 30px;\n      font-weight: 700;\n    }\n\n    .topbar {\n      display: flex;\n      align-items: flex-start;\n      justify-content: space-between;\n      gap: 12px;\n    }\n\n    .topbar-right {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-end;\n      gap: 8px;\n    }\n\n    .nav-links {\n      display: flex;\n      align-items: center;\n      gap: 8px;\n      flex-wrap: wrap;\n      justify-content: flex-end;\n    }\n\n    .nav-link,\n    .theme-btn {\n      border: 1px solid var(--border);\n      background: var(--panel);\n      border-radius: 999px;\n      color: var(--ink);\n      font-family: \"Segoe UI\", sans-serif;\n      font-size: 12px;\n      line-height: 1;\n      padding: 8px 12px;\n      text-decoration: none;\n      cursor: pointer;\n      white-space: nowrap;\n    }\n\n    .nav-link:hover,\n    .theme-btn:hover {\n      filter: brightness(1.05);\n    }\n\n    .meta {\n      font-size: 12px;\n      color: var(--muted);\n      margin: 6px 0 16px;\n    }\n\n    .step-card {\n      background: transparent;\n      border: none;\n      box-shadow: none;\n      margin-bottom: 14px;\n      padding: 0;\n    }\n\n    h2 {\n      margin: 0 0 8px 2px;\n      font-size: 14px;\n      text-transform: none;\n      color: var(--muted);\n      letter-spacing: .02em;\n      overflow-wrap: anywhere;\n      word-break: break-word;\n      line-height: 1.28;\n    }\n\n    .bubble {\n      border-radius: 18px;\n      padding: 10px 12px;\n      margin-bottom: 10px;\n      border: 1px solid var(--border);\n      box-shadow: var(--bubble-shadow);\n      max-width: 82%;\n    }\n\n    .bubble.user {\n      background: var(--user);\n      margin-left: auto;\n      border-bottom-right-radius: 6px;\n    }\n\n    .bubble.assistant {\n      background: var(--assistant);\n      margin-right: auto;\n      border-bottom-left-radius: 6px;\n    }\n\n    .bubble-head {\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      gap: 8px;\n      margin-bottom: 6px;\n    }\n\n    .label {\n      font-size: 11px;\n      color: var(--muted);\n      text-transform: uppercase;\n      letter-spacing: .07em;\n      font-weight: 600;\n    }\n\n    .copy-btn {\n      border: 1px solid var(--copy-border);\n      background: var(--copy-bg);\n      border-radius: 999px;\n      color: var(--copy-ink);\n      font-size: 11px;\n      line-height: 1;\n      padding: 4px 8px;\n      cursor: pointer;\n    }\n\n    .copy-btn.copied {\n      border-color: var(--copy-done-border);\n      background: var(--copy-done-bg);\n      color: var(--copy-done-ink);\n    }\n\n    .toolbox {\n      background: var(--tool);\n      border: 1px solid var(--border);\n      border-radius: 14px;\n      margin: 0 0 10px 0;\n      max-width: 88%;\n      margin-right: auto;\n      box-shadow: var(--bubble-shadow);\n    }\n\n    .tool-expando summary {\n      cursor: pointer;\n      list-style: none;\n      padding: 8px 10px;\n      color: var(--muted);\n      font-size: 11px;\n      text-transform: uppercase;\n      letter-spacing: .07em;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    .tool-expando summary::-webkit-details-marker {\n      display: none;\n    }\n\n    .expando-count {\n      border: 1px solid var(--border);\n      border-radius: 999px;\n      padding: 2px 7px;\n      background: var(--panel);\n      color: var(--ink);\n      font-size: 11px;\n      text-transform: none;\n      letter-spacing: 0;\n    }\n\n    .tool-list {\n      margin: 0;\n      padding: 0 10px 10px 18px;\n    }\n\n    .tool-item {\n      margin-bottom: 8px;\n    }\n\n    .tool-line {\n      margin-bottom: 4px;\n    }\n\n    .tool-output {\n      border: 1px solid var(--border);\n      border-radius: 10px;\n      overflow: hidden;\n      background: color-mix(in srgb, var(--tool) 78%, var(--panel));\n    }\n\n    .tool-output > summary {\n      cursor: pointer;\n      list-style: none;\n      padding: 5px 8px;\n      color: var(--muted);\n      font-size: 10px;\n      text-transform: uppercase;\n      letter-spacing: .07em;\n    }\n\n    .tool-output > summary::-webkit-details-marker {\n      display: none;\n    }\n\n    .tool-output pre {\n      margin: 0;\n      padding: 8px;\n      border-top: 1px solid var(--border);\n      background: color-mix(in srgb, var(--panel) 70%, var(--tool));\n    }\n\n    pre {\n      margin: 0;\n      white-space: pre-wrap;\n      word-break: break-word;\n      font-family: \"Consolas\", \"Courier New\", monospace;\n      font-size: 12px;\n    }\n\n    code {\n      font-family: \"Consolas\", \"Courier New\", monospace;\n      font-size: 11px;\n      color: var(--code);\n      background: var(--code-bg);\n      border: 1px solid var(--border);\n      border-radius: 6px;\n      padding: 1px 4px;\n    }\n\n    @media (max-width: 760px) {\n      .topbar {\n        flex-direction: column;\n      }\n      .topbar-right {\n        width: 100%;\n        align-items: flex-start;\n      }\n      .nav-links {\n        justify-content: flex-start;\n      }\n      .bubble,\n      .toolbox {\n        max-width: 96%;\n      }\n    }\n", "imessage": "    :root {\n      --bg: #f1f2f6;\n      --panel: #ffffff;\n      --ink: #101214;\n      --muted: #6a717b;\n      --user: #0a84ff;\n      --assistant: #e8e9ed;\n      --tool: #eef0f3;\n      --border: #d7dbe2;\n      --code: #1b3d63;\n      --code-bg: #edf5ff;\n      --copy-bg: #ffffff;\n      --copy-border: #c8cfda;\n      --copy-ink: #2f3b4b;\n      --copy-done-bg: #dceddd;\n      --copy-done-border: #84ad91;\n      --copy-done-ink: #214e33;\n    }\n\n    html[data-theme=\"dark\"] {\n      --bg: #121418;\n      --panel: #1d2128;\n      --ink: #eef3f8;\n      --muted: #98a3b1;\n      --user: #2b8cff;\n      --assistant: #2c313a;\n      --tool: #232832;\n      --border: #384050;\n      --code: #c5e3ff;\n      --code-bg: #243a52;\n      --copy-bg: #2d3643;\n      --copy-border: #47566a;\n      --copy-ink: #e2ebf6;\n      --copy-done-bg: #284137;\n      --copy-done-border: #597f6d;\n      --copy-done-ink: #ddf6e8;\n    }\n\n    body {\n      margin: 0;\n      font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif;\n      background: var(--bg);\n      color: var(--ink);\n      line-height: 1.35;\n    }\n\n    .wrap {\n      max-width: 980px;\n      margin: 0 auto;\n      padding: 18px;\n    }\n\n    h1 {\n      margin: 0 0 10px 0;\n      font-size: 28px;\n      font-weight: 700;\n    }\n\n    .topbar {\n      display: flex;\n      align-items: flex-start;\n      justify-content: space-between;\n      gap: 12px;\n    }\n\n    .topbar-right {\n      display: flex;\n      flex-direction: column;\n      align-items: flex-end;\n      gap: 8px;\n    }\n\n    .nav-links {\n      display: flex;\n      align-items: center;\n      gap: 8px;\n      flex-wrap: wrap;\n      justify-content: flex-end;\n    }\n\n    .nav-link,\n    .theme-btn {\n      border: 1px solid var(--border);\n      background: var(--panel);\n      border-radius: 999px;\n      color: var(--ink);\n      font-size: 12px;\n      line-height: 1;\n      padding: 8px 12px;\n      text-decoration: none;\n      cursor: pointer;\n      white-space: nowrap;\n    }\n\n    .meta {\n      font-size: 12px;\n      color: var(--muted);\n      margin: 6px 0 14px;\n    }\n\n    .step-card {\n      margin-bottom: 14px;\n      padding: 0;\n      background: transparent;\n      border: none;\n      box-shadow: none;\n    }\n\n    h2 {\n      margin: 0 0 8px 0;\n      font-size: 12px;\n      text-transform: none;\n      letter-spacing: .02em;\n      color: var(--muted);\n      font-weight: 600;\n      overflow-wrap: anywhere;\n      word-break: break-word;\n      line-height: 1.28;\n    }\n\n    .bubble {\n      border-radius: 22px;\n      padding: 10px 13px;\n      margin-bottom: 10px;\n      border: 1px solid transparent;\n      max-width: 78%;\n    }\n\n    .bubble.user {\n      background: var(--user);\n      color: #ffffff;\n      margin-left: auto;\n      border-bottom-right-radius: 8px;\n    }\n\n    .bubble.assistant {\n      background: var(--assistant);\n      color: var(--ink);\n      margin-right: auto;\n      border-bottom-left-radius: 8px;\n      border-color: var(--border);\n    }\n\n    .bubble-head {\n      display: flex;\n      align-items: center;\n      justify-content: space-between;\n      gap: 8px;\n      margin-bottom: 6px;\n    }\n\n    .label {\n      font-size: 10px;\n      letter-spacing: .06em;\n      text-transform: uppercase;\n      color: inherit;\n      opacity: .8;\n      font-weight: 700;\n    }\n\n    .copy-btn {\n      border: 1px solid var(--copy-border);\n      background: var(--copy-bg);\n      border-radius: 999px;\n      color: var(--copy-ink);\n      font-size: 10px;\n      line-height: 1;\n      padding: 4px 8px;\n      cursor: pointer;\n      text-transform: uppercase;\n      letter-spacing: .05em;\n    }\n\n    .copy-btn.copied {\n      border-color: var(--copy-done-border);\n      background: var(--copy-done-bg);\n      color: var(--copy-done-ink);\n    }\n\n    .toolbox {\n      background: var(--tool);\n      border: 1px solid var(--border);\n      border-radius: 16px;\n      margin: 0 0 10px 0;\n      max-width: 90%;\n      margin-right: auto;\n      overflow: hidden;\n    }\n\n    .tool-expando summary {\n      cursor: pointer;\n      list-style: none;\n      padding: 8px 10px;\n      color: var(--muted);\n      font-size: 11px;\n      text-transform: uppercase;\n      letter-spacing: .06em;\n      display: flex;\n      justify-content: space-between;\n      align-items: center;\n    }\n\n    .tool-expando summary::-webkit-details-marker {\n      display: none;\n    }\n\n    .expando-count {\n      border: 1px solid var(--border);\n      border-radius: 999px;\n      padding: 2px 7px;\n      background: var(--panel);\n      color: var(--ink);\n      font-size: 10px;\n      text-transform: none;\n      letter-spacing: 0;\n    }\n\n    .tool-list {\n      margin: 0;\n      padding: 0 10px 10px 18px;\n    }\n\n    .tool-item {\n      margin-bottom: 8px;\n    }\n\n    .tool-line {\n      margin-bottom: 3px;\n    }\n\n    .tool-output {\n      border: 1px solid var(--border);\n      border-radius: 10px;\n      background: color-mix(in srgb, var(--tool) 72%, var(--panel));\n      overflow: hidden;\n    }\n\n    .tool-output > summary {\n      cursor: pointer;\n      list-style: none;\n      padding: 5px 8px;\n      color: var(--muted);\n      font-size: 10px;\n      text-transform: uppercase;\n      letter-spacing: .06em;\n    }\n\n    .tool-output > summary::-webkit-details-marker {\n      display: none;\n    }\n\n    .tool-output pre {\n      margin: 0;\n      padding: 8px;\n      border-top: 1px solid var(--border);\n      background: color-mix(in srgb, var(--panel) 65%, var(--tool));\n    }\n\n    pre {\n      margin: 0;\n      white-space: pre-wrap;\n      word-break: break-word;\n      font-family: \"SFMono-Regular\", Menlo, Consolas, monospace;\n      font-size: 12px;\n    }\n\n    code {\n      font-family: \"SFMono-Regular\", Menlo, Consolas, monospace;\n      font-size: 11px;\n      color: var(--code);\n      background: var(--code-bg);\n      border: 1px solid var(--border);\n      border-radius: 6px;\n      padding: 1px 4px;\n    }\n\n    @media (max-width: 760px) {\n      .topbar {\n        flex-direction: column;\n      }\n      .topbar-right {\n        width: 100%;\n        align-items: flex-start;\n      }\n      .nav-links {\n        justify-content: flex-start;\n      }\n      .bubble,\n      .toolbox {\n        max-width: 96%;\n      }\n    }\n"}</script>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const body = document.body;
+      const appearanceToggle = document.getElementById("appearance-toggle");
+      const skinStyle = document.querySelector("head style");
+      const skinMapNode = document.getElementById("skin-css-map");
+      const appearanceStorageKey = "dialog_appearance_pref_qwen3.5-4b__loose_v1";
+      const defaultSkin = "standard";
+      const skinOrder = ["standard", "telegram", "imessage"];
+
+      let skinMap = {};
+      try {
+        skinMap = JSON.parse((skinMapNode && skinMapNode.textContent) || "{}");
+      } catch (error) {
+        skinMap = {};
+      }
+
+      const appearanceStates = [];
+      for (const skin of skinOrder) {
+        appearanceStates.push({ skin, theme: "light" });
+        appearanceStates.push({ skin, theme: "dark" });
+      }
+
+      const setTheme = (theme) => {
+        root.setAttribute("data-theme", theme);
+      };
+
+      const setSkin = (skin) => {
+        if (!skinMap[skin]) {
+          return;
+        }
+        if (skinStyle) {
+          skinStyle.textContent = skinMap[skin];
+        }
+        if (body) {
+          body.setAttribute("data-skin", skin);
+        }
+      };
+
+      const setAppearance = (appearance) => {
+        const skin = appearance && appearance.skin && skinMap[appearance.skin] ? appearance.skin : defaultSkin;
+        const theme = appearance && appearance.theme === "dark" ? "dark" : "light";
+        setSkin(skin);
+        setTheme(theme);
+        if (appearanceToggle) {
+          appearanceToggle.textContent = `appearance: ${skin} ${theme}`;
+        }
+      };
+
+      const findAppearanceIndex = () => {
+        const currentSkin = body ? body.getAttribute("data-skin") : defaultSkin;
+        const currentTheme = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+        return appearanceStates.findIndex((state) => state.skin === currentSkin && state.theme === currentTheme);
+      };
+
+      const storedAppearanceRaw = window.localStorage.getItem(appearanceStorageKey);
+      if (storedAppearanceRaw) {
+        try {
+          const storedAppearance = JSON.parse(storedAppearanceRaw);
+          setAppearance(storedAppearance);
+        } catch (error) {
+          setAppearance({ skin: defaultSkin, theme: "light" });
+        }
+      } else {
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        setAppearance({ skin: defaultSkin, theme: prefersDark });
+      }
+
+      if (appearanceToggle) {
+        appearanceToggle.addEventListener("click", () => {
+          const index = findAppearanceIndex();
+          const next = appearanceStates[(index + 1) % appearanceStates.length] || appearanceStates[0];
+          setAppearance(next);
+          window.localStorage.setItem(appearanceStorageKey, JSON.stringify(next));
+        });
+      }
+
+      const copyButtons = document.querySelectorAll(".copy-btn");
+      for (const button of copyButtons) {
+        button.addEventListener("click", async () => {
+          const text = button.getAttribute("data-copy") || "";
+          const idle = button.getAttribute("data-label") || "copy";
+          const done = button.getAttribute("data-success-label") || "copied";
+          const fail = button.getAttribute("data-failure-label") || "copy-failed";
+          try {
+            await navigator.clipboard.writeText(text);
+            button.textContent = done;
+            button.classList.add("copied");
+          } catch (error) {
+            button.textContent = fail;
+          }
+          window.setTimeout(() => {
+            button.textContent = idle;
+            button.classList.remove("copied");
+          }, 1200);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{PAGE_TITLE}}</title>
+  <meta name="description" content="{{PAGE_DESCRIPTION}}" />
+  <style>
+    :root {
+      --bg: #e3ddd2;
+      --panel: #ece7de;
+      --ink: #201f1b;
+      --muted: #59544d;
+      --border: #c2b9aa;
+      --code-bg: #f5f0e6;
+      --code-border: #cdbba1;
+      --code-block-bg: #161d26;
+      --code-block-ink: #edf4fa;
+      --code-block-border: #334252;
+      --table-head-bg: #e6dfd1;
+      --table-row-alt: #f6f2ea;
+      --link: #1e5e98;
+      --link-hover: #157487;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #171a1f;
+      --panel: #1f252d;
+      --ink: #e8edf2;
+      --muted: #b7c1cc;
+      --border: #3b4652;
+      --code-bg: #293240;
+      --code-border: #435368;
+      --code-block-bg: #10161d;
+      --code-block-ink: #edf4fa;
+      --code-block-border: #2e3d4f;
+      --table-head-bg: #27303a;
+      --table-row-alt: #1b222a;
+      --link: #8fc9ff;
+      --link-hover: #a9ecff;
+    }
+
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.38;
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    a:hover {
+      color: var(--link-hover);
+    }
+
+    .wrap {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0 0 12px 0;
+      font-size: 34px;
+    }
+
+    .topbar-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 9px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 7px 10px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .nav-link:hover {
+      filter: brightness(1.06);
+    }
+
+    .theme-btn {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 10px;
+      color: var(--ink);
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1;
+      padding: 8px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-top: 4px;
+    }
+
+    .theme-btn:hover {
+      filter: brightness(1.06);
+    }
+
+    .meta {
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .doc-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+      padding: 18px 18px 22px;
+    }
+
+    h2 {
+      margin: 18px 0 10px 0;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 14px 0 8px 0;
+      font-size: 20px;
+    }
+
+    h4, h5, h6 {
+      margin: 12px 0 8px 0;
+      font-size: 17px;
+    }
+
+    p {
+      margin: 8px 0 12px 0;
+      color: var(--muted);
+    }
+
+    ul, ol {
+      margin: 8px 0 12px 0;
+      padding-left: 24px;
+      color: var(--muted);
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    code {
+      font-family: "Courier New", monospace;
+      font-size: 0.95em;
+      border: 1px solid var(--code-border);
+      border-radius: 6px;
+      padding: 0 4px;
+      background: var(--code-bg);
+      color: var(--ink);
+    }
+
+    pre {
+      margin: 10px 0 14px 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+      border-radius: 12px;
+      border: 1px solid var(--code-block-border);
+      background: var(--code-block-bg);
+      color: var(--code-block-ink);
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    pre code {
+      border: none;
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 12px 0 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 860px;
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 10px;
+      text-align: left;
+      vertical-align: top;
+      font-family: "Courier New", monospace;
+    }
+
+    th {
+      background: var(--table-head-bg);
+      color: var(--ink);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tbody tr:nth-child(even) {
+      background: color-mix(in srgb, var(--table-row-alt) 82%, transparent);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    @media (max-width: 760px) {
+      .wrap {
+        padding: 16px;
+      }
+      .topbar {
+        flex-direction: column;
+      }
+      .topbar-right {
+        width: 100%;
+        align-items: flex-start;
+      }
+      .nav-links {
+        justify-content: flex-start;
+      }
+      h1 {
+        font-size: 30px;
+      }
+      .doc-card {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <h1>{{PAGE_TITLE}}</h1>
+      <div class="topbar-right">
+        <div class="nav-links">
+          <a class="nav-link" href="{{NAV_RESEARCH_INDEX}}">Research Index</a>
+          <a class="nav-link" href="{{NAV_DOCS_HUB}}">Back to Docs Hub</a>
+          <a class="nav-link" href="{{NAV_REPO}}">View Repo</a>
+        </div>
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle dark and light theme">theme: light</button>
+      </div>
+    </div>
+    <div class="meta">{{GENERATED_META}}</div>
+    <section class="doc-card">
+{{CONTENT_HTML}}
+    </section>
+  </div>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      const themeToggle = document.getElementById("theme-toggle");
+      const storageKey = "{{THEME_STORAGE_KEY}}";
+
+      const setTheme = (theme) => {
+        root.setAttribute("data-theme", theme);
+        if (themeToggle) {
+          themeToggle.textContent = theme === "dark" ? "theme: dark" : "theme: light";
+        }
+      };
+
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === "dark" || stored === "light") {
+        setTheme(stored);
+      } else {
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        setTheme(prefersDark ? "dark" : "light");
+      }
+
+      if (themeToggle) {
+        themeToggle.addEventListener("click", () => {
+          const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          setTheme(next);
+          window.localStorage.setItem(storageKey, next);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
