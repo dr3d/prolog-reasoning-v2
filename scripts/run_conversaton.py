@@ -21,6 +21,7 @@ import json
 import os
 import re
 import sys
+import time
 import traceback
 import urllib.error
 import urllib.request
@@ -48,6 +49,9 @@ DEFAULT_CONVERSATION_FILE = "docs/research/scenarios/scenario-1.md"
 DEFAULT_OUT_ROOT = "docs/research/conversations"
 DEFAULT_CONTEXT_LENGTH = 8000
 DEFAULT_TEMPERATURE = 0.0
+DEFAULT_REQUEST_TIMEOUT_SECONDS = 300
+DEFAULT_STEP_RETRIES = 2
+DEFAULT_RETRY_DELAY_SECONDS = 3.0
 
 DEFAULT_RESET_PROMPT = "Reset runtime KB now. Use ONLY reset_kb and confirm."
 DEFAULT_INGESTION_PREFIX = (
@@ -120,14 +124,18 @@ def _load_env_file(path: Path) -> None:
 
 
 def _post_json(url: str, payload: dict[str, Any], api_key: str | None) -> dict[str, Any]:
-    body = json.dumps(payload).encode("utf-8")
+    payload_local = dict(payload)
+    request_timeout_seconds = int(
+        payload_local.pop("_request_timeout_seconds", DEFAULT_REQUEST_TIMEOUT_SECONDS)
+    )
+    body = json.dumps(payload_local).encode("utf-8")
     request = urllib.request.Request(url=url, data=body, method="POST")
     request.add_header("Content-Type", "application/json")
     if api_key:
         request.add_header("Authorization", f"Bearer {api_key}")
 
     try:
-        with urllib.request.urlopen(request, timeout=900) as response:
+        with urllib.request.urlopen(request, timeout=request_timeout_seconds) as response:
             return json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
         raw = error.read().decode("utf-8", errors="replace")
@@ -207,6 +215,7 @@ def _run_chat_step(
     step_id: str,
     context_length: int,
     temperature: float,
+    request_timeout_seconds: int,
 ) -> dict[str, Any]:
     endpoint = f"{base_url.rstrip('/')}/api/v1/chat"
     payload = {
@@ -215,9 +224,23 @@ def _run_chat_step(
         "integrations": [integration],
         "temperature": temperature,
         "context_length": context_length,
+        "_request_timeout_seconds": request_timeout_seconds,
     }
     response = _post_json(endpoint, payload, api_key)
     return _extract_step(response, step_id=step_id, prompt=prompt)
+
+
+def _is_retryable_error(error: Exception) -> bool:
+    message = str(error).lower()
+    retryable_fragments = [
+        "tool_format_generation_error",
+        "model unloaded",
+        "timed out",
+        "timeout",
+        "connection error",
+        "http 500",
+    ]
+    return any(fragment in message for fragment in retryable_fragments)
 
 
 def _extract_section(markdown: str, section_num: int, next_section_num: int) -> str:
@@ -539,6 +562,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--context-length", type=int, default=DEFAULT_CONTEXT_LENGTH)
     parser.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     parser.add_argument(
+        "--request-timeout-seconds",
+        type=int,
+        default=DEFAULT_REQUEST_TIMEOUT_SECONDS,
+        help="Per-request timeout for LM Studio chat calls.",
+    )
+    parser.add_argument(
+        "--step-retries",
+        type=int,
+        default=DEFAULT_STEP_RETRIES,
+        help="Retry count per step for transient LM Studio/tool-call failures.",
+    )
+    parser.add_argument(
+        "--retry-delay-seconds",
+        type=float,
+        default=DEFAULT_RETRY_DELAY_SECONDS,
+        help="Delay between per-step retries.",
+    )
+    parser.add_argument(
         "--skip-stress-prompts",
         action="store_true",
         help="Markdown mode only: skip section 8 prompts.",
@@ -624,18 +665,33 @@ def main() -> int:
                 prompt = _coerce_text(step.get("prompt")).strip()
                 if not prompt:
                     continue
-                steps_out.append(
-                    _run_chat_step(
-                        base_url=args.base_url,
-                        model=model,
-                        integration=args.integration,
-                        api_key=api_key,
-                        prompt=prompt,
-                        step_id=step_id,
-                        context_length=args.context_length,
-                        temperature=args.temperature,
-                    )
-                )
+                attempt = 0
+                while True:
+                    try:
+                        steps_out.append(
+                            _run_chat_step(
+                                base_url=args.base_url,
+                                model=model,
+                                integration=args.integration,
+                                api_key=api_key,
+                                prompt=prompt,
+                                step_id=step_id,
+                                context_length=args.context_length,
+                                temperature=args.temperature,
+                                request_timeout_seconds=args.request_timeout_seconds,
+                            )
+                        )
+                        break
+                    except Exception as step_error:
+                        attempt += 1
+                        can_retry = attempt <= args.step_retries and _is_retryable_error(step_error)
+                        if not can_retry:
+                            raise
+                        print(
+                            f"[{model}] retry step={step_id} attempt={attempt}/{args.step_retries} "
+                            f"reason={type(step_error).__name__}: {step_error}"
+                        )
+                        time.sleep(max(0.0, args.retry_delay_seconds))
 
             payload = {
                 "title": plan.get("title") or "Conversation",
@@ -654,6 +710,22 @@ def main() -> int:
         except Exception as error:
             status = "error"
             notes = f"{type(error).__name__}: {error}"
+            error_payload = {
+                "title": plan.get("title") or "Conversation",
+                "captured_at": captured_at,
+                "run_slug": run_slug,
+                "run_id": run_id,
+                "model": model,
+                "integration": args.integration,
+                "context_length": args.context_length,
+                "temperature": args.temperature,
+                "source_mode": plan.get("source_mode"),
+                "source_path": plan.get("source_path"),
+                "steps": steps_out,
+                "status": status,
+                "error": notes,
+            }
+            outputs = _write_outputs(error_payload, out_dir=out_dir, model_slug=model_slug)
             if not args.continue_on_error:
                 raise
             traceback.print_exc()

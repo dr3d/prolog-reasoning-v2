@@ -14,10 +14,10 @@ This file is the fast-start state for coding agents.
 - Product direction: symbolic reliability first; editor remains experimental.
 - Evaluator status: `prolog_baseline` 13/13, `ir_compiled` 13/13, `lm_only` 8/13.
 - Test/doc marker: shared pass-count marker is `108 passed`.
-- Latest completed track: research lane reorganized around `scenarios/` + `conversations/`, with reusable runner `scripts/run_conversaton.py` supporting single-model and Qwen battery runs to JSON+MD+HTML outputs.
-- Latest maintenance pass: docs/research archive split completed, temporary run cruft removed, tracked-file secret scan clean, and capture scripts hardened so `render_dialog_helpers` imports work under pytest module loading.
+- Latest completed track: `scenario-2` (Archive of Kestrel-9) added with integrated question battery (`37` prompts), and executed against the Qwen trio via `run_conversaton.py`.
+- Latest maintenance pass: runner hardened for transient LM Studio faults (per-step retries, configurable request timeout, partial artifact write-on-error).
 - Current safety boundary: `classify_statement` returns deterministic `proposal_check` (`valid | needs_clarification | reject`) but does not perform durable KB writes.
-- Next priority: run additional scenarios through the new battery runner and publish selected HTML artifacts through docs hub / GitHub Pages links.
+- Next priority: improve long-run stability for full scenario batteries (timeouts/tool-format failures) and publish successful scenario HTML packs via docs hub.
 
 ## Canonical Pointers (Current)
 
@@ -25,7 +25,8 @@ This file is the fast-start state for coding agents.
 - Matrix lane: `scripts/run_mcp_surface_model_matrix.py`, `docs/research/model-scenario-matrix.md`
 - Fact-ingestion dialog battery: `scripts/run_fact_ingestion_dialog_battery.py`, `data/fact_extraction/fact_ingestion_dialog_battery_v1.json`, `docs/research/fact-ingestion-dialog-battery.md`
 - Buried-fact extraction matrix: `scripts/run_fact_extraction_steering_matrix.py`, `data/fact_extraction/buried_facts_corpus_v1.json`, `docs/research/fact-extraction-steering-matrix.md`
-- Scenario pipeline: `docs/research/scenarios/README.md`, `docs/research/scenarios/scenario-1.md`, `scripts/run_conversaton.py`, `docs/research/conversations/<scenario>/<timestamp>/*.{json,md,html}`
+- Scenario pipeline: `docs/research/scenarios/README.md`, `docs/research/scenarios/scenario-1.md`, `docs/research/scenarios/scenario-2.md`, `scripts/run_conversaton.py`, `docs/research/conversations/<scenario>/<timestamp>/*.{json,md,html}`
+- Latest scenario-2 run artifacts: `docs/research/conversations/scenario-2/20260408-171233/*`
 - Shared conversation HTML renderer: `scripts/render_dialog_json_html.py`, `scripts/templates/dialog-session-page.template.html`, `scripts/templates/dialog-themes/*.css`
 - Renderer helpers: `scripts/render_dialog_helpers.py`, `scripts/render_examples_sessions_html.py`
 - Research ledger HTML renderer: `scripts/render_research_ledgers_html.py`, `scripts/templates/research-ledger-page.template.html`
