@@ -1,4 +1,4 @@
-# MCP Surface Playbook Session (Captured)
+﻿# MCP Surface Playbook Session (Captured)
 
 - Captured at: 2026-04-07T15:36:02.313518+00:00
 - Model: `qwen3.5-27b@q4_k_m`
@@ -23,7 +23,7 @@ Then give a one-paragraph summary of what this MCP server can do.
 
 
 
-This Prolog Reasoning v2 MCP server is a local-first neuro-symbolic reliability layer designed to augment LLM agents with deterministic symbolic reasoning capabilities. It enables natural language query processing where user intent is expressed conversationally while the underlying Prolog engine validates truth against a structured knowledge base, supporting domains ranging from family relationships and access control permissions to clinical medication triage and project dependency risk analysis. The system features runtime fact assertion and retraction for dynamic chat-driven scenarios, semantic validation before query execution, friendly failure explanations with suggestions, and proof-trace generation—all built on a rich predicate vocabulary that includes both fact-backed examples (like parent, role, permission) and rule-derived predicates (such as ancestor, allowed, blocked_task, safe_candidate). With its core philosophy that "memories are timestamped but facts are not," this server provides a reliable reasoning layer that can handle complex logical queries across multiple domains while maintaining transparency through detailed explanations of what the system knows and how it arrives at conclusions.
+This Prolog Reasoning MCP server is a local-first neuro-symbolic reliability layer designed to augment LLM agents with deterministic symbolic reasoning capabilities. It enables natural language query processing where user intent is expressed conversationally while the underlying Prolog engine validates truth against a structured knowledge base, supporting domains ranging from family relationships and access control permissions to clinical medication triage and project dependency risk analysis. The system features runtime fact assertion and retraction for dynamic chat-driven scenarios, semantic validation before query execution, friendly failure explanations with suggestions, and proof-trace generationâ€”all built on a rich predicate vocabulary that includes both fact-backed examples (like parent, role, permission) and rule-derived predicates (such as ancestor, allowed, blocked_task, safe_candidate). With its core philosophy that "memories are timestamped but facts are not," this server provides a reliable reasoning layer that can handle complex logical queries across multiple domains while maintaining transparency through detailed explanations of what the system knows and how it arrives at conclusions.
 
 ## Step: reset
 
@@ -70,13 +70,13 @@ completed(alpha).
 Perfect! Both operations completed successfully:
 
 **Bulk Assertion (4 facts):**
-- ✅ task(alpha).
-- ✅ task(beta).
-- ✅ depends_on(beta, alpha).
-- ✅ supplier_status(alpha_vendor, on_time).
+- âœ… task(alpha).
+- âœ… task(beta).
+- âœ… depends_on(beta, alpha).
+- âœ… supplier_status(alpha_vendor, on_time).
 
 **Individual Assertion (1 fact):**
-- ✅ completed(alpha).
+- âœ… completed(alpha).
 
 All 5 facts have been added to the runtime knowledge base. You can now query these facts using any of the available query functions.
 
@@ -273,7 +273,8 @@ Confirm cleanup complete.
 
 Cleanup complete. Both operations executed successfully:
 
-1. ✅ Fact `completed(alpha).` retracted from runtime KB
-2. ✅ Runtime KB reset to baseline seed state
+1. âœ… Fact `completed(alpha).` retracted from runtime KB
+2. âœ… Runtime KB reset to baseline seed state
 
 The knowledge base has been cleaned and restored to its original baseline configuration.
+

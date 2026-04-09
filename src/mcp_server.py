@@ -86,6 +86,9 @@ class PrologMCPServer:
     DEFAULT_PRE_THINK_HISTORY_TURNS = 6
     DEFAULT_PRE_THINK_HISTORY_PATH = ".tmp_pre_think_history.json"
     DEFAULT_PRE_THINK_KB_INGEST_MODE = "none"
+    DEFAULT_PRE_THINK_SESSION_ENABLED = False
+    DEFAULT_PRE_THINK_SESSION_HANDOFF_MODE = "rewrite"
+    DEFAULT_PRE_THINK_SESSION_KB_INGEST_MODE = "none"
     DEFAULT_PRE_THINK_MAX_CANDIDATE_FACTS = 24
     DEFAULT_PRETHINKER_ENV_FILE = ".env.local"
     DEFAULT_PRETHINKER_TEMPERATURE = 0.0
@@ -218,6 +221,17 @@ class PrologMCPServer:
             self.pre_think_history_path
         )
         self.pre_think_skill_text = self._load_pre_think_skill_text(self.pre_think_skill_path)
+        self.pre_think_session_enabled = self._coerce_bool(
+            os.environ.get("PRE_THINK_SESSION_ENABLED"),
+            fallback=self.DEFAULT_PRE_THINK_SESSION_ENABLED,
+        )
+        self.pre_think_session_handoff_mode = self._coerce_pre_think_handoff_mode(
+            os.environ.get("PRE_THINK_SESSION_HANDOFF_MODE"),
+            fallback=self.DEFAULT_PRE_THINK_SESSION_HANDOFF_MODE,
+        )
+        self.pre_think_session_kb_ingest_mode = self._coerce_pre_think_kb_ingest_mode(
+            os.environ.get("PRE_THINK_SESSION_KB_INGEST_MODE"),
+        )
         self.expose_legacy_prethink_tools = self._coerce_bool(
             os.environ.get("PRETHINK_EXPOSE_LEGACY_TOOLS"),
             fallback=self.DEFAULT_EXPOSE_LEGACY_PRETHINK_TOOLS,
@@ -394,12 +408,39 @@ class PrologMCPServer:
             fallback=self.DEFAULT_PRE_THINK_HISTORY_TURNS,
         )
 
+    def _coerce_pre_think_handoff_mode(self, value: Any, fallback: str = "rewrite") -> str:
+        """Normalize pre-think handoff mode to a supported value."""
+        normalized = (str(value or "").strip().lower() or fallback)
+        if normalized == "answer_proxy":
+            return "answer_proxy"
+        return "rewrite"
+
     def _coerce_pre_think_kb_ingest_mode(self, value: Any) -> str:
         """Normalize pre-think KB ingest mode to a supported value."""
-        normalized = (str(value or "").strip().lower() or self.DEFAULT_PRE_THINK_KB_INGEST_MODE)
+        normalized = (
+            str(value or "").strip().lower()
+            or self.DEFAULT_PRE_THINK_SESSION_KB_INGEST_MODE
+        )
         if normalized in {"facts", "fact"}:
             return "facts"
         return "none"
+
+    def _get_pre_think_session_enabled(self) -> bool:
+        return self._coerce_bool(
+            getattr(self, "pre_think_session_enabled", None),
+            fallback=self.DEFAULT_PRE_THINK_SESSION_ENABLED,
+        )
+
+    def _get_pre_think_session_handoff_mode(self) -> str:
+        return self._coerce_pre_think_handoff_mode(
+            getattr(self, "pre_think_session_handoff_mode", None),
+            fallback=self.DEFAULT_PRE_THINK_SESSION_HANDOFF_MODE,
+        )
+
+    def _get_pre_think_session_kb_ingest_mode(self) -> str:
+        return self._coerce_pre_think_kb_ingest_mode(
+            getattr(self, "pre_think_session_kb_ingest_mode", None),
+        )
 
     def _normalize_pre_think_candidate_facts(self, raw_value: Any) -> List[str]:
         """Normalize model-proposed candidate facts into unique Prolog fact strings."""
@@ -547,6 +588,50 @@ class PrologMCPServer:
         if max_turns > 0 and len(history) > max_turns:
             del history[: len(history) - max_turns]
         self._persist_pre_think_history_to_disk()
+
+    def _detect_pre_think_session_directive(self, utterance: str) -> Optional[str]:
+        """Detect language directives to enable/disable pre-think session mode."""
+        text = (utterance or "").strip().lower()
+        if not text:
+            return None
+        normalized = re.sub(r"[^a-z0-9\s]", " ", text)
+        normalized = re.sub(r"\s+", " ", normalized).strip()
+        if not normalized:
+            return None
+
+        has_prethink_ref = (
+            "prethink" in normalized
+            or "pre think" in normalized
+            or "pre_think" in text
+        )
+        if not has_prethink_ref:
+            return None
+
+        disable_markers = {
+            "turn off",
+            "disable",
+            "stop",
+            "no more",
+            "dont use",
+            "do not use",
+            "without",
+        }
+        enable_markers = {
+            "turn on",
+            "enable",
+            "use",
+            "from now on",
+            "every turn",
+            "every subsequent",
+            "all future",
+            "always",
+        }
+
+        if any(marker in normalized for marker in disable_markers):
+            return "disable"
+        if any(marker in normalized for marker in enable_markers):
+            return "enable"
+        return None
 
     def _ingest_pre_think_candidate_facts(
         self,
@@ -1326,6 +1411,31 @@ class PrologMCPServer:
                 }
             },
             {
+                "name": "set_pre_think_session",
+                "description": (
+                    "Set session-level pre-think defaults for subsequent turns. "
+                    "When enabled, the assistant should call `pre_think` once per user turn and use this tool's "
+                    "stored handoff/ingest defaults unless a turn-specific override is needed."
+                ),
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean",
+                            "description": "Enable or disable session-level pre-think preference (default true when omitted)."
+                        },
+                        "handoff_mode": {
+                            "type": "string",
+                            "description": "Optional default handoff mode for session pre-think calls: `rewrite` or `answer_proxy`."
+                        },
+                        "kb_ingest_mode": {
+                            "type": "string",
+                            "description": "Optional default KB ingest mode for session pre-think calls: `none` or `facts`."
+                        }
+                    }
+                }
+            },
+            {
                 "name": "pre_think",
                 "description": "Primary pre-think entrypoint. Process a raw utterance into a cleaned continuation utterance for the downstream model. This call does not mutate the KB.",
                 "inputSchema": {
@@ -1510,6 +1620,41 @@ class PrologMCPServer:
         )
         return result
 
+    def set_pre_think_session(
+        self,
+        enabled: Any = True,
+        handoff_mode: Optional[str] = None,
+        kb_ingest_mode: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Store session-level pre-think defaults for assistant orchestration."""
+        enabled_flag = self._coerce_bool(enabled, fallback=True)
+        resolved_handoff_mode = self._coerce_pre_think_handoff_mode(
+            handoff_mode,
+            fallback=self._get_pre_think_session_handoff_mode(),
+        )
+        resolved_kb_ingest_mode = self._coerce_pre_think_kb_ingest_mode(
+            kb_ingest_mode
+            if kb_ingest_mode is not None
+            else self._get_pre_think_session_kb_ingest_mode()
+        )
+
+        self.pre_think_session_enabled = enabled_flag
+        self.pre_think_session_handoff_mode = resolved_handoff_mode
+        self.pre_think_session_kb_ingest_mode = resolved_kb_ingest_mode
+
+        return {
+            "status": "success",
+            "result_type": "pre_think_session",
+            "enabled": enabled_flag,
+            "handoff_mode": resolved_handoff_mode,
+            "kb_ingest_mode": resolved_kb_ingest_mode,
+            "note": (
+                "Session preference updated. The assistant should call pre_think once per subsequent user turn "
+                "and use these defaults unless a turn-specific override is required."
+            ),
+            "enforcement": "advisory_session_policy",
+        }
+
     def pre_think(
         self,
         utterance: str,
@@ -1534,6 +1679,50 @@ class PrologMCPServer:
                 "tool": "pre_think",
             }
 
+        directive_action = self._detect_pre_think_session_directive(input_utterance)
+        if directive_action in {"enable", "disable"}:
+            enable_flag = directive_action == "enable"
+            session_update = self.set_pre_think_session(enabled=enable_flag)
+            processed_utterance = (
+                "Session directive recognized: enable pre-think for subsequent turns."
+                if enable_flag
+                else "Session directive recognized: disable pre-think for subsequent turns."
+            )
+            self._record_pre_think_turn(
+                input_utterance=input_utterance,
+                processed_utterance=processed_utterance,
+            )
+            return {
+                "status": "success",
+                "result_type": "pre_think",
+                "input_utterance": input_utterance,
+                "processed_utterance": processed_utterance,
+                "fallback_used": False,
+                "normalization_reason": "session_directive",
+                "history_turns": len(self._get_pre_think_history()),
+                "raw_output": {},
+                "pre_think_model": self._get_pre_think_model(),
+                "prethinker_base_url": self._get_prethinker_base_url(),
+                "pre_think_skill_path": self._get_pre_think_skill_path(),
+                "handoff_mode": self._get_pre_think_session_handoff_mode(),
+                "kb_ingest_mode": self._get_pre_think_session_kb_ingest_mode(),
+                "requested_candidate_facts": 0,
+                "attempted_candidate_facts": 0,
+                "ingested_facts_count": 0,
+                "ingested_facts": [],
+                "rejected_candidate_facts_count": 0,
+                "rejected_candidate_facts": [],
+                "session_directive": {
+                    "detected": True,
+                    "action": directive_action,
+                },
+                "session_update": session_update,
+                "note": (
+                    "Language-level pre-think session directive was applied. "
+                    "This sets advisory session defaults for future turns."
+                ),
+            }
+
         resolved_model = (model or "").strip() or self._get_pre_think_model()
         resolved_temperature = self._coerce_float(
             temperature,
@@ -1542,10 +1731,24 @@ class PrologMCPServer:
             maximum=2.0,
         )
         resolved_narrative_context = (narrative_context or "").strip()
-        resolved_handoff_mode = (handoff_mode or "rewrite").strip().lower()
-        if resolved_handoff_mode not in {"rewrite", "answer_proxy"}:
-            resolved_handoff_mode = "rewrite"
-        resolved_kb_ingest_mode = self._coerce_pre_think_kb_ingest_mode(kb_ingest_mode)
+        session_enabled = self._get_pre_think_session_enabled()
+        default_handoff_mode = (
+            self._get_pre_think_session_handoff_mode()
+            if session_enabled
+            else self.DEFAULT_PRE_THINK_SESSION_HANDOFF_MODE
+        )
+        default_kb_ingest_mode = (
+            self._get_pre_think_session_kb_ingest_mode()
+            if session_enabled
+            else self.DEFAULT_PRE_THINK_SESSION_KB_INGEST_MODE
+        )
+        resolved_handoff_mode = self._coerce_pre_think_handoff_mode(
+            handoff_mode if handoff_mode is not None else default_handoff_mode,
+            fallback=default_handoff_mode,
+        )
+        resolved_kb_ingest_mode = self._coerce_pre_think_kb_ingest_mode(
+            kb_ingest_mode if kb_ingest_mode is not None else default_kb_ingest_mode
+        )
         resolved_max_candidate_facts = self._coerce_positive_int(
             max_candidate_facts,
             fallback=self.DEFAULT_PRE_THINK_MAX_CANDIDATE_FACTS,
@@ -2272,6 +2475,8 @@ class PrologMCPServer:
         capabilities = [
             "Literal Prolog query execution (`query_logic`, `query_rows`)",
             "Statement classification before query or ingestion decisions",
+            "Session-level pre-think preference toggle (`set_pre_think_session`)",
+            "Language-level pre-think enable/disable directives parsed by `pre_think`",
             "Pre-think utterance preprocessing (`pre_think`)",
             "Optional pre-think candidate fact ingestion (`pre_think` with `kb_ingest_mode=facts`)",
             "Deterministic pre-thinker write-path projection (`kb_projection.can_write_now`)",
@@ -2359,6 +2564,12 @@ class PrologMCPServer:
             "status": "success",
             "result_type": "pre_think_state",
             "pre_think_model": self._get_pre_think_model(),
+            "pre_think_session": {
+                "enabled": self._get_pre_think_session_enabled(),
+                "handoff_mode": self._get_pre_think_session_handoff_mode(),
+                "kb_ingest_mode": self._get_pre_think_session_kb_ingest_mode(),
+                "enforcement": "advisory_session_policy",
+            },
             "prethinker_base_url": self._get_prethinker_base_url(),
             "pre_think_skill_path": self._get_pre_think_skill_path(),
             "pre_think_skill_loaded": bool(skill_text),
@@ -2371,7 +2582,7 @@ class PrologMCPServer:
             "recent_history": recent_history,
             "note": (
                 "Pre-think state view for debugging. History is kept in memory and mirrored to disk when "
-                "PRE_THINK_HISTORY_PATH is configured."
+                "PRE_THINK_HISTORY_PATH is configured. Session-level pre-think mode is advisory and not server-enforced."
             ),
         }
     
@@ -2387,6 +2598,11 @@ class PrologMCPServer:
             "reset_kb": lambda: self.reset_kb(),
             "empty_kb": lambda: self.empty_kb(),
             "classify_statement": lambda: self.classify_statement(tool_input.get("text", "")),
+            "set_pre_think_session": lambda: self.set_pre_think_session(
+                enabled=tool_input.get("enabled", True),
+                handoff_mode=tool_input.get("handoff_mode"),
+                kb_ingest_mode=tool_input.get("kb_ingest_mode"),
+            ),
             "pre_think": lambda: self.pre_think(
                 tool_input.get("utterance", "") or tool_input.get("text", ""),
                 narrative_context=tool_input.get("narrative_context"),

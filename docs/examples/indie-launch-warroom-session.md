@@ -1,4 +1,4 @@
-# Indie Game Launch War Room Session (Captured)
+﻿# Indie Game Launch War Room Session (Captured)
 
 - Captured at: 2026-04-07T04:56:57.072935+00:00
 - Model: `qwen/qwen3.5-9b`
@@ -23,7 +23,7 @@ Then summarize in one paragraph what this MCP setup can and cannot do today.
 
 
 
-This Prolog Reasoning v2 MCP setup is a local-first neuro-symbolic reasoning layer that excels at deterministic knowledge-base inference through natural language queries. It can process plain English questions, classify user statements before ingestion, assert/retract runtime facts for chat-driven scenarios, validate queries semantically against known predicates, and provide friendly failure explanations with suggestions. The system supports family relationships, access control, clinical medication triage, project dependency analysis, and general knowledge representations across 70+ supported predicates (including parent/ancestor, permissions/roles, allergic_to, task dependencies, and game mechanics like hp/status/weather). However, it cannot perform probabilistic reasoning or learn from training data during sessions—all facts must be explicitly asserted. It's limited to its predefined predicate vocabulary, cannot make external API calls beyond its KB, and runtime assertions are process-specific (not persistent across MCP server restarts unless stored in core.pl). Essentially, it's a powerful symbolic logic engine for structured knowledge but not a general-purpose AI assistant.
+This Prolog Reasoning MCP setup is a local-first neuro-symbolic reasoning layer that excels at deterministic knowledge-base inference through natural language queries. It can process plain English questions, classify user statements before ingestion, assert/retract runtime facts for chat-driven scenarios, validate queries semantically against known predicates, and provide friendly failure explanations with suggestions. The system supports family relationships, access control, clinical medication triage, project dependency analysis, and general knowledge representations across 70+ supported predicates (including parent/ancestor, permissions/roles, allergic_to, task dependencies, and game mechanics like hp/status/weather). However, it cannot perform probabilistic reasoning or learn from training data during sessionsâ€”all facts must be explicitly asserted. It's limited to its predefined predicate vocabulary, cannot make external API calls beyond its KB, and runtime assertions are process-specific (not persistent across MCP server restarts unless stored in core.pl). Essentially, it's a powerful symbolic logic engine for structured knowledge but not a general-purpose AI assistant.
 
 ## Step: reset
 
@@ -145,7 +145,7 @@ milestone(global_launch).
 
 
 
-## ✅ All Counts Verified - Simulation Ready
+## âœ… All Counts Verified - Simulation Ready
 
 **Bulk Assertion Results:**
 - Requested: 62 facts
@@ -156,12 +156,12 @@ milestone(global_launch).
 
 | Predicate | Actual Count | Expected Count | Status |
 |-----------|-------------|----------------|--------|
-| `task(Task)` | 15 | 15 | ✅ |
-| `depends_on(Task, Prereq)` | 24 | 24 | ✅ |
-| `task_supplier(Task, Supplier)` | 4 | 4 | ✅ |
-| `supplier_status(Supplier, Status)` | 4 | 4 | ✅ |
-| `completed(Task)` | 4 | 4 | ✅ |
-| `milestone(M)` | 3 | 3 | ✅ |
+| `task(Task)` | 15 | 15 | âœ… |
+| `depends_on(Task, Prereq)` | 24 | 24 | âœ… |
+| `task_supplier(Task, Supplier)` | 4 | 4 | âœ… |
+| `supplier_status(Supplier, Status)` | 4 | 4 | âœ… |
+| `completed(Task)` | 4 | 4 | âœ… |
+| `milestone(M)` | 3 | 3 | âœ… |
 
 **No mismatches detected.** The knowledge base is fully loaded and ready for the indie launch war room simulation.
 
@@ -216,21 +216,21 @@ Return concise sections: ready now, blockers, waiting chain, milestone risk.
 
 ### Waiting Chain
 ```
-final_build_candidate → console_submission, localization_pack, day_one_patch, matchmaking_scale_test
-    ↓
-console_submission → platform_release_slot, global_launch
-platform_release_slot → streamer_preview_keys
-streamer_preview_keys → embargo_briefing, global_launch
-day_one_patch → community_faq_publish, global_launch
-matchmaking_scale_test → global_launch
-store_page_lock → streamer_preview_keys, global_launch
-localization_pack → global_launch
-embargo_briefing → global_launch
+final_build_candidate â†’ console_submission, localization_pack, day_one_patch, matchmaking_scale_test
+    â†“
+console_submission â†’ platform_release_slot, global_launch
+platform_release_slot â†’ streamer_preview_keys
+streamer_preview_keys â†’ embargo_briefing, global_launch
+day_one_patch â†’ community_faq_publish, global_launch
+matchmaking_scale_test â†’ global_launch
+store_page_lock â†’ streamer_preview_keys, global_launch
+localization_pack â†’ global_launch
+embargo_briefing â†’ global_launch
 ```
 
 ### Milestone Risk
 - **delayed_milestone**: None detected (0 risks)
-- **global_launch dependency**: Confirmed depends on console_submission ✓
+- **global_launch dependency**: Confirmed depends on console_submission âœ“
 
 ## Step: cdn_incident
 
@@ -297,7 +297,7 @@ Return top 3 interventions to protect global_launch.
 
 Based on the query results, here are the **top 3 interventions to protect global_launch**:
 
-## 🔴 Critical Analysis Summary
+## ðŸ”´ Critical Analysis Summary
 
 **Current State:**
 - `console_cert_vendor` status changed to **delayed** (just asserted)
@@ -307,7 +307,7 @@ Based on the query results, here are the **top 3 interventions to protect global
 
 ---
 
-## 🎯 Top 3 Interventions
+## ðŸŽ¯ Top 3 Interventions
 
 ### **1. Expedite console_cert_vendor Delivery (CRITICAL)**
 **Impact:** Unblocks 5 critical tasks including global_launch itself
@@ -428,13 +428,13 @@ Close with: ready now, still waiting, remaining launch risk.
 ## Recovery Pass Complete
 
 **Supplier Status Updates:**
-✅ cloud_vendor: delayed → on_time  
-✅ console_cert_vendor: delayed → on_time  
+âœ… cloud_vendor: delayed â†’ on_time  
+âœ… console_cert_vendor: delayed â†’ on_time  
 
 **Milestone Completions:**
-✅ final_build_candidate  
-✅ console_submission  
-✅ platform_release_slot  
+âœ… final_build_candidate  
+âœ… console_submission  
+âœ… platform_release_slot  
 
 ---
 
@@ -443,10 +443,10 @@ Close with: ready now, still waiting, remaining launch risk.
 **Tasks Safe to Start (11):** vertical_slice_lock, crash_triage_sweep, final_build_candidate, console_submission, platform_release_slot, launch_trailer_cut, press_kit_final, store_page_lock, localization_pack, day_one_patch, matchmaking_scale_test
 
 **Tasks Waiting on Prerequisites (8 dependencies):**
-- streamer_preview_keys → store_page_lock
-- community_faq_publish → day_one_patch
-- embargo_briefing → streamer_preview_keys
-- global_launch → day_one_patch, matchmaking_scale_test, store_page_lock, localization_pack, embargo_briefing
+- streamer_preview_keys â†’ store_page_lock
+- community_faq_publish â†’ day_one_patch
+- embargo_briefing â†’ streamer_preview_keys
+- global_launch â†’ day_one_patch, matchmaking_scale_test, store_page_lock, localization_pack, embargo_briefing
 
 **Delayed Milestones:** None (0) - All supplier delays resolved
 
@@ -514,3 +514,4 @@ I think launch date might be June 3? Not sure yet.
 #### Assistant Reply
 
 This should classify as tentative and avoid automatic persistence, creating room for clarification first.
+

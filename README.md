@@ -1,10 +1,10 @@
-# Prolog Reasoning v2
+# Prolog Reasoning
 
 **A Pre-Thinker for Neuro-Symbolic Knowledge Capture**
 
 **Memories are timestamped. Facts are not. Hallucinations begin when facts collapse into memories.**
 
-Prolog Reasoning v2 is a local-first research and engineering repo focused on the write path of agent memory: how natural language should (or should not) become symbolic state.
+Prolog Reasoning is a local-first research and engineering repo focused on the write path of agent memory: how natural language should (or should not) become symbolic state.
 
 Instead of treating memory as "retrieve more text," this project instruments the full language-to-state path: classification, normalization, validation, deterministic execution, and auditable explanation.
 

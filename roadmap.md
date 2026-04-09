@@ -1,7 +1,7 @@
-# Roadmap: Prolog Reasoning v2
+# Roadmap: Prolog Reasoning
 
 **Last Updated**: April 7, 2026  
-**Vision**: Develop Prolog Reasoning v2 as a lightweight deterministic logic layer for agents, then extend it into a curated symbolic memory pipeline.
+**Vision**: Develop Prolog Reasoning as a lightweight deterministic logic layer for agents, then extend it into a curated symbolic memory pipeline.
 
 ---
 

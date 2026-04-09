@@ -126,6 +126,7 @@ class TestMCPServer:
         assert "assert_rule" in tool_names
         assert "reset_kb" in tool_names
         assert "empty_kb" in tool_names
+        assert "set_pre_think_session" in tool_names
         assert "pre_think" in tool_names
         assert "prethink_utterance" not in tool_names
         assert "prethink_batch" not in tool_names
@@ -229,6 +230,9 @@ class TestMCPServer:
         server.pre_think_model = "qwen/qwen3.5-9b"
         server.pre_think_skill_path = "skills/pre-think/SKILL.md"
         server.pre_think_skill_text = "custom pre-think policy"
+        server.pre_think_session_enabled = True
+        server.pre_think_session_handoff_mode = "answer_proxy"
+        server.pre_think_session_kb_ingest_mode = "facts"
         server.pre_think_history_path = ".tmp_pre_think_history.json"
         server.pre_think_history = [
             {"input_utterance": "Maybe my mother was Ann.", "processed_utterance": "Tentative candidate..."},
@@ -246,8 +250,31 @@ class TestMCPServer:
         assert result["pre_think_skill_loaded"] is True
         assert result["prethinker_api_key_configured"] is True
         assert "pre_think_history_path" in result
+        assert result["pre_think_session"]["enabled"] is True
+        assert result["pre_think_session"]["handoff_mode"] == "answer_proxy"
+        assert result["pre_think_session"]["kb_ingest_mode"] == "facts"
         assert result["history_turns"] == 2
         assert len(result["recent_history"]) == 1
+
+    def test_set_pre_think_session_sets_advisory_defaults(self):
+        server = make_server()
+
+        result = server.set_pre_think_session(
+            enabled=True,
+            handoff_mode="answer_proxy",
+            kb_ingest_mode="facts",
+        )
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "pre_think_session"
+        assert result["enabled"] is True
+        assert result["handoff_mode"] == "answer_proxy"
+        assert result["kb_ingest_mode"] == "facts"
+
+        state = server.show_pre_think_state(include_history=False)
+        assert state["pre_think_session"]["enabled"] is True
+        assert state["pre_think_session"]["handoff_mode"] == "answer_proxy"
+        assert state["pre_think_session"]["kb_ingest_mode"] == "facts"
 
     def test_pre_think_history_persists_to_disk_and_reloads(self):
         server = make_server()
@@ -523,6 +550,39 @@ class TestMCPServer:
         assert result["handoff_mode"] == "answer_proxy"
         assert captured["handoff_mode"] == "answer_proxy"
 
+    def test_pre_think_uses_session_defaults_when_enabled(self):
+        server = make_server()
+        captured = {}
+        server.pre_think_session_enabled = True
+        server.pre_think_session_handoff_mode = "answer_proxy"
+        server.pre_think_session_kb_ingest_mode = "facts"
+
+        def fake_call_prethink_rewriter(
+            *,
+            utterance,
+            model,
+            temperature,
+            context_length,
+            narrative_context,
+            handoff_mode,
+            kb_ingest_mode,
+        ):
+            captured["handoff_mode"] = handoff_mode
+            captured["kb_ingest_mode"] = kb_ingest_mode
+            return {
+                "assistant_message": "answer passthrough",
+                "raw_response": {"output": [{"type": "message", "content": "answer passthrough"}]},
+            }
+
+        server._call_prethink_rewriter = fake_call_prethink_rewriter
+        result = server.pre_think("Use defaults for this turn.")
+
+        assert result["status"] == "success"
+        assert result["handoff_mode"] == "answer_proxy"
+        assert result["kb_ingest_mode"] == "facts"
+        assert captured["handoff_mode"] == "answer_proxy"
+        assert captured["kb_ingest_mode"] == "facts"
+
     def test_pre_think_can_ingest_candidate_facts_when_enabled(self):
         server = make_server()
         ingested = []
@@ -735,6 +795,28 @@ class TestMCPServer:
         assert structured["result_type"] == "pre_think"
         assert structured["input_utterance"] == "Maybe my mother was Ann."
         assert structured["processed_utterance"] == "clarify speaker identity, then classify"
+
+    def test_tools_call_routes_set_pre_think_session(self):
+        server = make_server()
+
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 422,
+                "method": "tools/call",
+                "params": {
+                    "name": "set_pre_think_session",
+                    "arguments": {"enabled": True, "handoff_mode": "answer_proxy", "kb_ingest_mode": "facts"},
+                },
+            }
+        )
+
+        structured = response["result"]["structuredContent"]
+        assert structured["status"] == "success"
+        assert structured["result_type"] == "pre_think_session"
+        assert structured["enabled"] is True
+        assert structured["handoff_mode"] == "answer_proxy"
+        assert structured["kb_ingest_mode"] == "facts"
 
     def test_tools_call_routes_show_pre_think_state(self):
         server = make_server()

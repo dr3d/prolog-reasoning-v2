@@ -1,4 +1,4 @@
-# Prolog Reasoning v2 - Session Tracker
+﻿# Prolog Reasoning - Session Tracker
 
 This file is the fast-start state for coding agents.
 
@@ -63,3 +63,4 @@ Default scope rule:
 4. Long-form files are historical records and may mention artifacts that were removed later.
 5. New parts should follow `sessions/parts/YYYY-part-XX.md`.
 6. Treat `sessions/parts/*` as archival context, not default planning input.
+

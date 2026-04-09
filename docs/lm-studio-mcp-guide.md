@@ -1,4 +1,4 @@
-# Using Prolog Reasoning with LM Studio via MCP
+﻿# Using Prolog Reasoning with LM Studio via MCP
 
 **Model Context Protocol (MCP) integration for local LLMs in LM Studio**
 
@@ -25,7 +25,7 @@ This guide walks you through setting up and using the Prolog Reasoning system as
 
 - LM Studio installed ([download here](https://lmstudio.ai/))
 - Python 3.12+ 
-- Prolog Reasoning v2 repo cloned
+- Prolog Reasoning repo cloned
 - Virtual environment set up (`pip install -r requirements.txt`)
 
 ---
@@ -118,15 +118,24 @@ Add this configuration to your `servers` list. Replace `<PYTHON_EXE>` with the P
    - query_logic
    - query_rows
    - classify_statement
+   - set_pre_think_session
+   - pre_think
+   - show_pre_think_state
    - list_known_facts
    - assert_fact
    - bulk_assert_facts
    - retract_fact
    - reset_kb
+   - empty_kb
    - explain_error
    - show_system_info
 
 Use the tool names above in day-to-day chat. The MCP surface is Prolog-first and expects literal Prolog queries.
+
+Pre-think session toggle note:
+- call `set_pre_think_session` with `enabled=true` to request pre-think on subsequent turns
+- call it with `enabled=false` to turn it back off
+- language directives like "disable pre-think from now on" are also recognized by `pre_think`
 
 ### Step 2d: API Token Note (for Scripted MCP Demos)
 
@@ -525,4 +534,5 @@ This would be **Course 04** in the training library!
 - Want to contribute? PRs welcome!
 
 Happy reasoning!
+
 

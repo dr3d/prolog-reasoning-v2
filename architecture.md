@@ -1,4 +1,4 @@
-# Prolog Reasoning v2 - Architecture
+# Prolog Reasoning - Architecture
 
 Status: Current design snapshot  
 Last updated: 2026-04-07

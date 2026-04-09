@@ -1,4 +1,4 @@
-# Prolog Reasoning v2 — Developer Quick Start
+﻿# Prolog Reasoning â€” Developer Quick Start
 
 ## Setup
 
@@ -18,32 +18,32 @@ python -m pytest tests/test_engine.py -v
 
 ```
 src/
-  ├── engine/          # Prolog interpreter (core.py, runner.py)
-  ├── ir/              # Intermediate representation schema
-  ├── compiler/        # IR → Prolog translator
-  ├── parser/          # Semantic grounding (NL → IR)
-  ├── explain/         # Proof trace generation
-  └── agent_skill.py   # Agent framework integration
+  â”œâ”€â”€ engine/          # Prolog interpreter (core.py, runner.py)
+  â”œâ”€â”€ ir/              # Intermediate representation schema
+  â”œâ”€â”€ compiler/        # IR â†’ Prolog translator
+  â”œâ”€â”€ parser/          # Semantic grounding (NL â†’ IR)
+  â”œâ”€â”€ explain/         # Proof trace generation
+  â””â”€â”€ agent_skill.py   # Agent framework integration
 
 tests/                 # Unit and integration tests
-  └── test_engine.py   # 21 comprehensive Prolog engine tests
+  â””â”€â”€ test_engine.py   # 21 comprehensive Prolog engine tests
 
 data/                  # Benchmark datasets and evaluation
-  ├── benchmark.py     # 13 test cases across 4 domains
-  └── evaluate.py      # Evaluation harness
+  â”œâ”€â”€ benchmark.py     # 13 test cases across 4 domains
+  â””â”€â”€ evaluate.py      # Evaluation harness
 
 scripts/               # Demo and utility scripts
-  ├── demonstrate_agent.py     # Agent integration demo
-  ├── demonstrate_semantic.py  # Semantic grounding demo
-  └── generate_manifest.py     # KB manifest generator
+  â”œâ”€â”€ demonstrate_agent.py     # Agent integration demo
+  â”œâ”€â”€ demonstrate_semantic.py  # Semantic grounding demo
+  â””â”€â”€ generate_manifest.py     # KB manifest generator
 
 prolog/                # Prolog knowledge bases
-  └── core.pl          # Base rules (family, access, etc.)
+  â””â”€â”€ core.pl          # Base rules (family, access, etc.)
 
 docs/                  # Documentation
-  ├── architecture.md          # Full system design
-  ├── agent-integration.md     # Agent framework integration
-  └── semantic-grounding.md    # NL processing guide
+  â”œâ”€â”€ architecture.md          # Full system design
+  â”œâ”€â”€ agent-integration.md     # Agent framework integration
+  â””â”€â”€ semantic-grounding.md    # NL processing guide
 ```
 
 ## Key Components
@@ -196,10 +196,10 @@ export PYTHONPATH=$PYTHONPATH:$(pwd)/src
 
 The system follows a layered architecture:
 
-1. **Natural Language** → Semantic Grounding → **IR**
-2. **IR** → Compiler → **Prolog Syntax**
-3. **Prolog Syntax** → Engine → **Solutions**
-4. **Solutions** → Explanation → **Human-Readable Output**
+1. **Natural Language** â†’ Semantic Grounding â†’ **IR**
+2. **IR** â†’ Compiler â†’ **Prolog Syntax**
+3. **Prolog Syntax** â†’ Engine â†’ **Solutions**
+4. **Solutions** â†’ Explanation â†’ **Human-Readable Output**
 
 Each layer is independently testable and can be swapped out.
 
@@ -216,7 +216,7 @@ Each layer is independently testable and can be swapped out.
 - **Discussions**: GitHub discussions for questions
 - **Research**: Email for academic collaboration
 
-Happy coding! 🚀
+Happy coding! ðŸš€
 
 engine = PrologEngine()
 engine.add_clause(Clause(Term("parent", [Term("john"), Term("alice")])))
@@ -302,14 +302,14 @@ cat data/evaluation_report.json
 
 ## Next Steps
 
-1. ✅ Core engine implementation
-2. ✅ IR schema design
-3. ✅ Based compiler
-4. ✅ Explanation generation
-5. ⚠️ Semantic parser (LLM grounding)
-6. ⚠️ Full test suite
-7. ⚠️ Extended benchmarks
-8. ⚠️ Paper draft
+1. âœ… Core engine implementation
+2. âœ… IR schema design
+3. âœ… Based compiler
+4. âœ… Explanation generation
+5. âš ï¸ Semantic parser (LLM grounding)
+6. âš ï¸ Full test suite
+7. âš ï¸ Extended benchmarks
+8. âš ï¸ Paper draft
 
 ## Performance Notes
 
@@ -337,3 +337,4 @@ cat data/evaluation_report.json
 - Update architecture.md for design changes
 - Keep engine pure Python (no external deps)
 - Document changes in docstrings
+

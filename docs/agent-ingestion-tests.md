@@ -1,6 +1,6 @@
-# Agent Ingestion Tests
+﻿# Agent Ingestion Tests
 
-Use these prompts to evaluate whether an external agent is using Prolog Reasoning v2 as a symbolic control plane rather than as a decorative query add-on.
+Use these prompts to evaluate whether an external agent is using Prolog Reasoning as a symbolic control plane rather than as a decorative query add-on.
 
 What these tests are trying to catch:
 - answering from model memory instead of the symbolic layer,
@@ -187,3 +187,4 @@ Fail if the agent repeatedly does these:
 - treats all factual-sounding text as durable truth,
 - ignores correction cues,
 - or claims writes happened when they did not.
+

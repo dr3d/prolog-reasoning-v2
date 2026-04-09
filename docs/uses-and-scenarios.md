@@ -1,4 +1,4 @@
-# Uses and Scenarios
+﻿# Uses and Scenarios
 
 Status: Draft  
 Owner: Core symbolic layer  
@@ -6,7 +6,7 @@ Date: 2026-04-05
 
 ## 1. Why This Doc Exists
 
-The easiest way to understand Prolog Reasoning v2 is not as a general-purpose
+The easiest way to understand Prolog Reasoning is not as a general-purpose
 "AI brain," but as a deterministic logic tool that an agent can load when it
 needs exact consequences, explicit rules, or explainable constraint handling.
 
@@ -441,3 +441,4 @@ Try it now:
 - walkthrough: `docs/drug-triage-walkthrough.md`
 - LLM + MCP layer: `python scripts/demonstrate_drug_triage_agent_mcp.py`
 - walkthrough: `docs/drug-triage-agent-mcp-walkthrough.md`
+

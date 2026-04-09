@@ -1,4 +1,4 @@
-# Indie Launch War Room (Natural-Language Tooling Showcase)
+﻿# Indie Launch War Room (Natural-Language Tooling Showcase)
 
 - Captured at: 2026-04-07T05:26:09.932185+00:00
 - Model: `qwen/qwen3.5-9b`
@@ -72,7 +72,7 @@ Hey, before we start, can you show me system info and what you factually know ri
 
 
 **System Info:**
-- **Prolog Reasoning v2** (0.5) - Local-first neuro-symbolic reliability layer
+- **Prolog Reasoning** (0.5) - Local-first neuro-symbolic reliability layer
 - **Core idea:** Memories are timestamped; facts are not
 - **Capabilities:** Natural language queries, statement classification, deterministic reasoning, runtime fact assertion/retraction, semantic validation, friendly failure explanations
 - **Supported domains:** Family relationships, access control, clinical medication triage, project dependency risk analysis, general knowledge
@@ -80,7 +80,7 @@ Hey, before we start, can you show me system info and what you factually know ri
 **Current Knowledge Base:**
 - **Entities:** admin, alice, bob, john, certification, cloud_vendor, community_faq_publish, console_cert_vendor, etc. (30+ entities)
 - **Predicates:** parent, sibling, ancestor, allergic_to, user, role, permission, allowed, task dependencies, clinical triage predicates, etc. (60+ predicates)
-- **Note:** This is a summary view of known entities and predicate vocabulary—not a full dump of every stored fact
+- **Note:** This is a summary view of known entities and predicate vocabularyâ€”not a full dump of every stored fact
 
 Ready to query! What would you like to know?
 
@@ -105,7 +105,7 @@ Can we do a clean slate first so old runtime edits don't leak into this run? Ple
 
 
 
-✅ **Reset Complete**
+âœ… **Reset Complete**
 
 The knowledge base has been successfully reset to a clean slate. All previous runtime edits have been cleared, and we're now starting fresh with the baseline seed state from `core.pl`.
 
@@ -200,22 +200,22 @@ milestone(global_launch).
 
 
 
-## Launch War-Room Board: Facts Loaded & Sanity-Checked ✓
+## Launch War-Room Board: Facts Loaded & Sanity-Checked âœ“
 
 All **54 facts** successfully loaded into working memory. Here's the sanity-check breakdown:
 
-### 📊 Count Summary
+### ðŸ“Š Count Summary
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **Tasks** | 15 | ✅ Correct |
-| **Dependencies** | 24 | ✅ Correct |
-| **Supplier Mappings** | 4 | ✅ Correct |
-| **Supplier Statuses** | 4 | ✅ Correct |
-| **Completed Items** | 4 | ✅ Correct |
-| **Milestones** | 3 | ✅ Correct |
+| **Tasks** | 15 | âœ… Correct |
+| **Dependencies** | 24 | âœ… Correct |
+| **Supplier Mappings** | 4 | âœ… Correct |
+| **Supplier Statuses** | 4 | âœ… Correct |
+| **Completed Items** | 4 | âœ… Correct |
+| **Milestones** | 3 | âœ… Correct |
 
-### 📋 Detailed Breakdown
+### ðŸ“‹ Detailed Breakdown
 
 **Tasks (15):**
 - vertical_slice_lock, crash_triage_sweep, final_build_candidate, console_submission, platform_release_slot, launch_trailer_cut, press_kit_final, store_page_lock, localization_pack, streamer_preview_keys, day_one_patch, matchmaking_scale_test, community_faq_publish, embargo_briefing, global_launch
@@ -224,13 +224,13 @@ All **54 facts** successfully loaded into working memory. Here's the sanity-chec
 - All dependency chains properly established with 6 dependencies on `global_launch` (the final milestone)
 
 **Supplier Mappings (4):**
-- console_submission → console_cert_vendor
-- platform_release_slot → platform_ops_vendor  
-- localization_pack → localization_vendor
-- matchmaking_scale_test → cloud_vendor
+- console_submission â†’ console_cert_vendor
+- platform_release_slot â†’ platform_ops_vendor  
+- localization_pack â†’ localization_vendor
+- matchmaking_scale_test â†’ cloud_vendor
 
 **Supplier Statuses (4):**
-- All 4 vendors: **on_time** ✅
+- All 4 vendors: **on_time** âœ…
 
 **Completed Items (4):**
 - vertical_slice_lock, crash_triage_sweep, launch_trailer_cut, press_kit_final
@@ -238,7 +238,7 @@ All **54 facts** successfully loaded into working memory. Here's the sanity-chec
 **Milestones (3):**
 - platform_release_slot, embargo_briefing, global_launch
 
-### ✅ Sanity Check Result: **ALL COUNTS VALID**
+### âœ… Sanity Check Result: **ALL COUNTS VALID**
 
 No discrepancies found. The board structure is sound with:
 - 15 total tasks in the pipeline
@@ -275,7 +275,7 @@ Morning standup view: what can start now, what's waiting, and do we have milesto
 
 ## Morning Standup View
 
-### ✅ What Can Start Now (6 tasks)
+### âœ… What Can Start Now (6 tasks)
 These tasks are safe to start based on current board state:
 - **vertical_slice_lock**
 - **crash_triage_sweep**
@@ -284,7 +284,7 @@ These tasks are safe to start based on current board state:
 - **press_kit_final**
 - **store_page_lock**
 
-### ⏳ What's Waiting (15 task-prerequisite pairs)
+### â³ What's Waiting (15 task-prerequisite pairs)
 Tasks blocked by unmet prerequisites:
 
 | Task | Waiting On |
@@ -301,12 +301,12 @@ Tasks blocked by unmet prerequisites:
 
 **Key Bottleneck**: `global_launch` has 6 dependencies and is the most complex task to unblock.
 
-### 🎯 Milestone Risk Status
+### ðŸŽ¯ Milestone Risk Status
 **No delayed milestones detected.** All milestones are currently on track based on the board state.
 
 ---
 
-**Summary**: You have 6 tasks ready to start immediately. The main dependency chain flows from `final_build_candidate` → multiple intermediate tasks → `global_launch`. No milestone delays at this time.
+**Summary**: You have 6 tasks ready to start immediately. The main dependency chain flows from `final_build_candidate` â†’ multiple intermediate tasks â†’ `global_launch`. No milestone delays at this time.
 
 ## Step: natural_cloud_incident
 
@@ -355,14 +355,14 @@ Update: cloud support slipped. Please update the board to reflect that vendor de
 Based on my analysis of the knowledge base, I've updated the board to reflect the cloud vendor delay and identified the impacts:
 
 ## **Vendor Delay Update**
-✅ **cloud_vendor status**: Updated from `on_time` → `delayed`
+âœ… **cloud_vendor status**: Updated from `on_time` â†’ `delayed`
 
 ---
 
 ## **Direct Task Impact**
 | Task | Supplier | Current Status | Impact |
 |------|----------|----------------|--------|
-| **matchmaking_scale_test** | cloud_vendor | waiting | ⚠️ **DELAYED** (direct vendor dependency) |
+| **matchmaking_scale_test** | cloud_vendor | waiting | âš ï¸ **DELAYED** (direct vendor dependency) |
 
 ---
 
@@ -377,20 +377,20 @@ Based on my analysis of the knowledge base, I've updated the board to reflect th
 The **global_launch** milestone is impacted by the cloud vendor delay. Since global_launch impacts 14 milestones, here's the full cascade:
 
 ### **All Affected Milestones (14 total):**
-1. ✅ global_launch
-2. ✅ console_submission  
-3. ✅ day_one_patch
-4. ✅ matchmaking_scale_test
-5. ✅ store_page_lock
-6. ✅ localization_pack
-7. ✅ embargo_briefing
-8. ✅ vertical_slice_lock
-9. ✅ crash_triage_sweep
-10. ✅ final_build_candidate
-11. ✅ launch_trailer_cut
-12. ✅ press_kit_final
-13. ✅ platform_release_slot
-14. ✅ streamer_preview_keys
+1. âœ… global_launch
+2. âœ… console_submission  
+3. âœ… day_one_patch
+4. âœ… matchmaking_scale_test
+5. âœ… store_page_lock
+6. âœ… localization_pack
+7. âœ… embargo_briefing
+8. âœ… vertical_slice_lock
+9. âœ… crash_triage_sweep
+10. âœ… final_build_candidate
+11. âœ… launch_trailer_cut
+12. âœ… press_kit_final
+13. âœ… platform_release_slot
+14. âœ… streamer_preview_keys
 
 ---
 
@@ -437,32 +437,32 @@ Now certification looks delayed too. Reflect that status change and tell me the 
 
 Based on the knowledge base and the certification delay status I've just reflected, here are the **top launch-protection actions**:
 
-## 🛡️ Top Launch-Protection Actions
+## ðŸ›¡ï¸ Top Launch-Protection Actions
 
 ### 1. **Prioritize Safe-to-Start Tasks** (6 tasks)
 These can proceed immediately without waiting:
-- ✅ `vertical_slice_lock` - Ready
-- ✅ `crash_triage_sweep` - Ready  
-- ✅ `final_build_candidate` - Ready
-- ✅ `launch_trailer_cut` - Ready
-- ✅ `press_kit_final` - Ready
-- ✅ `store_page_lock` - Ready
+- âœ… `vertical_slice_lock` - Ready
+- âœ… `crash_triage_sweep` - Ready  
+- âœ… `final_build_candidate` - Ready
+- âœ… `launch_trailer_cut` - Ready
+- âœ… `press_kit_final` - Ready
+- âœ… `store_page_lock` - Ready
 
 ### 2. **Address Blocked Critical Path Items**
-- ⚠️ `matchmaking_scale_test` is currently **BLOCKED** and directly impacts global_launch
+- âš ï¸ `matchmaking_scale_test` is currently **BLOCKED** and directly impacts global_launch
 - This is a critical dependency that needs immediate attention to unblock the launch path
 
 ### 3. **Focus on Waiting Tasks with Unmet Prerequisites**
 These tasks are waiting but need their dependencies resolved:
-- `console_submission` → waiting on `final_build_candidate` (ready ✅)
-- `day_one_patch` → waiting on `final_build_candidate` (ready ✅)
-- `localization_pack` → waiting on `final_build_candidate` (ready ✅)
+- `console_submission` â†’ waiting on `final_build_candidate` (ready âœ…)
+- `day_one_patch` â†’ waiting on `final_build_candidate` (ready âœ…)
+- `localization_pack` â†’ waiting on `final_build_candidate` (ready âœ…)
 
 ### 4. **Protect the Global Launch Milestone**
 The global_launch depends on these critical items:
 - `console_submission`, `day_one_patch`, `matchmaking_scale_test`, `store_page_lock`, `localization_pack`, `embargo_briefing`
 
-## 🎯 Immediate Action Items:
+## ðŸŽ¯ Immediate Action Items:
 1. **Unblock matchmaking_scale_test** - This is the highest priority as it's currently blocked and on the critical path
 2. **Complete final_build_candidate** - Multiple waiting tasks depend on this (console_submission, day_one_patch, localization_pack)
 3. **Proceed with safe-to-start tasks** - These can move forward immediately to build momentum
@@ -498,9 +498,9 @@ Producer note just came in: 'I think launch date might be June 3, but it is not 
 **Classification Result:** `tentative_fact` (confidence: 0.76)
 
 **Analysis:**
-- ✅ **Tentative language detected**: The system correctly identified this as uncertain information ("I think", "might be", "not locked yet")
-- ⚠️ **Cannot parse as deterministic fact**: The parser couldn't extract a clean, actionable fact from the text due to the hedging language
-- 📋 **Suggested operation**: `store_tentative_fact` (but note: durable journaled persistence is not implemented yet)
+- âœ… **Tentative language detected**: The system correctly identified this as uncertain information ("I think", "might be", "not locked yet")
+- âš ï¸ **Cannot parse as deterministic fact**: The parser couldn't extract a clean, actionable fact from the text due to the hedging language
+- ðŸ“‹ **Suggested operation**: `store_tentative_fact` (but note: durable journaled persistence is not implemented yet)
 
 **Safe Routing Recommendation:**
 Since this is explicitly marked as tentative and unconfirmed, you should:
@@ -562,7 +562,7 @@ Good news: both cloud and cert vendors are back on schedule. Also mark final_bui
 
 ## Summary Update
 
-### ✅ Completed Tasks (7 total)
+### âœ… Completed Tasks (7 total)
 The following tasks are now marked as **completed**:
 - `vertical_slice_lock`
 - `crash_triage_sweep`
@@ -572,28 +572,29 @@ The following tasks are now marked as **completed**:
 - `console_submission` *(just completed)*
 - `platform_release_slot` *(just completed)*
 
-### 🟢 Ready to Start (3 tasks)
+### ðŸŸ¢ Ready to Start (3 tasks)
 The following tasks are now **safe to start** (all prerequisites met):
-- `store_page_lock` - depends on: launch_trailer_cut ✅, press_kit_final ✅
-- `day_one_patch` - depends on: final_build_candidate ✅
-- `localization_pack` - depends on: final_build_candidate ✅
+- `store_page_lock` - depends on: launch_trailer_cut âœ…, press_kit_final âœ…
+- `day_one_patch` - depends on: final_build_candidate âœ…
+- `localization_pack` - depends on: final_build_candidate âœ…
 
-### 🟡 Waiting (3 tasks)
+### ðŸŸ¡ Waiting (3 tasks)
 The following tasks are **waiting** on prerequisites:
 | Task | Waiting On | Status |
 |------|------------|--------|
-| `streamer_preview_keys` | store_page_lock | ⏳ Blocked |
-| `community_faq_publish` | day_one_patch | ⏳ Blocked |
-| `embargo_briefing` | streamer_preview_keys | ⏳ Blocked (transitive) |
+| `streamer_preview_keys` | store_page_lock | â³ Blocked |
+| `community_faq_publish` | day_one_patch | â³ Blocked |
+| `embargo_briefing` | streamer_preview_keys | â³ Blocked (transitive) |
 
-### 🚫 Risk Assessment
+### ðŸš« Risk Assessment
 - **Blocked Tasks**: 0
 - **High Risk Entities**: 0
 - **Delayed Milestones**: 0
 
-### 📊 Overall Status
+### ðŸ“Š Overall Status
 - **Ready**: 3 tasks can start immediately
 - **Waiting**: 3 tasks blocked on prerequisites
 - **Risk**: None identified
 
 The critical path is now clear: `store_page_lock` and `day_one_patch` are ready to proceed, which will unblock `streamer_preview_keys`, then `community_faq_publish` and `embargo_briefing`. The `global_launch` milestone depends on all these tasks completing.
+
