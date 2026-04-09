@@ -21,3 +21,7 @@ mkdocs-material>=9.0.0
 # numpy>=1.24.0
 # pandas>=2.0.0
 # matplotlib>=3.7.0
+
+# Operator UI
+fastapi>=0.115.0
+uvicorn>=0.30.0

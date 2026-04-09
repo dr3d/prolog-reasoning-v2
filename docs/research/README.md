@@ -21,6 +21,7 @@ This folder holds exploratory framing and evaluation notes that inform direction
 - `family-memory-ladder-qwen9b-2026-04-09-summary.md`: publish-safe consolidated ladder scorecard.
 - `family-memory-ladder-qwen9b-2026-04-09-summary.json`: publish-safe machine-readable consolidated metrics.
 - `collaboration-map.md`: contribution lanes and open idea prompts for collaborators.
+- `idea-inbox.md`: quick-capture parking lane for ideas that appear mid-session.
 - `../../scripts/run_prethinker_edge_matrix.py`: edge harness for pre-thinker phrasing and validation runs.
 - `../../data/fact_extraction/prethinker_edge_cases_v1.json`: starter edge-case dataset for the harness.
 
@@ -31,3 +32,7 @@ This folder holds exploratory framing and evaluation notes that inform direction
 Render command:
 
 `python scripts/render_research_ledgers_html.py`
+
+Idea capture command:
+
+`powershell -ExecutionPolicy Bypass -File scripts/capture_idea.ps1 -Area prethink -Idea "short idea text" -Why "one-line rationale"`

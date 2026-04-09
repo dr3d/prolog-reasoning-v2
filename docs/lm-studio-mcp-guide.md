@@ -207,6 +207,52 @@ If this returns a model response, auth and local API connectivity are good.
 
 ---
 
+## Optional: Operator UI (Pre-Think Console)
+
+If you want an operator-facing UI instead of chat-only workflows, run:
+
+```bash
+python scripts/prethink_console.py
+```
+
+Then open:
+
+`http://127.0.0.1:8765`
+
+What this console gives you:
+- session toggles (`enabled`, `handoff_mode`, `kb_ingest_mode`)
+- pre-think only runs for raw utterance inspection
+- full routed turns (`utterance -> pre_think -> main model`)
+- explicit routing timeline per turn (input/pre-think/directive gate/main-model)
+- raw vs processed utterance diff view
+- KB utilities (`query_rows`, `reset_kb`, `empty_kb`)
+- KPI strip with run-level proxies:
+  - write precision proxy
+  - false-write proxy rate
+  - cloud escalation rate
+  - pre-think/main/end-to-end latency
+- one-click snapshot export (JSON + Markdown) to `docs/research/conversations/prethink-console/`
+
+Defaults can be overridden at launch:
+
+```bash
+python scripts/prethink_console.py --model qwen3.5-4b --integration mcp/prolog-reasoning --context-length 4000
+```
+
+The console writes JSONL turn logs to:
+
+`.tmp_prethink_console_runs.jsonl`
+
+Use `--run-log-path` if you want a different file.
+
+Snapshot root can also be overridden:
+
+```bash
+python scripts/prethink_console.py --snapshot-root docs/research/conversations/prethink-console
+```
+
+---
+
 ## Step 3: Use with Your LLM
 
 For chat-first copy/paste scenario scripts (including a Critical Path Method

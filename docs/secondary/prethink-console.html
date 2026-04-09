@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pre-Think Console</title>
+  <style>
+    :root {
+      --bg: #0b1119;
+      --panel: #121a24;
+      --panel-2: #1a2533;
+      --text: #e7eef7;
+      --muted: #8fa4bd;
+      --accent: #63c9a9;
+      --warn: #f2c96b;
+      --danger: #ef7a7a;
+      --border: #253447;
+      --mono: "Cascadia Mono", "Consolas", "SFMono-Regular", ui-monospace, monospace;
+      --sans: "Segoe UI", "Avenir Next", "Helvetica Neue", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; overflow-x: hidden; }
+    body {
+      margin: 0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, #14324a 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, #163020 0%, transparent 35%),
+        var(--bg);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(11, 17, 25, 0.92);
+      backdrop-filter: blur(6px);
+      z-index: 10;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .title-wrap p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .status {
+      font-size: 0.9rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #0f1722;
+      color: var(--muted);
+      min-width: 0;
+      text-align: center;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
+      min-width: 0;
+    }
+
+    @media (min-width: 860px) {
+      .layout {
+        grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr);
+      }
+    }
+
+    @media (min-width: 1280px) {
+      .layout {
+        grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      padding: 14px;
+      min-width: 0;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .stack { display: grid; gap: 10px; min-width: 0; }
+
+    .row {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .row-2 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .row-3 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+
+    @media (max-width: 720px) {
+      .row-2, .row-3 { grid-template-columns: 1fr; }
+    }
+
+    label { font-size: 0.84rem; color: var(--muted); }
+
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: #0f1722;
+      color: var(--text);
+      font-family: var(--mono);
+    }
+
+    textarea { min-height: 92px; resize: vertical; }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    button {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #122435;
+      color: var(--text);
+      padding: 8px 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover { border-color: var(--accent); }
+    button.warn:hover { border-color: var(--warn); }
+    button.danger:hover { border-color: var(--danger); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .kpi {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0f1722;
+      padding: 8px;
+    }
+
+    .kpi .name {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .kpi .value {
+      margin-top: 4px;
+      font-size: 1rem;
+      font-family: var(--mono);
+    }
+
+    pre {
+      margin: 0;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #0e1520;
+      color: #d9e6f4;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      line-height: 1.32;
+      padding: 10px;
+      overflow: auto;
+      max-height: 330px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      min-width: 0;
+    }
+
+    .small { font-size: 0.78rem; color: var(--muted); }
+    .mono { font-family: var(--mono); }
+
+    details {
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: rgba(15, 23, 34, 0.45);
+    }
+
+    details summary {
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.84rem;
+      user-select: none;
+    }
+
+    main.layout > section {
+      min-width: 0;
+    }
+
+    .row > * {
+      min-width: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="title-wrap">
+      <h1>Pre-Think Operator Console</h1>
+      <p>Session controls, routed turns, KB checks, and KPI proxies</p>
+    </div>
+    <div id="apiStatus" class="status">checking...</div>
+  </div>
+
+  <main class="layout">
+    <section class="stack">
+      <div class="panel">
+        <h2>Session Controls</h2>
+        <div class="stack">
+          <label class="checkbox">
+            <input id="sessionEnabled" type="checkbox">
+            pre-think enabled
+          </label>
+          <div class="row row-2">
+            <div>
+              <label for="handoffMode">handoff mode</label>
+              <select id="handoffMode">
+                <option value="rewrite">rewrite</option>
+                <option value="answer_proxy">answer_proxy</option>
+              </select>
+            </div>
+            <div>
+              <label for="kbIngestMode">kb ingest mode</label>
+              <select id="kbIngestMode">
+                <option value="none">none</option>
+                <option value="facts">facts</option>
+              </select>
+            </div>
+          </div>
+          <div class="row row-2">
+            <button id="applySessionBtn">Apply Session</button>
+            <button id="refreshStateBtn">Refresh State</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>KPI Strip</h2>
+        <div class="kpi-grid">
+          <div class="kpi"><div class="name">turns</div><div id="kpiTurns" class="value">-</div></div>
+          <div class="kpi"><div class="name">pre-think calls</div><div id="kpiPrethink" class="value">-</div></div>
+          <div class="kpi"><div class="name">write precision proxy</div><div id="kpiPrecision" class="value">-</div></div>
+          <div class="kpi"><div class="name">false-write proxy rate</div><div id="kpiFalseWrite" class="value">-</div></div>
+          <div class="kpi"><div class="name">cloud escalation rate</div><div id="kpiEscalation" class="value">-</div></div>
+          <div class="kpi"><div class="name">avg pre-think ms</div><div id="kpiPreMs" class="value">-</div></div>
+          <div class="kpi"><div class="name">avg main ms</div><div id="kpiMainMs" class="value">-</div></div>
+          <div class="kpi"><div class="name">avg end-to-end ms</div><div id="kpiEndMs" class="value">-</div></div>
+        </div>
+        <div class="row row-2" style="margin-top:10px">
+          <button id="resetKpiBtn" class="warn">Reset KPI Counters</button>
+          <button id="clearOutputsBtn">Clear Output Panes</button>
+        </div>
+        <p class="small">These are run-level proxies driven by console telemetry.</p>
+      </div>
+
+      <div class="panel">
+        <h2>KB Tools</h2>
+        <div class="stack">
+          <div>
+            <label for="queryInput">query_rows input</label>
+            <input id="queryInput" type="text" value="parent(zoe, X).">
+          </div>
+          <div class="row row-3">
+            <button id="queryBtn">Run Query</button>
+            <button id="resetKbBtn" class="warn">Reset KB</button>
+            <button id="emptyKbBtn" class="danger">Empty KB</button>
+          </div>
+          <pre id="queryOutput">(query output)</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="stack">
+      <div class="panel">
+        <h2>Turn Runner</h2>
+        <div class="stack">
+          <div>
+            <label for="utteranceInput">utterance</label>
+            <textarea id="utteranceInput" placeholder="Enter raw user utterance..."></textarea>
+          </div>
+          <div class="row row-2">
+            <label class="checkbox"><input id="forwardMain" type="checkbox" checked>forward to main model</label>
+            <label class="checkbox"><input id="integrationEnabled" type="checkbox" checked>integration enabled</label>
+          </div>
+          <details>
+            <summary>advanced turn options</summary>
+            <div class="stack" style="margin-top:8px">
+              <label class="checkbox"><input id="forcePrethink" type="checkbox">force pre-think</label>
+              <div class="row row-2">
+                <div>
+                  <label for="modelInput">main model</label>
+                  <input id="modelInput" type="text" value="qwen3.5-4b">
+                </div>
+                <div>
+                  <label for="integrationInput">integration</label>
+                  <input id="integrationInput" type="text" value="mcp/prolog-reasoning">
+                </div>
+              </div>
+              <div class="row row-3">
+                <div>
+                  <label for="contextLengthInput">context length</label>
+                  <input id="contextLengthInput" type="number" value="4000">
+                </div>
+                <div>
+                  <label for="temperatureInput">temperature</label>
+                  <input id="temperatureInput" type="number" step="0.1" value="0.0">
+                </div>
+                <div>
+                  <label for="timeoutInput">timeout seconds</label>
+                  <input id="timeoutInput" type="number" value="120">
+                </div>
+              </div>
+            </div>
+          </details>
+          <div class="row row-2">
+            <button id="prethinkOnlyBtn">Run Pre-Think Only</button>
+            <button id="runTurnBtn">Run Full Turn</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Outputs</h2>
+        <div class="stack">
+          <div>
+            <div class="small">processed utterance</div>
+            <pre id="processedOutput">(processed utterance)</pre>
+          </div>
+          <div>
+            <div class="small">main model response</div>
+            <pre id="mainOutput">(main response)</pre>
+          </div>
+          <div>
+            <div class="small">latency + routing</div>
+            <pre id="latencyOutput">(latency)</pre>
+          </div>
+          <div>
+            <div class="small">routing timeline</div>
+            <pre id="timelineOutput">(timeline)</pre>
+          </div>
+          <div>
+            <div class="small">raw vs processed diff</div>
+            <pre id="diffOutput">(diff)</pre>
+          </div>
+          <div>
+            <div class="small">pre-think detail (auditable JSON)</div>
+            <pre id="prethinkDetailOutput">(pre-think JSON)</pre>
+          </div>
+          <div>
+            <div class="small">state snapshot (recent pre-think history included)</div>
+            <pre id="stateOutput">(state)</pre>
+          </div>
+          <details>
+            <summary>save publish-ready snapshot</summary>
+            <div class="stack" style="margin-top:8px">
+              <div>
+                <label for="snapshotLabel">snapshot label</label>
+                <input id="snapshotLabel" type="text" value="prethink-console-run">
+              </div>
+              <div>
+                <label for="snapshotNotes">snapshot notes</label>
+                <textarea id="snapshotNotes" placeholder="Optional notes for this snapshot..."></textarea>
+              </div>
+              <div class="row row-2">
+                <label class="checkbox"><input id="snapshotStateHistory" type="checkbox" checked>include state history</label>
+                <button id="saveSnapshotBtn">Save Snapshot</button>
+              </div>
+              <div class="small">Output path: docs/research/conversations/prethink-console/...</div>
+              <pre id="snapshotOutput">(snapshot output)</pre>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const byId = (id) => document.getElementById(id);
+    const fmtNum = (value, digits = 3) => {
+      if (value === null || value === undefined || Number.isNaN(value)) return "-";
+      return Number(value).toFixed(digits);
+    };
+    const fmtRate = (value) => value === null || value === undefined ? "-" : `${(Number(value) * 100).toFixed(1)}%`;
+    const setPre = (id, value) => { byId(id).textContent = typeof value === "string" ? value : JSON.stringify(value, null, 2); };
+    let latestTurnForSnapshot = null;
+
+    function renderTimeline(steps) {
+      if (!Array.isArray(steps) || !steps.length) return "(timeline)";
+      return steps.map((step, index) => {
+        const part = `${index + 1}. ${step.step || "step"} | ${step.status || "unknown"}`;
+        const detail = step.detail ? ` | ${step.detail}` : "";
+        const latency = step.latency_ms !== null && step.latency_ms !== undefined
+          ? ` | ${Number(step.latency_ms).toFixed(1)}ms`
+          : "";
+        return `${part}${detail}${latency}`;
+      }).join("\n");
+    }
+
+    function renderDiff(diffObj) {
+      if (!diffObj || typeof diffObj !== "object") return "(diff)";
+      const changed = diffObj.changed ? "changed" : "unchanged";
+      const ratio = diffObj.similarity_ratio !== undefined && diffObj.similarity_ratio !== null
+        ? Number(diffObj.similarity_ratio).toFixed(3)
+        : "-";
+      const unified = diffObj.unified_diff && String(diffObj.unified_diff).trim().length
+        ? String(diffObj.unified_diff)
+        : "(no textual diff)";
+      return `status: ${changed}\nsimilarity_ratio: ${ratio}\n\n${unified}`;
+    }
+
+    async function api(method, url, body = null) {
+      const init = { method, headers: { "Content-Type": "application/json" } };
+      if (body !== null) init.body = JSON.stringify(body);
+      const response = await fetch(url, init);
+      const text = await response.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch (_) { data = { raw: text }; }
+      if (!response.ok) {
+        const message = data.detail || data.message || text || response.statusText;
+        throw new Error(typeof message === "string" ? message : JSON.stringify(message));
+      }
+      return data;
+    }
+
+    function hydrateKpi(kpi) {
+      byId("kpiTurns").textContent = kpi.turns_total ?? "-";
+      byId("kpiPrethink").textContent = kpi.prethink_calls_total ?? "-";
+      byId("kpiPrecision").textContent = fmtRate(kpi.write_precision_proxy);
+      byId("kpiFalseWrite").textContent = fmtRate(kpi.false_write_proxy_rate);
+      byId("kpiEscalation").textContent = fmtRate(kpi.cloud_escalation_rate);
+      byId("kpiPreMs").textContent = fmtNum(kpi.avg_prethink_latency_ms, 1);
+      byId("kpiMainMs").textContent = fmtNum(kpi.avg_main_latency_ms, 1);
+      byId("kpiEndMs").textContent = fmtNum(kpi.avg_end_to_end_latency_ms, 1);
+    }
+
+    function hydrateSession(state) {
+      const session = state.pre_think_session || {};
+      byId("sessionEnabled").checked = !!session.enabled;
+      byId("handoffMode").value = session.handoff_mode || "rewrite";
+      byId("kbIngestMode").value = session.kb_ingest_mode || "none";
+    }
+
+    function hydrateRuntime(runtime) {
+      if (!runtime) return;
+      byId("modelInput").value = runtime.default_model || byId("modelInput").value;
+      byId("integrationInput").value = runtime.default_integration || byId("integrationInput").value;
+      byId("contextLengthInput").value = runtime.default_context_length || byId("contextLengthInput").value;
+      byId("temperatureInput").value = runtime.default_temperature ?? byId("temperatureInput").value;
+      byId("timeoutInput").value = runtime.timeout_seconds || byId("timeoutInput").value;
+    }
+
+    async function refreshState() {
+      const status = byId("apiStatus");
+      try {
+        status.textContent = "connected";
+        status.style.color = "#63c9a9";
+        const data = await api("GET", "/api/state");
+        hydrateSession(data.pre_think_state || {});
+        hydrateKpi(data.kpi || {});
+        hydrateRuntime(data.runtime || {});
+        setPre("stateOutput", data.pre_think_state || {});
+      } catch (error) {
+        status.textContent = "offline";
+        status.style.color = "#ef7a7a";
+        setPre("stateOutput", { error: String(error) });
+      }
+    }
+
+    async function applySession() {
+      const payload = {
+        enabled: byId("sessionEnabled").checked,
+        handoff_mode: byId("handoffMode").value,
+        kb_ingest_mode: byId("kbIngestMode").value,
+      };
+      const data = await api("POST", "/api/session", payload);
+      hydrateKpi(data.kpi || {});
+      await refreshState();
+    }
+
+    async function runPrethinkOnly() {
+      const payload = {
+        utterance: byId("utteranceInput").value,
+      };
+      const data = await api("POST", "/api/prethink", payload);
+      const result = data.result || {};
+      latestTurnForSnapshot = {
+        kind: "prethink_only",
+        captured_at: new Date().toISOString(),
+        request: payload,
+        response: data,
+      };
+      setPre("processedOutput", result.processed_utterance || "(none)");
+      setPre("mainOutput", "(pre-think only)");
+      setPre("latencyOutput", data.latency_ms || {});
+      setPre("timelineOutput", renderTimeline(data.routing_timeline || []));
+      setPre("diffOutput", renderDiff(data.utterance_diff || {}));
+      setPre("prethinkDetailOutput", result);
+      hydrateKpi(data.kpi || {});
+      await refreshState();
+    }
+
+    async function runTurn() {
+      const payload = {
+        utterance: byId("utteranceInput").value,
+        force_pre_think: byId("forcePrethink").checked,
+        forward_to_main: byId("forwardMain").checked,
+        integration_enabled: byId("integrationEnabled").checked,
+        model: byId("modelInput").value,
+        integration: byId("integrationInput").value,
+        context_length: Number(byId("contextLengthInput").value),
+        temperature: Number(byId("temperatureInput").value),
+        timeout_seconds: Number(byId("timeoutInput").value),
+      };
+      const data = await api("POST", "/api/chat_turn", payload);
+      latestTurnForSnapshot = {
+        kind: "chat_turn",
+        captured_at: new Date().toISOString(),
+        request: payload,
+        response: data,
+      };
+      setPre("processedOutput", data.processed_utterance || "(none)");
+      setPre("mainOutput", data.main_model_response || "(none)");
+      setPre("latencyOutput", {
+        apply_pre_think: data.apply_pre_think,
+        forwarded_to_main: data.forwarded_to_main,
+        latency_ms: data.latency_ms || {}
+      });
+      setPre("timelineOutput", renderTimeline(data.routing_timeline || []));
+      setPre("diffOutput", renderDiff(data.utterance_diff || {}));
+      setPre("prethinkDetailOutput", data.pre_think_result || "(none)");
+      hydrateKpi(data.kpi || {});
+      await refreshState();
+    }
+
+    async function runQuery() {
+      const data = await api("POST", "/api/query", { query: byId("queryInput").value });
+      setPre("queryOutput", data.result || {});
+    }
+
+    async function resetKb() {
+      const data = await api("POST", "/api/kb/reset", {});
+      setPre("queryOutput", data.result || {});
+      await refreshState();
+    }
+
+    async function emptyKb() {
+      const data = await api("POST", "/api/kb/empty", {});
+      setPre("queryOutput", data.result || {});
+      await refreshState();
+    }
+
+    async function resetKpi() {
+      const data = await api("POST", "/api/kpi/reset", {});
+      hydrateKpi(data.kpi || {});
+    }
+
+    async function saveSnapshot() {
+      const payload = {
+        label: byId("snapshotLabel").value,
+        notes: byId("snapshotNotes").value,
+        include_state_history: byId("snapshotStateHistory").checked,
+        latest_turn: latestTurnForSnapshot,
+      };
+      const data = await api("POST", "/api/snapshot/save", payload);
+      setPre("snapshotOutput", data.snapshot || data);
+    }
+
+    function clearOutputs() {
+      setPre("processedOutput", "(processed utterance)");
+      setPre("mainOutput", "(main response)");
+      setPre("latencyOutput", "(latency)");
+      setPre("timelineOutput", "(timeline)");
+      setPre("diffOutput", "(diff)");
+      setPre("prethinkDetailOutput", "(pre-think JSON)");
+      setPre("queryOutput", "(query output)");
+      setPre("snapshotOutput", "(snapshot output)");
+      latestTurnForSnapshot = null;
+    }
+
+    function wireEvents() {
+      byId("applySessionBtn").addEventListener("click", () => applySession().catch(err => alert(err)));
+      byId("refreshStateBtn").addEventListener("click", () => refreshState().catch(err => alert(err)));
+      byId("prethinkOnlyBtn").addEventListener("click", () => runPrethinkOnly().catch(err => alert(err)));
+      byId("runTurnBtn").addEventListener("click", () => runTurn().catch(err => alert(err)));
+      byId("queryBtn").addEventListener("click", () => runQuery().catch(err => alert(err)));
+      byId("resetKbBtn").addEventListener("click", () => resetKb().catch(err => alert(err)));
+      byId("emptyKbBtn").addEventListener("click", () => emptyKb().catch(err => alert(err)));
+      byId("resetKpiBtn").addEventListener("click", () => resetKpi().catch(err => alert(err)));
+      byId("saveSnapshotBtn").addEventListener("click", () => saveSnapshot().catch(err => alert(err)));
+      byId("clearOutputsBtn").addEventListener("click", clearOutputs);
+    }
+
+    wireEvents();
+    refreshState();
+    setInterval(refreshState, 8000);
+  </script>
+</body>
+</html>
