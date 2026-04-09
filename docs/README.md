@@ -7,6 +7,7 @@ GitHub Pages base (for shareable rendered HTML):
 
 ## Start Here (Core)
 
+- [../AGENT-README.md](../AGENT-README.md): fast-start guide for coding agents (orientation, MCP setup path, and first useful actions).
 - [lm-studio-mcp-guide.md](lm-studio-mcp-guide.md): LM Studio + MCP setup and usage.
 - [mcp-chat-playbooks.md](mcp-chat-playbooks.md): copy/paste chat playbooks for deterministic tool use.
 - [index.html](https://dr3d.github.io/prolog-reasoning/): default docs landing page with project intro and primary demo links.

@@ -125,7 +125,7 @@ class TestMCPServer:
         assert "retract_fact" in tool_names
         assert "assert_rule" in tool_names
         assert "reset_kb" in tool_names
-        assert "kb_empty" in tool_names
+        assert "empty_kb" in tool_names
         assert "pre_think" in tool_names
         assert "prethink_utterance" not in tool_names
         assert "prethink_batch" not in tool_names
@@ -1041,14 +1041,14 @@ class TestMCPServer:
         assert query_result["status"] == "success"
         assert query_result["result_type"] == "success"
 
-    def test_kb_empty_clears_runtime_and_reset_kb_restores_baseline(self):
+    def test_empty_kb_clears_runtime_and_reset_kb_restores_baseline(self):
         server = PrologMCPServer(kb_path="prolog/core.pl")
 
         baseline = server.query_rows("parent(X, Y).")
         assert baseline["status"] == "success"
         assert baseline["num_rows"] > 0
 
-        emptied = server.kb_empty()
+        emptied = server.empty_kb()
         assert emptied["status"] == "success"
         assert emptied["result_type"] == "runtime_emptied"
         assert emptied["remaining_clause_count"] == 0

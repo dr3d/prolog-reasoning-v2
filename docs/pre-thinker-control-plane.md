@@ -45,6 +45,7 @@ With a control layer:
 - context switching is inspectable,
 - escalation is policy-driven,
 - and cost/latency become easier to manage.
+- for low-complexity turns (for example routing, normalization, or lightweight clarification prep), local handling can avoid unnecessary cloud escalation and may reduce token-credit spend.
 
 ## 4. Scope of the Pre-Thinker
 
@@ -220,5 +221,6 @@ This is a practical architecture pattern, not model hype:
 - symbolic engine for determinism,
 - small model for control,
 - larger model only when needed.
+- practical side effect: some Q&A-adjacent control work can stay local, which may reduce cloud usage on smaller operations.
 
 The goal is to make long-horizon memory systems more auditable, cheaper to run, and easier to correct when conversations evolve.

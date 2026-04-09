@@ -13,6 +13,7 @@ Instead of treating memory as "retrieve more text," this project instruments the
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 - Live docs hub: [dr3d.github.io/prolog-reasoning/docs-hub.html](https://dr3d.github.io/prolog-reasoning/docs-hub.html)
+- Coding-agent fast start: [AGENT-README.md](AGENT-README.md)
 
 ![Two memory systems, two inference systems](infographics/02-memory-and-inference-map.png)
 

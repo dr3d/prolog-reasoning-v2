@@ -107,7 +107,7 @@ PROLOG_TOOL_NAMES = {
     "retract_fact",
     "assert_rule",
     "reset_kb",
-    "kb_empty",
+    "empty_kb",
     "list_known_facts",
     "explain_error",
     "classify_statement",

@@ -552,7 +552,7 @@ def _summarize_tool_usage(steps: list[dict[str, Any]]) -> dict[str, Any]:
                 "retract_fact",
                 "assert_rule",
                 "reset_kb",
-                "kb_empty",
+                "empty_kb",
             }:
                 prolog_calls += 1
             if tool in write_tools:

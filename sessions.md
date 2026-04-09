@@ -4,10 +4,11 @@ This file is the fast-start state for coding agents.
 
 ## Agent Read Order
 
-1. `README.md` (project thesis and runtime promises)
-2. `docs/README.md` (docs map)
-3. `status.md` and `roadmap.md` (what is complete vs next)
-4. `sessions/operator-brief.md` (active handoff and current priorities)
+1. `AGENT-README.md` (fast onboarding and MCP setup path)
+2. `README.md` (project thesis and runtime promises)
+3. `docs/README.md` (docs map)
+4. `status.md` and `roadmap.md` (what is complete vs next)
+5. `sessions/operator-brief.md` (active handoff and current priorities)
 
 Default scope rule:
 - Do not read `sessions/parts/*` by default.

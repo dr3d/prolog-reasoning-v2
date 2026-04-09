@@ -173,6 +173,7 @@ Secondary:
 - agreement with deterministic baseline
 - clarification trigger quality
 - latency and cost per turn
+- cloud escalation rate for low-complexity turns (watch for avoidable large-model calls)
 
 ## 10) Non-Negotiable Guardrails
 
@@ -197,4 +198,3 @@ measurable reliability, what is ready for symbolic memory and what must be
 clarified, deferred, or rejected.
 
 That is the path to trustworthy long-horizon neuro-symbolic memory systems.
-

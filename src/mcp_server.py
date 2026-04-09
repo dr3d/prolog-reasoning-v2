@@ -1304,7 +1304,7 @@ class PrologMCPServer:
                 }
             },
             {
-                "name": "kb_empty",
+                "name": "empty_kb",
                 "description": "Clear the runtime KB to an empty in-memory state (no baseline facts/rules loaded).",
                 "inputSchema": {
                     "type": "object",
@@ -2045,7 +2045,7 @@ class PrologMCPServer:
             "result_type": "fact_asserted",
             "fact": normalized,
             "message": "Fact asserted into runtime KB for this server process.",
-            "note": "Use reset_kb (baseline restore) or kb_empty (fully empty runtime) to clear runtime changes.",
+            "note": "Use reset_kb (baseline restore) or empty_kb (fully empty runtime) to clear runtime changes.",
         }
 
     def bulk_assert_facts(self, facts: List[str]) -> Dict[str, Any]:
@@ -2140,10 +2140,10 @@ class PrologMCPServer:
             "result_type": "rule_asserted",
             "rule": normalized,
             "message": "Rule asserted into runtime KB for this server process.",
-            "note": "Use reset_kb (baseline restore) or kb_empty (fully empty runtime) to clear runtime changes.",
+            "note": "Use reset_kb (baseline restore) or empty_kb (fully empty runtime) to clear runtime changes.",
         }
 
-    def kb_empty(self) -> Dict[str, Any]:
+    def empty_kb(self) -> Dict[str, Any]:
         """Clear all runtime facts/rules from the in-memory KB."""
         engine = getattr(self.skill.prolog_skill, "engine", None)
         if engine is not None and hasattr(engine, "clauses"):
@@ -2385,7 +2385,7 @@ class PrologMCPServer:
             "retract_fact": lambda: self.retract_fact(tool_input.get("fact", "")),
             "assert_rule": lambda: self.assert_rule(tool_input.get("rule", "")),
             "reset_kb": lambda: self.reset_kb(),
-            "kb_empty": lambda: self.kb_empty(),
+            "empty_kb": lambda: self.empty_kb(),
             "classify_statement": lambda: self.classify_statement(tool_input.get("text", "")),
             "pre_think": lambda: self.pre_think(
                 tool_input.get("utterance", "") or tool_input.get("text", ""),
