@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Lightweight docs consistency checks for common drift regressions.
 """
@@ -30,6 +30,8 @@ def main() -> int:
     readme_text = _read("README.md")
     status_text = _read("status.md")
     docs_readme_text = _read("docs/README.md")
+    sessions_text = _read("sessions.md")
+    operator_brief_text = _read("sessions/operator-brief.md")
 
     pass_pattern = re.compile(r"(\d+)\s+passed")
     readme_match = pass_pattern.search(readme_text)
@@ -48,6 +50,18 @@ def main() -> int:
         findings.append(
             "docs/README.md contains broken in-docs sessions links. "
             "Use local-only wording plus ../sessions.md."
+        )
+
+    if "latest `sessions/parts/*` file" in sessions_text:
+        findings.append(
+            "sessions.md read order still includes long-form historical notes by default. "
+            "Keep default flow focused on current-state docs."
+        )
+
+    if "Then open:" in operator_brief_text and "`sessions/parts/" in operator_brief_text:
+        findings.append(
+            "sessions/operator-brief.md still directs agents into long-form history by default. "
+            "Historical parts should be opt-in/on-request only."
         )
 
     for rel in (

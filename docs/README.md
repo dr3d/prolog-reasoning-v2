@@ -18,6 +18,8 @@ GitHub Pages base (for shareable rendered HTML):
 - [examples/fantasy-overlord-session.html](https://dr3d.github.io/prolog-reasoning/examples/fantasy-overlord-session.html): multi-character simulation transcript with Prolog console view.
 - [examples/indie-launch-warroom-session.html](https://dr3d.github.io/prolog-reasoning/examples/indie-launch-warroom-session.html): conversational game-launch control-room transcript.
 - [examples/indie-launch-warroom-natural-session.html](https://dr3d.github.io/prolog-reasoning/examples/indie-launch-warroom-natural-session.html): natural-language tool-selection robustness capture (honest pass/miss per step).
+- [examples/family-memory-ladder-hybrid-session.html](https://dr3d.github.io/prolog-reasoning/examples/family-memory-ladder-hybrid-session.html): harder family-memory ladder run in hybrid mode (`pre_think` + Prolog tools).
+- [examples/family-memory-ladder-hybrid-pressure-session.html](https://dr3d.github.io/prolog-reasoning/examples/family-memory-ladder-hybrid-pressure-session.html): same ladder with extra context pressure.
 - [fantasy-overlord-session.md](fantasy-overlord-session.md): markdown version of the fantasy transcript.
 - [examples/](examples/): canonical captured transcript JSON/MD/HTML artifacts.
 
@@ -66,11 +68,13 @@ GitHub Pages base (for shareable rendered HTML):
 - [research/scenarios/README.md](research/scenarios/README.md): scenario authoring contract and runner usage.
 - [research/scenarios/scenario-2.md](research/scenarios/scenario-2.md): current scenario narrative used for recent run batches.
 - [research/pre-thinker.md](research/pre-thinker.md): forward plan for automating pre-thinker engineering and evaluation.
+- [research/family-memory-ladder-qwen9b-2026-04-09.md](research/family-memory-ladder-qwen9b-2026-04-09.md): harder ad-hoc fuzzy vs sharp vs hybrid memory report.
+- [research/family-memory-ladder-qwen9b-2026-04-09-summary.md](research/family-memory-ladder-qwen9b-2026-04-09-summary.md): publish-safe consolidated scorecard.
+- [research/family-memory-ladder-qwen9b-2026-04-09-summary.json](research/family-memory-ladder-qwen9b-2026-04-09-summary.json): machine-readable consolidated metrics.
 - [research/conversation-plan-template.json](research/conversation-plan-template.json): reusable JSON prompt-plan template for scenario runs.
 - [research/conversations/README.md](research/conversations/README.md): output layout for generated conversation captures.
 - [research/prethinker-lora-playbook.md](research/prethinker-lora-playbook.md): practical pre-thinker vs LoRA sequence and dataset/eval workflow.
 - [research/collaboration-map.md](research/collaboration-map.md): contribution lanes and open idea prompts for collaborators.
-- [research/legacy/README.md](research/legacy/README.md): archived research notes and dated run packs.
 - [../scripts/run_prethinker_edge_matrix.py](../scripts/run_prethinker_edge_matrix.py): automation harness for pre-thinker edge-case runs.
 - [../data/fact_extraction/prethinker_edge_cases_v1.json](../data/fact_extraction/prethinker_edge_cases_v1.json): starter edge-case dataset for pre-thinker phrasing checks.
 
@@ -92,7 +96,12 @@ GitHub Pages base (for shareable rendered HTML):
 ## Session Records
 
 - Long-form session notes stay local-only under `sessions/parts/` and are not published.
+- Long-form session notes are archival and should be read only when explicitly requested.
 - [../sessions.md](../sessions.md): compact public session tracker in repo root.
+
+## Historical References (Open On Request)
+
+- [research/legacy/README.md](research/legacy/README.md): archived research notes and dated run packs.
 
 ## Intentional Repo-Root Markdown
 

@@ -70,3 +70,26 @@ JSON plan mode example:
 Then run:
 
 - `python scripts/run_conversaton.py --conversation-file path/to/plan.json --input-mode json_plan`
+
+## Scenario-2 Pre-Think A/B Stress Matrix
+
+Run the exact experiment track:
+
+- baseline with pre-think off
+- baseline with pre-think on
+- context-stuffed with pre-think off
+- context-stuffed with pre-think on
+
+Command:
+
+- `python scripts/run_scenario2_prethink_matrix.py --models qwen3.5-4b qwen/qwen3.5-9b`
+
+Outputs are written under:
+
+- `docs/research/conversations/scenario-2-prethink-matrix/<timestamp>/`
+
+The matrix runner emits:
+
+- per-run transcript (`json`, `md`, `html`)
+- `matrix-summary.json`
+- `matrix-summary.md`

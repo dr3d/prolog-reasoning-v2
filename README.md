@@ -8,7 +8,7 @@ Prolog Reasoning v2 is a local-first research and engineering repo focused on th
 
 Instead of treating memory as "retrieve more text," this project instruments the full language-to-state path: classification, normalization, validation, deterministic execution, and auditable explanation.
 
-[![Tests](https://img.shields.io/badge/tests-108%20passed-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-115%20passed-brightgreen)](tests/)
 [![Python](https://img.shields.io/badge/python-3.12+-blue)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
@@ -72,7 +72,7 @@ Implemented and runnable now:
 - Failure translation in [src/explain/failure_translator.py](src/explain/failure_translator.py)
 - MCP server integration in [src/mcp_server.py](src/mcp_server.py)
 - Scenario and matrix research harnesses in [scripts/](scripts/)
-- Current test baseline: `108 passed`
+- Current test baseline: `115 passed`
 
 ## Explicit Boundaries (Important)
 
@@ -113,6 +113,9 @@ Start with the docs that define the technical spine:
 Then inspect concrete run artifacts:
 
 - [docs/research/conversations/README.md](docs/research/conversations/README.md)
+
+Historical archive (open only when you explicitly need old runs):
+
 - [docs/research/legacy/README.md](docs/research/legacy/README.md)
 
 Run a scenario capture (LM Studio required for live calls):

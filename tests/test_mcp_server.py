@@ -8,8 +8,14 @@ These tests cover the behavior LM Studio depends on:
 - response shaping for query/list/error tools
 """
 
+import io
+import json
+import os
 import sys
+import tempfile
+import urllib.error
 from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, "src")
 
@@ -71,6 +77,7 @@ def make_server(skill=None):
     server.kb_path = Path("D:/repo/prolog/core.pl")
     server.skill = skill or DummySkill({})
     server.statement_classifier = StatementClassifier()
+    server.expose_legacy_prethink_tools = False
     server._request_id = 0
     return server
 
@@ -119,8 +126,10 @@ class TestMCPServer:
         assert "assert_rule" in tool_names
         assert "reset_kb" in tool_names
         assert "kb_empty" in tool_names
-        assert "prethink_utterance" in tool_names
-        assert "prethink_batch" in tool_names
+        assert "pre_think" in tool_names
+        assert "prethink_utterance" not in tool_names
+        assert "prethink_batch" not in tool_names
+        assert "show_pre_think_state" in tool_names
         assert "query_prolog" not in tool_names
         assert "query_prolog_raw" not in tool_names
         assert "query_prolog_rows_raw" not in tool_names
@@ -128,6 +137,24 @@ class TestMCPServer:
         assert "bulk_assert_facts_raw" not in tool_names
         assert "retract_fact_raw" not in tool_names
         assert "reset_runtime_kb" not in tool_names
+
+    def test_tools_list_includes_legacy_prethink_surface_when_enabled(self):
+        server = make_server()
+        server.expose_legacy_prethink_tools = True
+
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "tools/list",
+                "params": {},
+            }
+        )
+
+        tool_names = [tool["name"] for tool in response["result"]["tools"]]
+        assert "pre_think" in tool_names
+        assert "prethink_utterance" in tool_names
+        assert "prethink_batch" in tool_names
 
     def test_tools_call_rejects_removed_tool_name(self):
         server = make_server()
@@ -193,6 +220,77 @@ class TestMCPServer:
         assert "control_plane_policy" in result
         assert result["control_plane_policy"]["clarification_eagerness"] == 0.0
         assert result["control_plane_policy"]["status"] == "no-op placeholder for future routing policy"
+        capabilities_text = "\n".join(result["capabilities"])
+        assert "pre_think" in capabilities_text
+        assert "prethink_utterance" in capabilities_text
+
+    def test_show_pre_think_state_exposes_model_skill_and_history(self):
+        server = make_server()
+        server.pre_think_model = "qwen/qwen3.5-9b"
+        server.pre_think_skill_path = "skills/pre-think/SKILL.md"
+        server.pre_think_skill_text = "custom pre-think policy"
+        server.pre_think_history_path = ".tmp_pre_think_history.json"
+        server.pre_think_history = [
+            {"input_utterance": "Maybe my mother was Ann.", "processed_utterance": "Tentative candidate..."},
+            {"input_utterance": "Actually not Bob, I meant Alice.", "processed_utterance": "Correction candidate..."},
+        ]
+        server.pre_think_max_history_turns = 6
+        server.prethinker_base_url = "http://127.0.0.1:1234"
+        server.prethinker_api_key = "sk-lm-xxxxx"
+
+        result = server.show_pre_think_state(include_history=True, history_items=1)
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "pre_think_state"
+        assert result["pre_think_model"] == "qwen/qwen3.5-9b"
+        assert result["pre_think_skill_loaded"] is True
+        assert result["prethinker_api_key_configured"] is True
+        assert "pre_think_history_path" in result
+        assert result["history_turns"] == 2
+        assert len(result["recent_history"]) == 1
+
+    def test_pre_think_history_persists_to_disk_and_reloads(self):
+        server = make_server()
+        history_path = Path("tests/.tmp_pre_think_history_test.json").resolve()
+        if history_path.exists():
+            history_path.unlink()
+
+        try:
+            server.pre_think_history_path = str(history_path)
+            server.pre_think_max_history_turns = 2
+            server.pre_think_history = []
+
+            server._record_pre_think_turn(
+                input_utterance="first input",
+                processed_utterance="first output",
+            )
+            server._record_pre_think_turn(
+                input_utterance="second input",
+                processed_utterance="second output",
+            )
+            server._record_pre_think_turn(
+                input_utterance="third input",
+                processed_utterance="third output",
+            )
+
+            assert history_path.exists()
+            payload = json.loads(history_path.read_text(encoding="utf-8"))
+            assert isinstance(payload, list)
+            assert len(payload) == 2
+            assert payload[0]["input_utterance"] == "second input"
+            assert payload[1]["input_utterance"] == "third input"
+
+            fresh_server = make_server()
+            fresh_server.pre_think_history_path = str(history_path)
+            fresh_server.pre_think_max_history_turns = 2
+            loaded = fresh_server._load_pre_think_history_from_disk(str(history_path))
+
+            assert len(loaded) == 2
+            assert loaded[0]["input_utterance"] == "second input"
+            assert loaded[1]["input_utterance"] == "third input"
+        finally:
+            if history_path.exists():
+                history_path.unlink()
 
     def test_classify_statement_detects_query(self):
         server = make_server()
@@ -243,6 +341,232 @@ class TestMCPServer:
 
         assert result["status"] == "validation_error"
         assert "text" in result["message"].lower()
+
+    def test_pre_think_validation_requires_utterance(self):
+        server = make_server()
+
+        result = server.pre_think("")
+
+        assert result["status"] == "validation_error"
+        assert "utterance" in result["message"].lower()
+
+    def test_pre_think_processes_utterance_for_downstream_model(self):
+        server = make_server()
+        captured = {}
+
+        def fake_call_prethink_rewriter(
+            *,
+            utterance,
+            model,
+            temperature,
+            context_length,
+            narrative_context,
+            handoff_mode,
+            kb_ingest_mode,
+        ):
+            captured["utterance"] = utterance
+            captured["model"] = model
+            captured["temperature"] = temperature
+            captured["context_length"] = context_length
+            captured["narrative_context"] = narrative_context
+            captured["handoff_mode"] = handoff_mode
+            captured["kb_ingest_mode"] = kb_ingest_mode
+            return {
+                "assistant_message": "Please classify this as a tentative fact before any write attempt.",
+                "raw_response": {"output": [{"type": "message", "content": "Please classify this as a tentative fact before any write attempt."}]},
+            }
+
+        server._call_prethink_rewriter = fake_call_prethink_rewriter
+        result = server.pre_think(
+            "Maybe my mother was Ann.",
+            narrative_context="Speaker identity unresolved.",
+            model="qwen3.5-4b",
+            temperature=0.1,
+            context_length=2048,
+        )
+
+        assert result["status"] == "success"
+        assert result["result_type"] == "pre_think"
+        assert result["input_utterance"] == "Maybe my mother was Ann."
+        assert result["processed_utterance"] == "Please classify this as a tentative fact before any write attempt."
+        assert result["fallback_used"] is False
+        assert result["normalization_reason"] == "model_output"
+        assert result["pre_think_skill_path"] == "skills/pre-think/SKILL.md"
+        assert captured["utterance"] == "Maybe my mother was Ann."
+        assert captured["narrative_context"] == "Speaker identity unresolved."
+        assert captured["model"] == "qwen3.5-4b"
+        assert captured["temperature"] == 0.1
+        assert captured["context_length"] == 2048
+        assert captured["handoff_mode"] == "rewrite"
+        assert captured["kb_ingest_mode"] == "none"
+        assert "kb mutation occurs only" in result["note"].lower()
+
+    def test_build_pre_think_input_includes_skill_guidance(self):
+        server = make_server()
+        server._get_pre_think_skill_text = lambda: "Use correction-safe phrasing."
+
+        prompt = server._build_pre_think_input(
+            utterance="Actually not Bob, I meant Alice.",
+            narrative_context="Prior candidate used Bob.",
+        )
+
+        assert "Pre-think SKILL guidance:" in prompt
+        assert "Use correction-safe phrasing." in prompt
+        assert "first shot" in prompt.lower()
+
+    def test_build_pre_think_input_answer_proxy_mode_changes_instructions(self):
+        server = make_server()
+        server._get_pre_think_skill_text = lambda: "Return direct user-ready text."
+
+        prompt = server._build_pre_think_input_with_mode(
+            utterance="Who supervises A-3 at T0?",
+            narrative_context="Scenario-2 baseline context.",
+            handoff_mode="answer_proxy",
+        )
+
+        assert "final user-facing answer text directly" in prompt.lower()
+        assert "echo your output verbatim" in prompt.lower()
+
+    def test_build_pre_think_input_includes_candidate_fact_json_contract_when_ingest_enabled(self):
+        server = make_server()
+        server._get_pre_think_skill_text = lambda: "Extract only high-confidence facts."
+
+        prompt = server._build_pre_think_input_with_mode(
+            utterance="A-3 is supervised by P-002 at T0.",
+            narrative_context="Scenario context.",
+            handoff_mode="rewrite",
+            kb_ingest_mode="facts",
+        )
+
+        assert "return json only" in prompt.lower()
+        assert "candidate_facts" in prompt
+
+    def test_pre_think_falls_back_to_input_when_model_output_empty(self):
+        server = make_server()
+
+        def fake_call_prethink_rewriter(
+            *,
+            utterance,
+            model,
+            temperature,
+            context_length,
+            narrative_context,
+            handoff_mode,
+            kb_ingest_mode,
+        ):
+            return {
+                "assistant_message": "",
+                "raw_response": {"output": [{"type": "message", "content": ""}]},
+            }
+
+        server._call_prethink_rewriter = fake_call_prethink_rewriter
+        result = server.pre_think("Who is John's parent?")
+
+        assert result["status"] == "success"
+        assert result["processed_utterance"] == "Who is John's parent?"
+        assert result["fallback_used"] is True
+        assert result["normalization_reason"] == "empty_model_output"
+
+    def test_pre_think_uses_qwen_9b_default_model(self):
+        server = make_server()
+        captured = {}
+
+        def fake_call_prethink_rewriter(
+            *,
+            utterance,
+            model,
+            temperature,
+            context_length,
+            narrative_context,
+            handoff_mode,
+            kb_ingest_mode,
+        ):
+            captured["model"] = model
+            return {
+                "assistant_message": "normalized utterance",
+                "raw_response": {"output": [{"type": "message", "content": "normalized utterance"}]},
+            }
+
+        server._call_prethink_rewriter = fake_call_prethink_rewriter
+        result = server.pre_think("Maybe my mother was Ann.")
+
+        assert result["status"] == "success"
+        assert captured["model"] == "qwen/qwen3.5-9b"
+
+    def test_pre_think_accepts_answer_proxy_handoff_mode(self):
+        server = make_server()
+        captured = {}
+
+        def fake_call_prethink_rewriter(
+            *,
+            utterance,
+            model,
+            temperature,
+            context_length,
+            narrative_context,
+            handoff_mode,
+            kb_ingest_mode,
+        ):
+            captured["handoff_mode"] = handoff_mode
+            return {
+                "assistant_message": "P-002 supervises A-3 at T0.",
+                "raw_response": {"output": [{"type": "message", "content": "P-002 supervises A-3 at T0."}]},
+            }
+
+        server._call_prethink_rewriter = fake_call_prethink_rewriter
+        result = server.pre_think(
+            "Who supervises A-3 at T0?",
+            handoff_mode="answer_proxy",
+        )
+
+        assert result["status"] == "success"
+        assert result["handoff_mode"] == "answer_proxy"
+        assert captured["handoff_mode"] == "answer_proxy"
+
+    def test_pre_think_can_ingest_candidate_facts_when_enabled(self):
+        server = make_server()
+        ingested = []
+
+        def fake_call_prethink_rewriter(
+            *,
+            utterance,
+            model,
+            temperature,
+            context_length,
+            narrative_context,
+            handoff_mode,
+            kb_ingest_mode,
+        ):
+            return {
+                "assistant_message": (
+                    '{"processed_utterance":"A-3 supervisor at T0 is P-002.",'
+                    '"candidate_facts":["parent(john, alice).","role(alice, admin)."]}'
+                ),
+                "raw_response": {},
+            }
+
+        def fake_assert_fact(fact):
+            ingested.append(fact)
+            if "parent(" in fact:
+                return {"status": "success", "fact": fact}
+            return {"status": "validation_error", "message": "rejected in test"}
+
+        server._call_prethink_rewriter = fake_call_prethink_rewriter
+        server.assert_fact = fake_assert_fact
+        result = server.pre_think(
+            "Who supervises A-3 at T0?",
+            handoff_mode="answer_proxy",
+            kb_ingest_mode="facts",
+            max_candidate_facts=10,
+        )
+
+        assert result["status"] == "success"
+        assert result["kb_ingest_mode"] == "facts"
+        assert result["requested_candidate_facts"] == 2
+        assert result["attempted_candidate_facts"] == 2
+        assert result["ingested_facts_count"] == 1
+        assert result["rejected_candidate_facts_count"] == 1
+        assert len(ingested) == 2
 
     def test_prethink_utterance_forwards_text_to_prethinker_model(self):
         server = make_server()
@@ -373,6 +697,129 @@ class TestMCPServer:
         assert structured["assessment_valid"] is True
         assert structured["assessment"]["kind"] == "query"
         assert "kb_projection" in structured
+
+    def test_tools_call_routes_pre_think(self):
+        server = make_server()
+
+        def fake_pre_think(
+            utterance,
+            narrative_context=None,
+            model=None,
+            temperature=None,
+            context_length=None,
+            handoff_mode=None,
+            kb_ingest_mode=None,
+            max_candidate_facts=None,
+        ):
+            return {
+                "status": "success",
+                "result_type": "pre_think",
+                "input_utterance": utterance,
+                "processed_utterance": "clarify speaker identity, then classify",
+                "fallback_used": False,
+                "normalization_reason": "model_output",
+            }
+
+        server.pre_think = fake_pre_think
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 420,
+                "method": "tools/call",
+                "params": {"name": "pre_think", "arguments": {"utterance": "Maybe my mother was Ann."}},
+            }
+        )
+
+        structured = response["result"]["structuredContent"]
+        assert structured["status"] == "success"
+        assert structured["result_type"] == "pre_think"
+        assert structured["input_utterance"] == "Maybe my mother was Ann."
+        assert structured["processed_utterance"] == "clarify speaker identity, then classify"
+
+    def test_tools_call_routes_show_pre_think_state(self):
+        server = make_server()
+
+        def fake_show_pre_think_state(include_history=True, history_items=5):
+            return {
+                "status": "success",
+                "result_type": "pre_think_state",
+                "pre_think_model": "qwen/qwen3.5-9b",
+                "history_turns": 3,
+                "recent_history": [],
+            }
+
+        server.show_pre_think_state = fake_show_pre_think_state
+        response = server.process_request(
+            {
+                "jsonrpc": "2.0",
+                "id": 421,
+                "method": "tools/call",
+                "params": {"name": "show_pre_think_state", "arguments": {"include_history": False}},
+            }
+        )
+
+        structured = response["result"]["structuredContent"]
+        assert structured["status"] == "success"
+        assert structured["result_type"] == "pre_think_state"
+        assert structured["pre_think_model"] == "qwen/qwen3.5-9b"
+
+    def test_post_json_retries_localhost_401_with_default_key(self):
+        server = make_server()
+        requests = []
+
+        class DummyResponse:
+            def __init__(self, body: bytes):
+                self._body = body
+
+            def read(self):
+                return self._body
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb):
+                return False
+
+        def fake_urlopen(request, timeout):
+            requests.append(request)
+            if len(requests) == 1:
+                raise urllib.error.HTTPError(
+                    request.full_url,
+                    401,
+                    "Unauthorized",
+                    hdrs=None,
+                    fp=io.BytesIO(b'{"error":"unauthorized"}'),
+                )
+            assert request.headers.get("Authorization") == "Bearer lm-studio"
+            return DummyResponse(b'{"status":"ok"}')
+
+        with patch("mcp_server.urllib.request.urlopen", side_effect=fake_urlopen):
+            result = server._post_json(
+                url="http://127.0.0.1:1234/api/v1/chat",
+                payload={"model": "qwen/qwen3.5-9b", "input": "hello"},
+                api_key=None,
+                timeout_seconds=5,
+            )
+
+        assert result["status"] == "ok"
+        assert len(requests) == 2
+        assert requests[0].headers.get("Authorization") is None
+
+    def test_load_env_file_reads_missing_values_without_overriding_existing(self):
+        server = make_server()
+        with tempfile.NamedTemporaryFile("w", suffix=".env", delete=False, encoding="utf-8") as handle:
+            handle.write("LMSTUDIO_API_KEY=from_env_file\n")
+            handle.write("PRETHINKER_MODEL=qwen/qwen3.5-9b\n")
+            env_path = handle.name
+
+        try:
+            with patch.dict("os.environ", {"PRETHINKER_MODEL": "keep_existing"}, clear=False):
+                server._load_env_file(env_path)
+                assert "LMSTUDIO_API_KEY" in os.environ
+                assert os.environ["LMSTUDIO_API_KEY"] == "from_env_file"
+                assert os.environ["PRETHINKER_MODEL"] == "keep_existing"
+        finally:
+            os.remove(env_path)
 
     def test_prethink_utterance_normalizes_string_booleans_and_aliases(self):
         server = make_server()

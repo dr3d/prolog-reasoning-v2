@@ -1,0 +1,82 @@
+{
+  "captured_at": "2026-04-09 04:38:00 UTC",
+  "report_date": "2026-04-09",
+  "report_id": "family-memory-ladder-qwen9b-2026-04-09",
+  "model": "qwen/qwen3.5-9b",
+  "notes": "Consolidated from two runs: 20260409-040159 (fuzzy/sharp/hybrid) and 20260409-043209 (hybrid_pressure).",
+  "rows": [
+    {
+      "mode": "fuzzy",
+      "status": "ok",
+      "probes_pass": 10,
+      "probes_total": 12,
+      "probe_pass_rate": 0.8333333333333334,
+      "tier4_pass": 7,
+      "tier4_total": 9,
+      "tier4_pass_rate": 0.7777777777777778,
+      "tool_usage": {
+        "total_tool_calls": 0,
+        "pre_think_calls": 0,
+        "legacy_prethink_calls": 0,
+        "prolog_tool_calls": 0,
+        "write_tool_calls": 0
+      },
+      "source_run": "20260409-040159"
+    },
+    {
+      "mode": "sharp",
+      "status": "ok",
+      "probes_pass": 9,
+      "probes_total": 12,
+      "probe_pass_rate": 0.75,
+      "tier4_pass": 6,
+      "tier4_total": 9,
+      "tier4_pass_rate": 0.6666666666666666,
+      "tool_usage": {
+        "total_tool_calls": 36,
+        "pre_think_calls": 0,
+        "legacy_prethink_calls": 0,
+        "prolog_tool_calls": 31,
+        "write_tool_calls": 9
+      },
+      "source_run": "20260409-040159"
+    },
+    {
+      "mode": "hybrid",
+      "status": "ok",
+      "probes_pass": 10,
+      "probes_total": 12,
+      "probe_pass_rate": 0.8333333333333334,
+      "tier4_pass": 7,
+      "tier4_total": 9,
+      "tier4_pass_rate": 0.7777777777777778,
+      "tool_usage": {
+        "total_tool_calls": 63,
+        "pre_think_calls": 24,
+        "legacy_prethink_calls": 0,
+        "prolog_tool_calls": 35,
+        "write_tool_calls": 8
+      },
+      "source_run": "20260409-040159"
+    },
+    {
+      "mode": "hybrid_pressure",
+      "status": "ok",
+      "probes_pass": 10,
+      "probes_total": 12,
+      "probe_pass_rate": 0.8333333333333334,
+      "tier4_pass": 7,
+      "tier4_total": 9,
+      "tier4_pass_rate": 0.7777777777777778,
+      "tool_usage": {
+        "total_tool_calls": 72,
+        "pre_think_calls": 33,
+        "legacy_prethink_calls": 0,
+        "prolog_tool_calls": 38,
+        "write_tool_calls": 8
+      },
+      "source_run": "20260409-043209"
+    }
+  ],
+  "local_artifacts_note": "Full per-turn transcripts live under docs/research/conversations/** and are intentionally git-ignored for publication hygiene."
+}

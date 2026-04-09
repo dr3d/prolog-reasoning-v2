@@ -179,6 +179,23 @@ If token auth is enabled and no valid token is provided, the script will fail
 with `HTTP 401` and a remediation hint. The script checks `LMSTUDIO_API_KEY`
 first, then `OPENAI_API_KEY`.
 
+Quick 401 recovery (copy/paste):
+
+```powershell
+# Load key from shell or fallback to .env.local, then ping :1234
+$key = $env:LMSTUDIO_API_KEY
+if (-not $key -and (Test-Path ".env.local")) {
+  foreach ($line in Get-Content ".env.local") {
+    if ($line -match "^LMSTUDIO_API_KEY=(.+)$") { $key = $Matches[1].Trim(); break }
+  }
+}
+$headers = @{ "Content-Type" = "application/json"; "Authorization" = "Bearer $key" }
+$body = @{ model = "qwen/qwen3.5-9b"; input = "Reply with exactly: LM_OK"; temperature = 0; context_length = 256 } | ConvertTo-Json
+Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:1234/api/v1/chat" -Headers $headers -Body $body
+```
+
+If this returns a model response, auth and local API connectivity are good.
+
 ---
 
 ## Step 3: Use with Your LLM

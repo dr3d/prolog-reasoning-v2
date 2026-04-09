@@ -17,6 +17,9 @@ This folder holds exploratory framing and evaluation notes that inform direction
 - `fact-extraction-steering-matrix.html`: themed HTML render of extraction steering matrix.
 - `pre-thinker.md`: forward plan for pre-thinker automation, evaluation loops, and rollout phases.
 - `prethinker-lora-playbook.md`: practical pre-thinker vs LoRA sequence and dataset/eval workflow.
+- `family-memory-ladder-qwen9b-2026-04-09.md`: harder ad-hoc fuzzy vs sharp vs hybrid memory report.
+- `family-memory-ladder-qwen9b-2026-04-09-summary.md`: publish-safe consolidated ladder scorecard.
+- `family-memory-ladder-qwen9b-2026-04-09-summary.json`: publish-safe machine-readable consolidated metrics.
 - `collaboration-map.md`: contribution lanes and open idea prompts for collaborators.
 - `../../scripts/run_prethinker_edge_matrix.py`: edge harness for pre-thinker phrasing and validation runs.
 - `../../data/fact_extraction/prethinker_edge_cases_v1.json`: starter edge-case dataset for the harness.
